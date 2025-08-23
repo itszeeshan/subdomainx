@@ -1,0 +1,63 @@
+---
+title: "Overview"
+---
+
+# Overview
+
+All-in-one subdomain enumeration tool that combines the power of multiple tools into a single, efficient command-line interface.
+
+## Features
+
+- **Multiple Tools**: Integrates subfinder, amass, findomain, and more for comprehensive enumeration
+- **High Performance**: Concurrent execution with configurable threads and rate limiting
+- **HTTP Scanning**: Built-in httpx integration for web service discovery and analysis
+- **Flexible Output**: Generate reports in JSON, TXT, or beautiful HTML formats
+- **Easy to Use**: Simple CLI interface with sensible defaults and optional configuration
+- **Tool Management**: Automatic tool detection and installation guidance for missing dependencies
+
+## Quick Start
+
+### 1. Install
+
+```bash
+go install github.com/itszeeshan/subdomainx@latest
+```
+
+### 2. Create domains file
+
+```bash
+echo "example.com" > domains.txt
+```
+
+### 3. Run scan
+
+```bash
+subdomainx --wildcard domains.txt --format html
+```
+
+## What's Included
+
+### Enumeration Tools <a href="/supported-tools#enumeration-tools" className="details-link">details</a>
+
+- **subfinder** - Fast subdomain discovery tool with passive online sources
+- **amass** - Comprehensive network reconnaissance and attack surface mapping
+- **findomain** - Cross-platform subdomain enumeration tool
+- **assetfinder** - Find domains and subdomains potentially related to a given domain
+- **sublist3r** - Fast subdomain enumeration tool for penetration testers
+- **knockpy** - Python3 tool designed to enumerate subdomains on a target domain
+- **dnsrecon** - DNS enumeration and reconnaissance tool
+- **fierce** - DNS reconnaissance tool for locating non-contiguous IP space
+- **massdns** - High-performance DNS stub resolver
+- **altdns** - Generates permutations, alterations and mutations of subdomains
+
+### Scanning Tools <a href="/supported-tools#scanning-tools" className="details-link">details</a>
+
+- **httpx** - Fast and multi-purpose HTTP probe for web services
+- **smap** - Port scanner and service discovery tool
+
+## Next Steps
+
+- [Installation Guide](/installation) - Get SubdomainX up and running
+- [CLI Reference](/cli-reference) - Complete command-line interface reference
+- [Examples](/examples) - Practical usage examples and use cases
+- [Configuration](/configuration) - Learn about YAML configuration and CLI options

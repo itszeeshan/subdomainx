@@ -1,0 +1,149 @@
+---
+title: "Configuration"
+---
+
+# Configuration
+
+Learn how to configure SubdomainX using YAML files and CLI options.
+
+## Configuration Overview
+
+> **CLI-First Approach**: SubdomainX prioritizes command-line arguments over configuration files. All options can be passed directly via CLI flags.
+
+> **Optional YAML Config**: YAML configuration files are optional and provide default values that can be overridden by CLI arguments.
+
+> **CLI Overrides YAML**: Command-line arguments always take precedence over configuration file settings.
+
+## YAML Configuration
+
+### Default Configuration File
+
+Create a configuration file at `configs/default.yaml`:
+
+```yaml
+# SubdomainX Configuration File
+# All options are optional and can be overridden via CLI
+
+# Input configuration
+wildcard_file: "" # Path to domains file (required via CLI)
+
+# Output configuration
+unique_name: "scan"
+output_format: "json" # json, txt, html
+output_dir: "output"
+
+# Performance settings
+threads: 10
+retries: 3
+timeout: 30
+rate_limit: 100
+
+# Tool selection (all false by default - use CLI flags)
+tools:
+  subfinder: false
+  amass: false
+  findomain: false
+  assetfinder: false
+  sublist3r: false
+  knockpy: false
+  dnsrecon: false
+  fierce: false
+  massdns: false
+  altdns: false
+
+# Scanning tools
+scanners:
+  httpx: false
+  smap: false
+```
+
+## Configuration Parameters
+
+### Input Configuration
+
+| Parameter       | Type   | Default | CLI Flag     | Description                                           |
+| --------------- | ------ | ------- | ------------ | ----------------------------------------------------- |
+| `wildcard_file` | string | `""`    | `--wildcard` | Path to file containing target domains (one per line) |
+
+### Output Configuration
+
+| Parameter       | Type   | Default    | CLI Flag   | Description                          |
+| --------------- | ------ | ---------- | ---------- | ------------------------------------ |
+| `unique_name`   | string | `"scan"`   | `--name`   | Unique name for output files         |
+| `output_format` | string | `"json"`   | `--format` | Output format: json, txt, html       |
+| `output_dir`    | string | `"output"` | `--output` | Output directory for generated files |
+
+### Performance Configuration
+
+| Parameter    | Type    | Default | CLI Flag       | Description                  |
+| ------------ | ------- | ------- | -------------- | ---------------------------- |
+| `threads`    | integer | `10`    | `--threads`    | Number of concurrent threads |
+| `retries`    | integer | `3`     | `--retries`    | Number of retry attempts     |
+| `timeout`    | integer | `30`    | `--timeout`    | Timeout in seconds           |
+| `rate_limit` | integer | `100`   | `--rate-limit` | Rate limit per second        |
+
+### Tool Configuration
+
+Tool selection is primarily controlled via CLI flags. YAML configuration provides default states:
+
+#### Enumeration Tools
+
+- `subfinder` → `--subfinder`
+- `amass` → `--amass`
+- `findomain` → `--findomain`
+- `assetfinder` → `--assetfinder`
+- `sublist3r` → `--sublist3r`
+- `knockpy` → `--knockpy`
+- `dnsrecon` → `--dnsrecon`
+- `fierce` → `--fierce`
+- `massdns` → `--massdns`
+- `altdns` → `--altdns`
+
+#### Scanning Tools
+
+- `httpx` → `--httpx`
+- `smap` → `--smap`
+
+## Usage Examples
+
+### Use Default Configuration
+
+Run with default settings from config file:
+
+```bash
+subdomainx --wildcard domains.txt
+```
+
+### Override Configuration
+
+Override specific settings via CLI:
+
+```bash
+subdomainx --wildcard domains.txt --threads 20 --format html
+```
+
+### Custom Config File
+
+Use a custom configuration file:
+
+```bash
+subdomainx --wildcard domains.txt --config my-config.yaml
+```
+
+### CLI Only
+
+Ignore config file and use only CLI arguments:
+
+```bash
+subdomainx --wildcard domains.txt --subfinder --httpx --format json
+```
+
+## Configuration Tips
+
+> **Tip**:
+>
+> - CLI arguments always override YAML configuration
+> - Use YAML for default settings and CLI for specific overrides
+> - Configuration files are optional - you can use CLI only
+> - Keep configuration files in version control for team consistency
+> - Use environment variables for sensitive configuration

@@ -1,0 +1,114 @@
+---
+title: "Supported Tools"
+---
+
+# Supported Tools
+
+Comprehensive list of enumeration and scanning tools integrated with SubdomainX.
+
+## Enumeration Tools
+
+Enumeration tools discover subdomains through various techniques including passive reconnaissance, DNS queries, and online sources.
+
+### subfinder
+
+**Description**: Fast subdomain discovery tool that uses passive online sources to find subdomains. It queries various search engines, certificate transparency logs, and other public sources to discover subdomains without directly interacting with the target.  
+**Website**: [GitHub](https://github.com/projectdiscovery/subfinder)  
+**Install**: `go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest`
+
+### amass
+
+**Description**: Comprehensive network reconnaissance and attack surface mapping tool. It performs DNS enumeration, network mapping, and subdomain discovery using multiple techniques including brute forcing, certificate transparency, and passive reconnaissance.  
+**Website**: [GitHub](https://github.com/owasp-amass/amass)  
+**Install**: `go install -v github.com/owasp-amass/amass/v4/...@master`
+
+### findomain
+
+**Description**: Cross-platform subdomain enumeration tool that uses multiple sources including search engines, certificate transparency logs, and DNS bruteforcing. It's designed to be fast and efficient while providing comprehensive coverage.  
+**Website**: [GitHub](https://github.com/findomain/findomain)  
+**Install**: `curl -LO https://github.com/findomain/findomain/releases/latest/download/findomain-linux`
+
+### assetfinder
+
+**Description**: Find domains and subdomains potentially related to a given domain by querying various online sources. It's designed to discover assets that might be related to the target organization through passive reconnaissance.  
+**Website**: [GitHub](https://github.com/tomnomnom/assetfinder)  
+**Install**: `go install github.com/tomnomnom/assetfinder@latest`
+
+### sublist3r
+
+**Description**: Fast subdomain enumeration tool for penetration testers that uses search engines and other online sources to discover subdomains. It's designed to be efficient and provide quick results for security assessments.  
+**Website**: [GitHub](https://github.com/aboul3la/Sublist3r)  
+**Install**: `pip install sublist3r`
+
+### knockpy
+
+**Description**: Python3 tool designed to enumerate subdomains on a target domain through DNS bruteforcing and wordlist-based discovery. It's effective for finding subdomains that might not be publicly indexed.  
+**Website**: [GitHub](https://github.com/guelfoweb/knock)  
+**Install**: `pip install knockpy`
+
+### dnsrecon
+
+**Description**: DNS enumeration and reconnaissance tool that performs various DNS queries including zone transfers, reverse lookups, and bruteforcing. It's designed for comprehensive DNS reconnaissance and mapping.  
+**Website**: [GitHub](https://github.com/darkoperator/dnsrecon)  
+**Install**: `pip install dnsrecon`
+
+### fierce
+
+**Description**: DNS reconnaissance tool for locating non-contiguous IP space and hostnames. It uses DNS queries to discover hosts and subdomains, making it effective for network mapping and reconnaissance.  
+**Website**: [GitHub](https://github.com/davidpepper/fierce)  
+**Install**: `pip install fierce`
+
+### massdns
+
+**Description**: High-performance DNS stub resolver designed for bulk DNS queries. It can process large wordlists efficiently and is often used in combination with other tools for subdomain enumeration and DNS bruteforcing.  
+**Website**: [GitHub](https://github.com/blechschmidt/massdns)  
+**Install**: `git clone https://github.com/blechschmidt/massdns.git && cd massdns && make`
+
+### altdns
+
+**Description**: Generates permutations, alterations and mutations of subdomains to discover additional hosts. It takes existing subdomains and creates variations that might reveal additional assets through pattern-based discovery.  
+**Website**: [GitHub](https://github.com/infosec-au/altdns)  
+**Install**: `pip install py-altdns`
+
+## Scanning Tools
+
+Scanning tools analyze discovered subdomains to identify open ports, web services, and gather additional information about the target infrastructure.
+
+### httpx
+
+**Description**: Fast and multi-purpose HTTP probe for web services  
+**Website**: [GitHub](https://github.com/projectdiscovery/httpx)  
+**Install**: `go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest`
+
+### smap
+
+**Description**: Port scanner and service discovery tool  
+**Website**: [GitHub](https://github.com/s0md3v/Smap)  
+**Install**: `pip install smap`
+
+## Tool Management
+
+### Check Tool Availability
+
+Verify which tools are available on your system:
+
+```bash
+subdomainx --check-tools
+```
+
+### Get Installation Help
+
+Get detailed installation instructions for missing tools:
+
+```bash
+subdomainx --install-tools
+```
+
+## Pro Tips
+
+> **Tip**:
+>
+> - Install tools as needed - SubdomainX will work with any combination
+> - More tools = better coverage and results
+> - Some tools may require API keys for optimal performance
+> - Check tool documentation for specific configuration requirements

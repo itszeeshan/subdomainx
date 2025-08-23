@@ -1,0 +1,129 @@
+---
+title: "CLI Reference"
+---
+
+# CLI Reference
+
+Complete command-line interface reference for SubdomainX.
+
+## Basic Usage
+
+```bash
+subdomainx --wildcard <domains_file> [OPTIONS]
+```
+
+> **Required**: You must provide a file containing target domains using the `--wildcard` flag.
+
+## Command Options
+
+### Required Options
+
+| Option            | Description                                           |
+| ----------------- | ----------------------------------------------------- |
+| `--wildcard FILE` | Path to file containing target domains (one per line) |
+
+### Tool Selection <a href="/supported-tools#enumeration-tools" className="details-link">details</a>
+
+Use specific tools, otherwise all available tools will be used.
+
+| Option          | Description          |
+| --------------- | -------------------- |
+| `--subfinder`   | Use subfinder tool   |
+| `--amass`       | Use amass tool       |
+| `--findomain`   | Use findomain tool   |
+| `--assetfinder` | Use assetfinder tool |
+| `--sublist3r`   | Use sublist3r tool   |
+| `--knockpy`     | Use knockpy tool     |
+| `--dnsrecon`    | Use dnsrecon tool    |
+| `--fierce`      | Use fierce tool      |
+| `--massdns`     | Use massdns tool     |
+| `--altdns`      | Use altdns tool      |
+
+> **Note**: If no specific tools are specified, SubdomainX will use all available tools mentioned above.
+
+### Scanning Tools <a href="/supported-tools#scanning-tools" className="details-link">details</a>
+
+| Option    | Description                                                                                           |
+| --------- | ----------------------------------------------------------------------------------------------------- |
+| `--httpx` | Use httpx for HTTP scanning (discovers web services, extracts titles, status codes, and technologies) |
+| `--smap`  | Use smap for port scanning (identifies open ports and services on discovered hosts)                   |
+
+### Output Options
+
+| Option            | Default  | Description                          |
+| ----------------- | -------- | ------------------------------------ |
+| `--name NAME`     | `scan`   | Unique name for output files         |
+| `--format FORMAT` | `json`   | Output format: json, txt, html       |
+| `--output DIR`    | `output` | Output directory for generated files |
+
+### Performance Options
+
+| Option           | Default | Description                  |
+| ---------------- | ------- | ---------------------------- |
+| `--threads N`    | `10`    | Number of concurrent threads |
+| `--retries N`    | `3`     | Number of retry attempts     |
+| `--timeout N`    | `30`    | Timeout in seconds           |
+| `--rate-limit N` | `100`   | Rate limit per second        |
+
+### Utility Options
+
+| Option            | Description                                      |
+| ----------------- | ------------------------------------------------ |
+| `--help`          | Show help message                                |
+| `--version`       | Show version information                         |
+| `--check-tools`   | Check availability of enumeration tools          |
+| `--install-tools` | Show installation instructions for missing tools |
+| `--config FILE`   | Use custom configuration file                    |
+| `-v, --verbose`   | Enable verbose output                            |
+
+## Examples
+
+### Basic Scan
+
+Run a basic scan with all available tools:
+
+```bash
+subdomainx --wildcard domains.txt
+```
+
+### Specific Tools
+
+Use only specific enumeration and scanning tools:
+
+```bash
+subdomainx --wildcard domains.txt --amass --subfinder --httpx
+```
+
+### HTML Report
+
+Generate a beautiful HTML report with custom name:
+
+```bash
+subdomainx --wildcard domains.txt --format html --name my_scan
+```
+
+### High Performance
+
+Optimize for speed with more threads and longer timeout:
+
+```bash
+subdomainx --wildcard domains.txt --threads 20 --timeout 60
+```
+
+## Tool Management
+
+### Check Tools
+
+Check which tools are available and get installation help:
+
+```bash
+subdomainx --check-tools
+```
+
+### Install Help
+
+Get detailed installation instructions for missing tools:
+
+```bash
+subdomainx --install-tools
+```

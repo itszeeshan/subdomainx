@@ -1,0 +1,151 @@
+---
+title: "Examples"
+---
+
+# Examples
+
+Practical examples and use cases for SubdomainX.
+
+## Basic Examples
+
+### Simple Scan
+
+Run a basic scan with all available tools on a single domain:
+
+```bash
+subdomainx --wildcard domains.txt
+```
+
+> **Note**: Uses all available enumeration tools and generates JSON output by default
+
+### Specific Tools
+
+Use only specific enumeration tools for targeted scanning:
+
+```bash
+subdomainx --wildcard domains.txt --subfinder --amass --findomain
+```
+
+> **Note**: Limits the scan to only the specified tools for faster execution
+
+### With HTTP Scanning
+
+Include HTTP scanning to discover web services:
+
+```bash
+subdomainx --wildcard domains.txt --httpx
+```
+
+> **Note**: Discovers web services, extracts titles, status codes, and technologies
+
+### Complete Scan
+
+Full enumeration with both HTTP and port scanning:
+
+```bash
+subdomainx --wildcard domains.txt --httpx --smap
+```
+
+> **Note**: Comprehensive scan including port discovery and service identification
+
+## Advanced Examples
+
+### Custom Output Format
+
+Generate a beautiful HTML report with custom naming:
+
+```bash
+subdomainx --wildcard domains.txt --format html --name my_scan --output reports/
+```
+
+> **Note**: Creates an HTML report in the reports/ directory with custom filename
+
+### High Performance
+
+Optimize for speed with increased threads and timeout:
+
+```bash
+subdomainx --wildcard domains.txt --threads 20 --timeout 60 --rate-limit 200
+```
+
+> **Note**: Uses more threads and higher rate limits for faster scanning
+
+### Verbose Output
+
+Get detailed information about the scanning process:
+
+```bash
+subdomainx --wildcard domains.txt --verbose
+```
+
+> **Note**: Shows detailed progress and debugging information
+
+### Custom Configuration
+
+Use a custom configuration file:
+
+```bash
+subdomainx --wildcard domains.txt --config my-config.yaml
+```
+
+> **Note**: Loads settings from a custom YAML configuration file
+
+## Sample Files
+
+### domains.txt
+
+A simple text file containing target domains:
+
+```txt
+example.com
+test.com
+demo.org
+sample.net
+```
+
+### config.yaml
+
+Custom configuration file:
+
+```yaml
+threads: 15
+timeout: 45
+retries: 5
+rate_limit: 150
+output_format: html
+output_dir: scans/
+```
+
+## Best Practices
+
+- **Start Small**: Begin with a few domains and specific tools to test your setup
+- **Use Appropriate Rate Limits**: Set reasonable rate limits to avoid being blocked by services
+- **Monitor Resources**: Keep an eye on system resources when using high thread counts
+- **Organize Output**: Use meaningful names and organize output directories
+- **Verify Results**: Always verify discovered subdomains and validate findings
+
+## Common Use Cases
+
+### Bug Bounty
+
+Comprehensive subdomain discovery for bug bounty programs:
+
+```bash
+subdomainx --wildcard targets.txt --httpx --smap --format html --name bugbounty_scan
+```
+
+### Security Assessment
+
+Quick reconnaissance for security assessments:
+
+```bash
+subdomainx --wildcard domains.txt --subfinder --amass --httpx --threads 10
+```
+
+### Asset Discovery
+
+Discover all assets belonging to an organization:
+
+```bash
+subdomainx --wildcard org_domains.txt --format json --output assets/
+```

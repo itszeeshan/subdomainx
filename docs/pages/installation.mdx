@@ -1,0 +1,95 @@
+---
+title: "Installation"
+---
+
+# Installation
+
+Get SubdomainX up and running on your system.
+
+## Prerequisites
+
+- **Go 1.21 or later** - Required for building and running the tool
+- **Git** - For cloning the repository (if building from source)
+- **External Tools** - Various enumeration and scanning tools (optional, can be installed later)
+
+## Installation Methods
+
+### Quick Install (Recommended)
+
+Install directly from GitHub using Go's module system:
+
+```bash
+go install github.com/itszeeshan/subdomainx@latest
+```
+
+> **Note**: This will install the binary to your Go bin directory. Make sure it's in your PATH.
+
+### Build from Source
+
+Clone the repository and build manually:
+
+```bash
+git clone https://github.com/itszeeshan/subdomainx.git
+cd subdomainx
+go build -o subdomainx cmd/subdomainx/main.go
+```
+
+### Using Makefile
+
+If you have the source code, you can use the provided Makefile:
+
+```bash
+make build
+make install
+```
+
+## Verification
+
+Verify that SubdomainX is installed correctly:
+
+```bash
+subdomainx --version
+subdomainx --help
+```
+
+> **Success**: If you see the help output, SubdomainX is installed correctly!
+
+## Next Steps
+
+### Check Tool Availability
+
+Verify which tools are available on your system:
+
+```bash
+subdomainx --check-tools
+```
+
+### Get Installation Help
+
+Get detailed installation instructions for missing tools:
+
+```bash
+subdomainx --install-tools
+```
+
+## Troubleshooting
+
+### Command Not Found
+
+If you get a "command not found" error after installation:
+
+**Solution**: Add your Go bin directory to your PATH:
+
+```bash
+export PATH=$PATH:$(go env GOPATH)/bin
+```
+
+### Permission Denied
+
+If you encounter permission issues:
+
+**Solution**: Make the binary executable:
+
+```bash
+chmod +x $(go env GOPATH)/bin/subdomainx
+```
