@@ -1,0 +1,23 @@
+wildcard_file: domains.txt
+unique_name: scan
+output_dir: output
+output_format: json
+threads: 10
+retries: 3
+timeout: 30
+rate_limit: 100
+wordlist: ""
+filters:
+  status_code: "200,301,302"
+  ports: "80,443,8080"
+tools:
+  subfinder: true
+  findomain: true
+  assetfinder: true
+  amass: true
+  sublist3r: true
+  knockpy: true
+  dnsrecon: true
+  fierce: true
+  massdns: true
+  altdns: true
