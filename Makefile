@@ -5,7 +5,7 @@
 # Build variables
 BINARY_NAME=subdomainx
 BUILD_DIR=build
-MAIN_PATH=./cmd/subdomainx
+MAIN_PATH=.
 
 # Default target
 all: build
@@ -44,7 +44,7 @@ install:
 # Test go install from GitHub (requires pushing to GitHub first)
 install-remote:
 	@echo "Installing SubdomainX from GitHub..."
-	go install github.com/itszeeshan/subdomainx/cmd/subdomainx@latest
+	go install github.com/itszeeshan/subdomainx@latest
 	@echo "SubdomainX installed from GitHub!"
 
 # Run tests

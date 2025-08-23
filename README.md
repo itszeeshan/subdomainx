@@ -76,13 +76,13 @@ git clone https://github.com/itszeeshan/subdomainx.git
 cd subdomainx
 
 # Build the binary
-go build -o subdomainx ./cmd/subdomainx
+go build -o subdomainx
 
 # Or use the Makefile
 make build
 
 # Or install globally
-go install ./cmd/subdomainx
+go install .
 ```
 
 ### Tool Installation Check
@@ -284,7 +284,7 @@ go mod tidy
 go test ./...
 
 # Build
-go build ./cmd/subdomainx
+go build
 ```
 
 ## License 📄
