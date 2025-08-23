@@ -25,6 +25,7 @@ tools:
   virustotal: false
   censys: false
   waybackurls: false
+  linkheader: false
 scanners:
   httpx: false
   smap: false

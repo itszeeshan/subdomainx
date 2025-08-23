@@ -197,6 +197,17 @@ func GetRequiredTools() []Tool {
 			},
 			Required: false,
 		},
+		{
+			Name:        "linkheader",
+			Command:     "linkheader",
+			Description: "Discover subdomains from HTTP Link headers",
+			InstallCmd: map[string]string{
+				"linux":   "Built-in (no installation required)",
+				"darwin":  "Built-in (no installation required)",
+				"windows": "Built-in (no installation required)",
+			},
+			Required: false,
+		},
 	}
 }
 
@@ -217,6 +228,9 @@ func CheckToolAvailability(toolName string) bool {
 		apiID := strings.TrimSpace(os.Getenv("CENSYS_API_ID"))
 		secret := strings.TrimSpace(os.Getenv("CENSYS_SECRET"))
 		return apiID != "" && secret != ""
+	case "linkheader":
+		// Link header enumerator is built-in, always available
+		return true
 	default:
 		// For command-line tools, check if they're in PATH
 		_, err := exec.LookPath(toolName)

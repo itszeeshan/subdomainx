@@ -44,19 +44,20 @@ Use specific tools, otherwise all available enumeration tools will be used by de
 
 #### Enumeration Tools
 
-| Option          | Description          |
-| --------------- | -------------------- |
-| `--subfinder`   | Use subfinder tool   |
-| `--amass`       | Use amass tool       |
-| `--findomain`   | Use findomain tool   |
-| `--assetfinder` | Use assetfinder tool |
-| `--sublist3r`   | Use sublist3r tool   |
-| `--knockpy`     | Use knockpy tool     |
-| `--dnsrecon`    | Use dnsrecon tool    |
-| `--fierce`      | Use fierce tool      |
-| `--massdns`     | Use massdns tool     |
-| `--altdns`      | Use altdns tool      |
-| `--waybackurls` | Use waybackurls tool |
+| Option          | Description                 |
+| --------------- | --------------------------- |
+| `--subfinder`   | Use subfinder tool          |
+| `--amass`       | Use amass tool              |
+| `--findomain`   | Use findomain tool          |
+| `--assetfinder` | Use assetfinder tool        |
+| `--sublist3r`   | Use sublist3r tool          |
+| `--knockpy`     | Use knockpy tool            |
+| `--dnsrecon`    | Use dnsrecon tool           |
+| `--fierce`      | Use fierce tool             |
+| `--massdns`     | Use massdns tool            |
+| `--altdns`      | Use altdns tool             |
+| `--waybackurls` | Use waybackurls tool        |
+| `--linkheader`  | Use Link Header enumeration |
 
 #### API Tools <a href="/supported-tools#api-tools" className="details-link">details</a>
 
@@ -144,6 +145,20 @@ subdomainx --amass --subfinder --waybackurls example.com
 subdomainx --wildcard domains.txt --amass --subfinder --waybackurls
 ```
 
+### Link Header Discovery
+
+**Single domain:**
+
+```bash
+subdomainx --linkheader example.com
+```
+
+**Multiple domains:**
+
+```bash
+subdomainx --wildcard domains.txt --linkheader
+```
+
 ### API Tools
 
 **Single domain:**
@@ -163,13 +178,13 @@ subdomainx --wildcard domains.txt --securitytrails --virustotal --censys
 **Single domain:**
 
 ```bash
-subdomainx --subfinder --securitytrails --httpx example.com
+subdomainx --subfinder --securitytrails --linkheader example.com
 ```
 
 **Multiple domains:**
 
 ```bash
-subdomainx --wildcard domains.txt --amass --virustotal --censys --httpx
+subdomainx --wildcard domains.txt --amass --virustotal --censys --linkheader
 ```
 
 ### With Filters

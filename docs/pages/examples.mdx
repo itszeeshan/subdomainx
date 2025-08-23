@@ -71,16 +71,16 @@ Combine command-line tools with API tools for maximum coverage:
 **Single domain:**
 
 ```bash
-subdomainx --subfinder --securitytrails --waybackurls example.com
+subdomainx --subfinder --securitytrails --waybackurls --linkheader example.com
 ```
 
 **Multiple domains:**
 
 ```bash
-subdomainx --wildcard domains.txt --amass --virustotal --censys --waybackurls
+subdomainx --wildcard domains.txt --amass --virustotal --censys --waybackurls --linkheader
 ```
 
-> **Note**: Combines the speed of local tools with the breadth of API databases and historical data
+> **Note**: Combines the speed of local tools with the breadth of API databases, historical data, and HTTP Link header discovery
 
 ### With HTTP Scanning
 
@@ -305,13 +305,13 @@ Leverage external APIs for comprehensive subdomain discovery:
 **Single domain:**
 
 ```bash
-subdomainx --securitytrails --virustotal --censys --httpx example.com
+subdomainx --securitytrails --virustotal --censys --linkheader example.com
 ```
 
 **Multiple domains:**
 
 ```bash
-subdomainx --wildcard domains.txt --securitytrails --virustotal --censys --httpx
+subdomainx --wildcard domains.txt --securitytrails --virustotal --censys --linkheader
 ```
 
 ### Maximum Coverage
@@ -321,13 +321,13 @@ Combine all available tools for maximum subdomain discovery:
 **Single domain:**
 
 ```bash
-subdomainx --subfinder --amass --securitytrails --virustotal --censys --waybackurls --httpx --smap example.com
+subdomainx --subfinder --amass --securitytrails --virustotal --censys --waybackurls --linkheader --httpx --smap example.com
 ```
 
 **Multiple domains:**
 
 ```bash
-subdomainx --wildcard domains.txt --subfinder --amass --securitytrails --virustotal --censys --waybackurls --httpx --smap
+subdomainx --wildcard domains.txt --subfinder --amass --securitytrails --virustotal --censys --waybackurls --linkheader --httpx --smap
 ```
 
 ### Asset Discovery

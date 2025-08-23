@@ -6,12 +6,19 @@ type SubdomainResult struct {
 	IPs       []string `json:"ips,omitempty"`
 }
 
+type LinkHeader struct {
+	URL        string   `json:"url"`
+	Rel        string   `json:"rel"`
+	Subdomains []string `json:"subdomains,omitempty"`
+}
+
 type HTTPResult struct {
-	URL           string   `json:"url"`
-	StatusCode    int      `json:"status_code"`
-	Title         string   `json:"title,omitempty"`
-	Technologies  []string `json:"technologies,omitempty"`
-	ContentLength int      `json:"content_length,omitempty"`
+	URL           string       `json:"url"`
+	StatusCode    int          `json:"status_code"`
+	Title         string       `json:"title,omitempty"`
+	Technologies  []string     `json:"technologies,omitempty"`
+	ContentLength int          `json:"content_length,omitempty"`
+	LinkHeaders   []LinkHeader `json:"link_headers,omitempty"`
 }
 
 type PortResult struct {
