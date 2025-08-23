@@ -1,7 +1,7 @@
 export default {
   logo: (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-      <img src="/SubdomainX logo.png" alt="SubdomainX" style={{ height: '32px', width: 'auto' }} />
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      <img src="/logo.png" alt="SubdomainX" style={{ height: '32px', width: 'auto' }} />
       <span>SubdomainX</span>
     </div>
   ),
@@ -31,8 +31,8 @@ export default {
       <meta property="og:title" content="SubdomainX" />
       <meta property="og:description" content="All-in-one subdomain enumeration tool" />
       <link rel="stylesheet" href="/styles/globals.css" />
-      <link rel="icon" type="image/png" href="/SubdomainX logo.png" />
-      <link rel="apple-touch-icon" href="/SubdomainX logo.png" />
+      <link rel="icon" type="image/png" href="/logo.png" />
+      <link rel="apple-touch-icon" href="/logo.png" />
     </>
   ),
   primaryHue: {
