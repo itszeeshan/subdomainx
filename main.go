@@ -211,15 +211,16 @@ func main() {
 
 // showBanner displays the application banner
 func showBanner() {
-	fmt.Println(`
- ____        _         _                       _       __  __
-/ ___| _   _| |__   __| | ___  _ __ ___   __ _(_)_ __ \ \/ /
-\___ \| | | | '_ \ / _` + "`" + ` |/ _ \| '_ ` + "`" + ` _ \ / _` + "`" + ` | | '_ \ \  / 
- ___) | |_| | |_) | (_| | (_) | | | | | | (_| | | | | /  \ 
-|____/ \__,_|_.__/ \__,_|\___/|_| |_| |_|\__,_|_|_| |_/_/\_\
+	fmt.Print(`
+  ____        _         _                       _       __  __
+ / ___| _   _| |__   __| | ___  _ __ ___   __ _(_)_ __  \ \/ /
+ \___ \| | | | '_ \ / _' |/ _ \| '_ ' _ \ / _' | | '_ \  \  / 
+  ___) | |_| | |_) | (_| | (_) | | | | | | (_| | | | | | /  \ 
+ |____/ \__,_|_.__/ \__,_|\___/|_| |_| |_|\__,_|_|_| |_|/_/\_\
 
-🔍 All-in-one Subdomain Enumeration Tool
-📧 https://github.com/itszeeshan/subdomainx`)
+        🔍 All-in-one Subdomain Enumeration Tool
+        📧 https://github.com/itszeeshan/subdomainx
+`)
 }
 
 // showUsage displays usage information

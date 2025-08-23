@@ -57,7 +57,7 @@ Install SubdomainX directly using Go:
 
 ```bash
 # Install the latest version
-go install github.com/itszeeshan/subdomainx/cmd/subdomainx@latest
+go install github.com/itszeeshan/subdomainx@latest
 
 # (Optional) Make it globally accessible
 # The binary will be installed to $(go env GOPATH)/bin/subdomainx
