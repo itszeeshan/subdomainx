@@ -52,12 +52,12 @@ Use specific tools, otherwise all available tools will be used.
 
 Filter results based on specific criteria:
 
-| Option           | Description                                   | Example                      |
-| ---------------- | --------------------------------------------- | ---------------------------- |
-| `--status-codes` | Filter by HTTP status codes (comma-separated) | `--status-codes 200,301,302` |
-| `--ports`        | Filter by ports (comma-separated)             | `--ports 80,443,8080`        |
+| Option           | Default | Description                                   | Example                      |
+| ---------------- | ------- | --------------------------------------------- | ---------------------------- |
+| `--status-codes` | All     | Filter by HTTP status codes (comma-separated) | `--status-codes 200,301,302` |
+| `--ports`        | All     | Filter by ports (comma-separated)             | `--ports 80,443,8080`        |
 
-> **Note**: Filter options work with HTTP scanning (`--httpx`) and port scanning (`--smap`) results.
+> **Note**: Filter options work with HTTP scanning (`--httpx`) and port scanning (`--smap`) results. Default values include all common HTTP status codes (100-511) and common ports (21,22,23,25,53,80,110,111,135,139,143,443,993,995,1723,3306,3389,5900,8080,8443).
 
 ### Output Options
 
