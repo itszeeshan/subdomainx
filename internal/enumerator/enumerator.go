@@ -61,7 +61,7 @@ func Run(cfg *config.Config, dnsCache *cache.DNSCache) ([]types.SubdomainResult,
 	defer cancel()
 
 	// Create a worker pool for concurrent enumeration
-	results := make(chan types.SubdomainResult, 1000)
+	subdomainChan := make(chan string, 1000)
 	var wg sync.WaitGroup
 
 	// Start a goroutine for each enabled and available enumerator and domain
@@ -83,37 +83,38 @@ func Run(cfg *config.Config, dnsCache *cache.DNSCache) ([]types.SubdomainResult,
 
 				fmt.Printf("✅ %s found %d subdomains for %s\n", toolName, len(subdomains), d)
 
+				// Send subdomains to channel without DNS resolution
 				for _, subdomain := range subdomains {
-					// Resolve DNS for the subdomain
-					ips := dnsCache.Resolve(subdomain)
-					results <- types.SubdomainResult{
-						Subdomain: subdomain,
-						Source:    toolName,
-						IPs:       ips,
-					}
+					subdomainChan <- subdomain
 				}
 			}(enumerator, domain, name)
 		}
 	}
 
-	// Wait for all enumerators to complete and close results channel
+	// Wait for all enumerators to complete and close subdomain channel
 	go func() {
 		wg.Wait()
-		close(results)
+		close(subdomainChan)
 	}()
 
-	// Collect and deduplicate results
-	uniqueResults := make(map[string]types.SubdomainResult)
-	for result := range results {
-		if _, exists := uniqueResults[result.Subdomain]; !exists {
-			uniqueResults[result.Subdomain] = result
-		}
+	// Collect and deduplicate subdomains first
+	uniqueSubdomains := make(map[string]bool)
+	for subdomain := range subdomainChan {
+		uniqueSubdomains[subdomain] = true
 	}
 
-	// Convert to slice
+	fmt.Printf("📊 Total unique subdomains found: %d\n", len(uniqueSubdomains))
+
+	// Now perform DNS resolution only for unique subdomains
 	var finalResults []types.SubdomainResult
-	for _, result := range uniqueResults {
-		finalResults = append(finalResults, result)
+	for subdomain := range uniqueSubdomains {
+		// Resolve DNS for the subdomain
+		ips := dnsCache.Resolve(subdomain)
+		finalResults = append(finalResults, types.SubdomainResult{
+			Subdomain: subdomain,
+			Source:    "combined", // Since we deduplicated, we can't track individual sources
+			IPs:       ips,
+		})
 	}
 
 	return finalResults, nil

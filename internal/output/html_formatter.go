@@ -9,6 +9,8 @@ import (
 	"github.com/itszeeshan/subdomainx/internal/types"
 )
 
+const itemsPerPage = 50
+
 // WriteHTML creates an HTML report of the scan results
 func WriteHTML(filename string, results *types.ScanResults) error {
 	file, err := os.Create(filename)
@@ -67,7 +69,7 @@ func generateHTMLHeader() string {
             overflow: hidden;
         }
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
             color: white;
             padding: 30px;
             text-align: center;
@@ -89,7 +91,7 @@ func generateHTMLHeader() string {
         }
         .section h2 {
             color: #333;
-            border-bottom: 2px solid #667eea;
+            border-bottom: 2px solid #16a34a;
             padding-bottom: 10px;
             margin-bottom: 20px;
         }
@@ -104,12 +106,12 @@ func generateHTMLHeader() string {
             padding: 20px;
             border-radius: 8px;
             text-align: center;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #16a34a;
         }
         .stat-number {
             font-size: 2em;
             font-weight: bold;
-            color: #667eea;
+            color: #16a34a;
         }
         .stat-label {
             color: #666;
@@ -130,7 +132,7 @@ func generateHTMLHeader() string {
             border-bottom: 1px solid #ddd;
         }
         th {
-            background-color: #667eea;
+            background-color: #16a34a;
             color: white;
             font-weight: 600;
         }
@@ -147,6 +149,49 @@ func generateHTMLHeader() string {
             border-radius: 12px;
             font-size: 0.8em;
             color: #495057;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            gap: 10px;
+        }
+        .pagination button {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        .pagination button:hover {
+            background: #16a34a;
+            color: white;
+            border-color: #16a34a;
+        }
+        .pagination button:disabled {
+            background: #f5f5f5;
+            color: #999;
+            cursor: not-allowed;
+        }
+        .pagination button.active {
+            background: #16a34a;
+            color: white;
+            border-color: #16a34a;
+        }
+        .pagination-info {
+            margin: 0 20px;
+            color: #666;
+        }
+        .table-container {
+            position: relative;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #666;
         }
         .footer {
             background: #f8f9fa;
@@ -196,118 +241,282 @@ func generateSubdomainsSection(subdomains []types.SubdomainResult) string {
         </div>`
 	}
 
-	html := `
-        <div class="section">
-            <h2>🌐 Subdomains Found</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Subdomain</th>
-                        <th>Source</th>
-                        <th>IP Addresses</th>
-                    </tr>
-                </thead>
-                <tbody>`
-
+	// Generate all rows as JSON for JavaScript pagination
+	var rows []string
 	for _, subdomain := range subdomains {
 		ips := strings.Join(subdomain.IPs, ", ")
 		if ips == "" {
 			ips = "N/A"
 		}
-		html += fmt.Sprintf(`
-                    <tr>
-                        <td><strong>%s</strong></td>
-                        <td><span class="source-tag">%s</span></td>
-                        <td>%s</td>
-                    </tr>`, subdomain.Subdomain, subdomain.Source, ips)
+		row := fmt.Sprintf(`{"subdomain": "%s", "source": "%s", "ips": "%s"}`,
+			subdomain.Subdomain, subdomain.Source, ips)
+		rows = append(rows, row)
 	}
+	rowsJSON := "[" + strings.Join(rows, ",") + "]"
 
-	html += `
-                </tbody>
-            </table>
-        </div>`
+	html := fmt.Sprintf(`
+        <div class="section">
+            <h2>🌐 Subdomains Found (%d total)</h2>
+            <div class="table-container">
+                <table id="subdomains-table">
+                    <thead>
+                        <tr>
+                            <th>Subdomain</th>
+                            <th>Source</th>
+                            <th>IP Addresses</th>
+                        </tr>
+                    </thead>
+                    <tbody id="subdomains-tbody">
+                    </tbody>
+                </table>
+                <div class="loading" id="subdomains-loading">Loading...</div>
+                <div class="pagination" id="subdomains-pagination">
+                    <button onclick="changePage('subdomains', -1)">Previous</button>
+                    <span class="pagination-info" id="subdomains-info">Page 1 of 1</span>
+                    <button onclick="changePage('subdomains', 1)">Next</button>
+                </div>
+            </div>
+        </div>
+        <script>
+            const subdomainsData = %s;
+            let subdomainsCurrentPage = 1;
+            const subdomainsPerPage = %d;
+            
+            function renderSubdomainsTable() {
+                const tbody = document.getElementById('subdomains-tbody');
+                const startIndex = (subdomainsCurrentPage - 1) * subdomainsPerPage;
+                const endIndex = startIndex + subdomainsPerPage;
+                const pageData = subdomainsData.slice(startIndex, endIndex);
+                
+                tbody.innerHTML = '';
+                pageData.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = '<td><strong>' + item.subdomain + '</strong></td>' +
+                                   '<td><span class="source-tag">' + item.source + '</span></td>' +
+                                   '<td>' + item.ips + '</td>';
+                    tbody.appendChild(row);
+                });
+                
+                // Update pagination info
+                const totalPages = Math.ceil(subdomainsData.length / subdomainsPerPage);
+                document.getElementById('subdomains-info').textContent = 'Page ' + subdomainsCurrentPage + ' of ' + totalPages + ' (' + subdomainsData.length + ' total items)';
+                
+                // Update button states
+                const prevBtn = document.querySelector('#subdomains-pagination button:first-child');
+                const nextBtn = document.querySelector('#subdomains-pagination button:last-child');
+                prevBtn.disabled = subdomainsCurrentPage === 1;
+                nextBtn.disabled = subdomainsCurrentPage === totalPages;
+            }
+            
+            function changePage(tableType, direction) {
+                if (tableType === 'subdomains') {
+                    const totalPages = Math.ceil(subdomainsData.length / subdomainsPerPage);
+                    const newPage = subdomainsCurrentPage + direction;
+                    if (newPage >= 1 && newPage <= totalPages) {
+                        subdomainsCurrentPage = newPage;
+                        renderSubdomainsTable();
+                    }
+                }
+            }
+            
+            // Initialize table
+            renderSubdomainsTable();
+        </script>`, len(subdomains), rowsJSON, itemsPerPage)
 
 	return html
 }
 
 func generateHTTPSection(httpResults []types.HTTPResult) string {
-	html := `
+	if len(httpResults) == 0 {
+		return `
         <div class="section">
             <h2>🌍 HTTP Services</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>URL</th>
-                        <th>Status</th>
-                        <th>Title</th>
-                        <th>Content Length</th>
-                        <th>Technologies</th>
-                    </tr>
-                </thead>
-                <tbody>`
+            <p>No HTTP services found.</p>
+        </div>`
+	}
 
+	// Generate all rows as JSON for JavaScript pagination
+	var rows []string
 	for _, result := range httpResults {
 		statusClass := fmt.Sprintf("status-%d", result.StatusCode)
 		technologies := strings.Join(result.Technologies, ", ")
 		if technologies == "" {
 			technologies = "N/A"
 		}
-
-		html += fmt.Sprintf(`
-                    <tr>
-                        <td><a href="%s" target="_blank">%s</a></td>
-                        <td class="%s">%d</td>
-                        <td>%s</td>
-                        <td>%d</td>
-                        <td>%s</td>
-                    </tr>`, result.URL, result.URL, statusClass, result.StatusCode, result.Title, result.ContentLength, technologies)
+		row := fmt.Sprintf(`{"url": "%s", "status": %d, "statusClass": "%s", "title": "%s", "contentLength": %d, "technologies": "%s"}`,
+			result.URL, result.StatusCode, statusClass, result.Title, result.ContentLength, technologies)
+		rows = append(rows, row)
 	}
+	rowsJSON := "[" + strings.Join(rows, ",") + "]"
 
-	html += `
-                </tbody>
-            </table>
-        </div>`
+	html := fmt.Sprintf(`
+        <div class="section">
+            <h2>🌍 HTTP Services (%d total)</h2>
+            <div class="table-container">
+                <table id="http-table">
+                    <thead>
+                        <tr>
+                            <th>URL</th>
+                            <th>Status</th>
+                            <th>Title</th>
+                            <th>Content Length</th>
+                            <th>Technologies</th>
+                        </tr>
+                    </thead>
+                    <tbody id="http-tbody">
+                    </tbody>
+                </table>
+                <div class="loading" id="http-loading">Loading...</div>
+                <div class="pagination" id="http-pagination">
+                    <button onclick="changeHTTPPage(-1)">Previous</button>
+                    <span class="pagination-info" id="http-info">Page 1 of 1</span>
+                    <button onclick="changeHTTPPage(1)">Next</button>
+                </div>
+            </div>
+        </div>
+        <script>
+            const httpData = %s;
+            let httpCurrentPage = 1;
+            const httpPerPage = %d;
+            
+            function renderHTTPTable() {
+                const tbody = document.getElementById('http-tbody');
+                const startIndex = (httpCurrentPage - 1) * httpPerPage;
+                const endIndex = startIndex + httpPerPage;
+                const pageData = httpData.slice(startIndex, endIndex);
+                
+                tbody.innerHTML = '';
+                pageData.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = '<td><a href="' + item.url + '" target="_blank">' + item.url + '</a></td>' +
+                                   '<td class="' + item.statusClass + '">' + item.status + '</td>' +
+                                   '<td>' + item.title + '</td>' +
+                                   '<td>' + item.contentLength + '</td>' +
+                                   '<td>' + item.technologies + '</td>';
+                    tbody.appendChild(row);
+                });
+                
+                // Update pagination info
+                const totalPages = Math.ceil(httpData.length / httpPerPage);
+                document.getElementById('http-info').textContent = 'Page ' + httpCurrentPage + ' of ' + totalPages + ' (' + httpData.length + ' total items)';
+                
+                // Update button states
+                const prevBtn = document.querySelector('#http-pagination button:first-child');
+                const nextBtn = document.querySelector('#http-pagination button:last-child');
+                prevBtn.disabled = httpCurrentPage === 1;
+                nextBtn.disabled = httpCurrentPage === totalPages;
+            }
+            
+            function changeHTTPPage(direction) {
+                const totalPages = Math.ceil(httpData.length / httpPerPage);
+                const newPage = httpCurrentPage + direction;
+                if (newPage >= 1 && newPage <= totalPages) {
+                    httpCurrentPage = newPage;
+                    renderHTTPTable();
+                }
+            }
+            
+            // Initialize table
+            renderHTTPTable();
+        </script>`, len(httpResults), rowsJSON, itemsPerPage)
 
 	return html
 }
 
 func generatePortsSection(portResults []types.PortResult) string {
-	html := `
+	if len(portResults) == 0 {
+		return `
         <div class="section">
             <h2>🔌 Port Scan Results</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Host</th>
-                        <th>IP</th>
-                        <th>Port</th>
-                        <th>Protocol</th>
-                        <th>State</th>
-                        <th>Service</th>
-                        <th>Version</th>
-                    </tr>
-                </thead>
-                <tbody>`
-
-	for _, result := range portResults {
-		for _, port := range result.Ports {
-			html += fmt.Sprintf(`
-                    <tr>
-                        <td><strong>%s</strong></td>
-                        <td>%s</td>
-                        <td>%d</td>
-                        <td>%s</td>
-                        <td>%s</td>
-                        <td>%s</td>
-                        <td>%s</td>
-                    </tr>`, result.Host, result.IP, port.Number, port.Protocol, port.State, port.Service, port.Version)
-		}
+            <p>No port scan results found.</p>
+        </div>`
 	}
 
-	html += `
-                </tbody>
-            </table>
-        </div>`
+	// Generate all rows as JSON for JavaScript pagination
+	var rows []string
+	for _, result := range portResults {
+		for _, port := range result.Ports {
+			row := fmt.Sprintf(`{"host": "%s", "ip": "%s", "port": %d, "protocol": "%s", "state": "%s", "service": "%s", "version": "%s"}`,
+				result.Host, result.IP, port.Number, port.Protocol, port.State, port.Service, port.Version)
+			rows = append(rows, row)
+		}
+	}
+	rowsJSON := "[" + strings.Join(rows, ",") + "]"
+
+	html := fmt.Sprintf(`
+        <div class="section">
+            <h2>🔌 Port Scan Results (%d total)</h2>
+            <div class="table-container">
+                <table id="ports-table">
+                    <thead>
+                        <tr>
+                            <th>Host</th>
+                            <th>IP</th>
+                            <th>Port</th>
+                            <th>Protocol</th>
+                            <th>State</th>
+                            <th>Service</th>
+                            <th>Version</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ports-tbody">
+                    </tbody>
+                </table>
+                <div class="loading" id="ports-loading">Loading...</div>
+                <div class="pagination" id="ports-pagination">
+                    <button onclick="changePortsPage(-1)">Previous</button>
+                    <span class="pagination-info" id="ports-info">Page 1 of 1</span>
+                    <button onclick="changePortsPage(1)">Next</button>
+                </div>
+            </div>
+        </div>
+        <script>
+            const portsData = %s;
+            let portsCurrentPage = 1;
+            const portsPerPage = %d;
+            
+            function renderPortsTable() {
+                const tbody = document.getElementById('ports-tbody');
+                const startIndex = (portsCurrentPage - 1) * portsPerPage;
+                const endIndex = startIndex + portsPerPage;
+                const pageData = portsData.slice(startIndex, endIndex);
+                
+                tbody.innerHTML = '';
+                pageData.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = '<td><strong>' + item.host + '</strong></td>' +
+                                   '<td>' + item.ip + '</td>' +
+                                   '<td>' + item.port + '</td>' +
+                                   '<td>' + item.protocol + '</td>' +
+                                   '<td>' + item.state + '</td>' +
+                                   '<td>' + item.service + '</td>' +
+                                   '<td>' + item.version + '</td>';
+                    tbody.appendChild(row);
+                });
+                
+                // Update pagination info
+                const totalPages = Math.ceil(portsData.length / portsPerPage);
+                document.getElementById('ports-info').textContent = 'Page ' + portsCurrentPage + ' of ' + totalPages + ' (' + portsData.length + ' total items)';
+                
+                // Update button states
+                const prevBtn = document.querySelector('#ports-pagination button:first-child');
+                const nextBtn = document.querySelector('#ports-pagination button:last-child');
+                prevBtn.disabled = portsCurrentPage === 1;
+                nextBtn.disabled = portsCurrentPage === totalPages;
+            }
+            
+            function changePortsPage(direction) {
+                const totalPages = Math.ceil(portsData.length / portsPerPage);
+                const newPage = portsCurrentPage + direction;
+                if (newPage >= 1 && newPage <= totalPages) {
+                    portsCurrentPage = newPage;
+                    renderPortsTable();
+                }
+            }
+            
+            // Initialize table
+            renderPortsTable();
+        </script>`, len(rows), rowsJSON, itemsPerPage)
 
 	return html
 }
