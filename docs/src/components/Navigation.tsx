@@ -22,7 +22,6 @@ const navigation = [
   { name: 'Supported Tools', href: '/supported-tools', icon: ShieldCheckIcon },
   { name: 'Configuration', href: '/configuration', icon: CogIcon },
   { name: 'Examples', href: '/examples', icon: CodeBracketIcon },
-  { name: 'API Reference', href: '/api-reference', icon: BookOpenIcon },
 ]
 
 export default function Navigation() {
