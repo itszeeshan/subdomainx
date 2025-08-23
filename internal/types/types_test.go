@@ -60,6 +60,7 @@ func TestSubdomainResultEmptyIPs(t *testing.T) {
 	if len(result.IPs) == 0 && len(jsonData) > 0 {
 		// Should not contain "ips" field when empty
 		// This is expected behavior with omitempty tag
+		t.Log("IPs field correctly omitted when empty")
 	}
 
 	// Test unmarshaling back
