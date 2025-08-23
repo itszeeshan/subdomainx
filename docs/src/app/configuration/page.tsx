@@ -1,52 +1,63 @@
 import Navigation from '@/components/Navigation'
 import { 
-  CogIcon, 
-  DocumentTextIcon,
-  InformationCircleIcon
+  InformationCircleIcon, 
+  CheckCircleIcon,
+  ExclamationTriangleIcon,
+  CogIcon
 } from '@heroicons/react/24/outline'
 
 export default function Configuration() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <Navigation />
       
       <div className="lg:pl-64">
         <div className="px-4 py-10 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-4xl">
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-900">Configuration</h1>
-              <p className="mt-2 text-lg text-gray-600">
-                Learn how to configure SubdomainX using YAML files and command-line options.
-              </p>
+            {/* Header */}
+            <div className="mb-8 flex items-center">
+              <div className="bg-emerald-100 dark:bg-emerald-900/20 p-3 rounded-lg mr-4">
+                <CogIcon className="h-8 w-8 text-emerald-600 dark:text-emerald-400" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Configuration</h1>
+                <p className="mt-2 text-lg text-gray-600 dark:text-gray-300">
+                  Learn how to configure SubdomainX using YAML files and CLI options.
+                </p>
+              </div>
             </div>
 
-            {/* Configuration Overview */}
+            {/* Overview */}
             <div className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Configuration Overview</h2>
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">YAML Configuration</h3>
-                    <p className="text-gray-600 mb-3">
-                      Use a YAML file for default settings and complex configurations.
-                    </p>
-                    <ul className="space-y-2 text-sm text-gray-600">
-                      <li>• Default location: <code className="bg-gray-100 px-1 rounded">configs/default.yaml</code></li>
-                      <li>• Optional - CLI flags take precedence</li>
-                      <li>• Good for team settings and complex setups</li>
-                    </ul>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Configuration Overview</h2>
+              <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
+                <div className="space-y-4">
+                  <div className="flex items-start space-x-3">
+                    <InformationCircleIcon className="h-5 w-5 text-emerald-600 dark:text-emerald-400 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">CLI-First Approach</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-300">
+                        SubdomainX prioritizes command-line arguments over configuration files. All options can be passed directly via CLI flags.
+                      </p>
+                    </div>
                   </div>
-                  
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">CLI Options</h3>
-                    <p className="text-gray-600 mb-3">
-                      Use command-line flags for quick configuration and automation.
-                    </p>
-                    <ul className="space-y-2 text-sm text-gray-600">
-                      <li>• Override YAML settings</li>
-                      <li>• Perfect for scripts and automation</li>
-                      <li>• Immediate effect without file editing</li>
-                    </ul>
+                  <div className="flex items-start space-x-3">
+                    <CheckCircleIcon className="h-5 w-5 text-emerald-500 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">Optional YAML Config</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-300">
+                        YAML configuration files are optional and provide default values that can be overridden by CLI arguments.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <ExclamationTriangleIcon className="h-5 w-5 text-yellow-500 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">CLI Overrides YAML</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-300">
+                        Command-line arguments always take precedence over configuration file settings.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -54,298 +65,272 @@ export default function Configuration() {
 
             {/* YAML Configuration */}
             <div className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">YAML Configuration File</h2>
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <div className="mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Default Configuration</h3>
-                  <p className="text-sm text-gray-600 mb-4">
-                    Create a <code className="bg-gray-100 px-1 rounded">configs/default.yaml</code> file with your preferred settings:
-                  </p>
-                </div>
-                
-                <div className="rounded-lg bg-gray-900 p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-gray-300">configs/default.yaml</span>
-                    <button className="text-xs text-gray-400 hover:text-gray-300">Copy</button>
-                  </div>
-                  <pre className="text-sm text-green-400 overflow-x-auto">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">YAML Configuration</h2>
+              <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Default Configuration File</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                  Create a configuration file at <code className="bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded text-sm text-gray-800 dark:text-gray-200">configs/default.yaml</code>:
+                </p>
+                <div className="bg-gray-900 dark:bg-gray-800 rounded-lg p-4">
+                  <code className="text-sm text-emerald-400 block overflow-x-auto">
 {`# SubdomainX Configuration File
-wildcard_file: domains.txt          # File containing target domains
-unique_name: scan                   # Unique name for output files
-output_dir: output                  # Output directory
-output_format: json                 # Output format: json, txt, html
-threads: 10                         # Number of concurrent threads
-retries: 3                          # Number of retry attempts
-timeout: 30                         # Timeout in seconds
-rate_limit: 100                     # Rate limit per second
-wordlist: ""                        # Custom wordlist (optional)
+# All options are optional and can be overridden via CLI
 
-# Filters for results
-filters:
-  status_code: "200,301,302"        # Filter by HTTP status codes
-  ports: "80,443,8080"              # Filter by ports
+# Input configuration
+wildcard_file: ""  # Path to domains file (required via CLI)
 
-# Tool selection
+# Output configuration
+unique_name: "scan"
+output_format: "json"  # json, txt, html
+output_dir: "output"
+
+# Performance settings
+threads: 10
+retries: 3
+timeout: 30
+rate_limit: 100
+
+# Tool selection (all false by default - use CLI flags)
 tools:
-  subfinder: true                   # Enable/disable specific tools
-  findomain: true
-  assetfinder: true
-  amass: true
-  sublist3r: true
-  knockpy: true
-  dnsrecon: true
-  fierce: true
-  massdns: true
-  altdns: true
-  httpx: true                       # HTTP scanning
-  smap: true                        # Port scanning`}
-                  </pre>
+  subfinder: false
+  amass: false
+  findomain: false
+  assetfinder: false
+  sublist3r: false
+  knockpy: false
+  dnsrecon: false
+  fierce: false
+  massdns: false
+  altdns: false
+
+# Scanning tools
+scanners:
+  httpx: false
+  smap: false`}
+                  </code>
                 </div>
               </div>
             </div>
 
-            {/* Configuration Options */}
+            {/* Configuration Parameters */}
             <div className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Configuration Options</h2>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Configuration Parameters</h2>
               
-              {/* Basic Options */}
-              <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Basic Options</h3>
+              {/* Input Configuration */}
+              <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm p-6 mb-6 border border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Input Configuration</h3>
                 <div className="space-y-4">
-                  <div>
-                    <div className="flex items-center justify-between">
-                      <code className="text-sm font-mono bg-gray-100 px-2 py-1 rounded">wildcard_file</code>
-                      <span className="text-xs text-gray-500">Required</span>
+                  {[
+                    {
+                      name: 'wildcard_file',
+                      type: 'string',
+                      default: '""',
+                      description: 'Path to file containing target domains (one per line)',
+                      required: true,
+                      cli: '--wildcard'
+                    }
+                  ].map((param, index) => (
+                    <div key={index} className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <code className="text-sm font-mono bg-white dark:bg-gray-700 px-2 py-1 rounded border border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-200">{param.name}</code>
+                        <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded">{param.type}</span>
+                      </div>
+                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">{param.description}</p>
+                      <div className="flex items-center space-x-4 text-xs">
+                        <span className="text-gray-500 dark:text-gray-400">Default: <code className="bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded">{param.default}</code></span>
+                        <span className="text-gray-500 dark:text-gray-400">CLI: <code className="bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded">{param.cli}</code></span>
+                        {param.required && <span className="text-red-600 dark:text-red-400 font-medium">Required</span>}
+                      </div>
                     </div>
-                    <p className="text-sm text-gray-600 mt-1">
-                      Path to file containing target domains (one per line)
-                    </p>
-                  </div>
-                  
-                  <div>
-                    <div className="flex items-center justify-between">
-                      <code className="text-sm font-mono bg-gray-100 px-2 py-1 rounded">unique_name</code>
-                      <span className="text-xs text-gray-500">Default: scan</span>
-                    </div>
-                    <p className="text-sm text-gray-600 mt-1">
-                      Unique name for output files (e.g., scan_results.json)
-                    </p>
-                  </div>
-                  
-                  <div>
-                    <div className="flex items-center justify-between">
-                      <code className="text-sm font-mono bg-gray-100 px-2 py-1 rounded">output_dir</code>
-                      <span className="text-xs text-gray-500">Default: output</span>
-                    </div>
-                    <p className="text-sm text-gray-600 mt-1">
-                      Directory where output files will be saved
-                    </p>
-                  </div>
-                  
-                  <div>
-                    <div className="flex items-center justify-between">
-                      <code className="text-sm font-mono bg-gray-100 px-2 py-1 rounded">output_format</code>
-                      <span className="text-xs text-gray-500">Default: json</span>
-                    </div>
-                    <p className="text-sm text-gray-600 mt-1">
-                      Output format: json, txt, html
-                    </p>
-                  </div>
+                  ))}
                 </div>
               </div>
 
-              {/* Performance Options */}
-              <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Performance Options</h3>
+              {/* Output Configuration */}
+              <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm p-6 mb-6 border border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Output Configuration</h3>
                 <div className="space-y-4">
-                  <div>
-                    <div className="flex items-center justify-between">
-                      <code className="text-sm font-mono bg-gray-100 px-2 py-1 rounded">threads</code>
-                      <span className="text-xs text-gray-500">Default: 10</span>
+                  {[
+                    {
+                      name: 'unique_name',
+                      type: 'string',
+                      default: '"scan"',
+                      description: 'Unique name for output files',
+                      cli: '--name'
+                    },
+                    {
+                      name: 'output_format',
+                      type: 'string',
+                      default: '"json"',
+                      description: 'Output format: json, txt, html',
+                      cli: '--format'
+                    },
+                    {
+                      name: 'output_dir',
+                      type: 'string',
+                      default: '"output"',
+                      description: 'Output directory for generated files',
+                      cli: '--output'
+                    }
+                  ].map((param, index) => (
+                    <div key={index} className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <code className="text-sm font-mono bg-white dark:bg-gray-700 px-2 py-1 rounded border border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-200">{param.name}</code>
+                        <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded">{param.type}</span>
+                      </div>
+                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">{param.description}</p>
+                      <div className="flex items-center space-x-4 text-xs">
+                        <span className="text-gray-500 dark:text-gray-400">Default: <code className="bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded">{param.default}</code></span>
+                        <span className="text-gray-500 dark:text-gray-400">CLI: <code className="bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded">{param.cli}</code></span>
+                      </div>
                     </div>
-                    <p className="text-sm text-gray-600 mt-1">
-                      Number of concurrent threads for processing
-                    </p>
-                  </div>
-                  
-                  <div>
-                    <div className="flex items-center justify-between">
-                      <code className="text-sm font-mono bg-gray-100 px-2 py-1 rounded">retries</code>
-                      <span className="text-xs text-gray-500">Default: 3</span>
-                    </div>
-                    <p className="text-sm text-gray-600 mt-1">
-                      Number of retry attempts for failed operations
-                    </p>
-                  </div>
-                  
-                  <div>
-                    <div className="flex items-center justify-between">
-                      <code className="text-sm font-mono bg-gray-100 px-2 py-1 rounded">timeout</code>
-                      <span className="text-xs text-gray-500">Default: 30</span>
-                    </div>
-                    <p className="text-sm text-gray-600 mt-1">
-                      Timeout in seconds for individual operations
-                    </p>
-                  </div>
-                  
-                  <div>
-                    <div className="flex items-center justify-between">
-                      <code className="text-sm font-mono bg-gray-100 px-2 py-1 rounded">rate_limit</code>
-                      <span className="text-xs text-gray-500">Default: 100</span>
-                    </div>
-                    <p className="text-sm text-gray-600 mt-1">
-                      Rate limit per second to avoid overwhelming targets
-                    </p>
-                  </div>
+                  ))}
                 </div>
               </div>
 
-              {/* Filters */}
-              <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Filters</h3>
+              {/* Performance Configuration */}
+              <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm p-6 mb-6 border border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Performance Configuration</h3>
                 <div className="space-y-4">
-                  <div>
-                    <div className="flex items-center justify-between">
-                      <code className="text-sm font-mono bg-gray-100 px-2 py-1 rounded">filters.status_code</code>
-                      <span className="text-xs text-gray-500">Optional</span>
+                  {[
+                    {
+                      name: 'threads',
+                      type: 'integer',
+                      default: '10',
+                      description: 'Number of concurrent threads',
+                      cli: '--threads'
+                    },
+                    {
+                      name: 'retries',
+                      type: 'integer',
+                      default: '3',
+                      description: 'Number of retry attempts',
+                      cli: '--retries'
+                    },
+                    {
+                      name: 'timeout',
+                      type: 'integer',
+                      default: '30',
+                      description: 'Timeout in seconds',
+                      cli: '--timeout'
+                    },
+                    {
+                      name: 'rate_limit',
+                      type: 'integer',
+                      default: '100',
+                      description: 'Rate limit per second',
+                      cli: '--rate-limit'
+                    }
+                  ].map((param, index) => (
+                    <div key={index} className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <code className="text-sm font-mono bg-white dark:bg-gray-700 px-2 py-1 rounded border border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-200">{param.name}</code>
+                        <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded">{param.type}</span>
+                      </div>
+                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">{param.description}</p>
+                      <div className="flex items-center space-x-4 text-xs">
+                        <span className="text-gray-500 dark:text-gray-400">Default: <code className="bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded">{param.default}</code></span>
+                        <span className="text-gray-500 dark:text-gray-400">CLI: <code className="bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded">{param.cli}</code></span>
+                      </div>
                     </div>
-                    <p className="text-sm text-gray-600 mt-1">
-                      Comma-separated list of HTTP status codes to include
-                    </p>
-                  </div>
-                  
-                  <div>
-                    <div className="flex items-center justify-between">
-                      <code className="text-sm font-mono bg-gray-100 px-2 py-1 rounded">filters.ports</code>
-                      <span className="text-xs text-gray-500">Optional</span>
-                    </div>
-                    <p className="text-sm text-gray-600 mt-1">
-                      Comma-separated list of ports to include in results
-                    </p>
-                  </div>
+                  ))}
                 </div>
               </div>
 
-              {/* Tool Selection */}
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Tool Selection</h3>
-                <p className="text-sm text-gray-600 mb-4">
-                  Enable or disable specific tools by setting them to <code className="bg-gray-100 px-1 rounded">true</code> or <code className="bg-gray-100 px-1 rounded">false</code>.
+              {/* Tool Configuration */}
+              <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Tool Configuration</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                  Tool selection is primarily controlled via CLI flags. YAML configuration provides default states:
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <code className="text-sm font-mono bg-gray-100 px-2 py-1 rounded">tools.subfinder</code>
-                      <span className="text-xs text-gray-500">Default: true</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <code className="text-sm font-mono bg-gray-100 px-2 py-1 rounded">tools.amass</code>
-                      <span className="text-xs text-gray-500">Default: true</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <code className="text-sm font-mono bg-gray-100 px-2 py-1 rounded">tools.findomain</code>
-                      <span className="text-xs text-gray-500">Default: true</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <code className="text-sm font-mono bg-gray-100 px-2 py-1 rounded">tools.assetfinder</code>
-                      <span className="text-xs text-gray-500">Default: true</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <code className="text-sm font-mono bg-gray-100 px-2 py-1 rounded">tools.sublist3r</code>
-                      <span className="text-xs text-gray-500">Default: true</span>
+                  <div>
+                    <h4 className="font-medium text-gray-900 dark:text-white mb-2">Enumeration Tools</h4>
+                    <div className="space-y-2">
+                      {[
+                        'subfinder', 'amass', 'findomain', 'assetfinder', 'sublist3r',
+                        'knockpy', 'dnsrecon', 'fierce', 'massdns', 'altdns'
+                      ].map((tool) => (
+                        <div key={tool} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800 rounded">
+                          <code className="text-xs font-mono bg-white dark:bg-gray-700 px-2 py-1 rounded border border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-200">{tool}</code>
+                          <span className="text-xs text-gray-500 dark:text-gray-400">--{tool}</span>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                  
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <code className="text-sm font-mono bg-gray-100 px-2 py-1 rounded">tools.knockpy</code>
-                      <span className="text-xs text-gray-500">Default: true</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <code className="text-sm font-mono bg-gray-100 px-2 py-1 rounded">tools.dnsrecon</code>
-                      <span className="text-xs text-gray-500">Default: true</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <code className="text-sm font-mono bg-gray-100 px-2 py-1 rounded">tools.fierce</code>
-                      <span className="text-xs text-gray-500">Default: true</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <code className="text-sm font-mono bg-gray-100 px-2 py-1 rounded">tools.massdns</code>
-                      <span className="text-xs text-gray-500">Default: true</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <code className="text-sm font-mono bg-gray-100 px-2 py-1 rounded">tools.altdns</code>
-                      <span className="text-xs text-gray-500">Default: true</span>
+                  <div>
+                    <h4 className="font-medium text-gray-900 dark:text-white mb-2">Scanning Tools</h4>
+                    <div className="space-y-2">
+                      {[
+                        'httpx', 'smap'
+                      ].map((tool) => (
+                        <div key={tool} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800 rounded">
+                          <code className="text-xs font-mono bg-white dark:bg-gray-700 px-2 py-1 rounded border border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-200">{tool}</code>
+                          <span className="text-xs text-gray-500 dark:text-gray-400">--{tool}</span>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Using Custom Configuration */}
+            {/* Usage Examples */}
             <div className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Using Custom Configuration</h2>
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">Custom Config File</h3>
-                    <div className="rounded-lg bg-gray-900 p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-gray-300">Command</span>
-                        <button className="text-xs text-gray-400 hover:text-gray-300">Copy</button>
-                      </div>
-                      <code className="text-sm text-green-400 block">
-                        subdomainx --wildcard domains.txt --config custom.yaml
-                      </code>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">CLI Override</h3>
-                    <div className="rounded-lg bg-gray-900 p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-gray-300">Command</span>
-                        <button className="text-xs text-gray-400 hover:text-gray-300">Copy</button>
-                      </div>
-                      <code className="text-sm text-green-400 block">
-                        subdomainx --wildcard domains.txt --threads 20 --format html --name my_scan
-                      </code>
-                    </div>
-                    <p className="text-sm text-gray-600 mt-2">
-                      CLI flags always override YAML configuration values
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Usage Examples</h2>
+              <div className="space-y-6">
+                {[
+                  {
+                    title: 'Use Default Configuration',
+                    description: 'Run with default settings from config file',
+                    command: 'subdomainx --wildcard domains.txt'
+                  },
+                  {
+                    title: 'Override Configuration',
+                    description: 'Override specific settings via CLI',
+                    command: 'subdomainx --wildcard domains.txt --threads 20 --format html'
+                  },
+                  {
+                    title: 'Custom Config File',
+                    description: 'Use a custom configuration file',
+                    command: 'subdomainx --wildcard domains.txt --config my-config.yaml'
+                  },
+                  {
+                    title: 'CLI Only',
+                    description: 'Ignore config file and use only CLI arguments',
+                    command: 'subdomainx --wildcard domains.txt --subfinder --httpx --format json'
+                  }
+                ].map((example, index) => (
+                  <div key={index} className="bg-white dark:bg-gray-900 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">{example.title}</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
+                      {example.description}
                     </p>
+                    <div className="bg-gray-900 dark:bg-gray-800 rounded-lg p-4">
+                      <code className="text-sm text-emerald-400 block overflow-x-auto">
+                        {example.command}
+                      </code>
+                    </div>
                   </div>
-                </div>
+                ))}
               </div>
             </div>
 
-            {/* Configuration Tips */}
-            <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-6 border border-indigo-100">
-              <h2 className="text-xl font-bold text-gray-900 mb-3">Configuration Tips</h2>
-              <div className="space-y-3">
-                <div className="flex items-start">
-                  <InformationCircleIcon className="h-5 w-5 text-indigo-500 mt-0.5 mr-2" />
-                  <div className="text-sm text-gray-700">
-                    <strong>Start Simple:</strong> Begin with basic configuration and add complexity as needed.
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <InformationCircleIcon className="h-5 w-5 text-indigo-500 mt-0.5 mr-2" />
-                  <div className="text-sm text-gray-700">
-                    <strong>Team Settings:</strong> Use YAML files for consistent team configurations.
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <InformationCircleIcon className="h-5 w-5 text-indigo-500 mt-0.5 mr-2" />
-                  <div className="text-sm text-gray-700">
-                    <strong>Automation:</strong> Use CLI flags in scripts for automated scanning.
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <InformationCircleIcon className="h-5 w-5 text-indigo-500 mt-0.5 mr-2" />
-                  <div className="text-sm text-gray-700">
-                    <strong>Performance:</strong> Adjust threads and rate limits based on your network and target.
-                  </div>
+            {/* Tips */}
+            <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-lg p-6 border border-emerald-200 dark:border-emerald-800">
+              <div className="flex items-start">
+                <InformationCircleIcon className="h-5 w-5 text-emerald-600 dark:text-emerald-400 mt-0.5 mr-3 flex-shrink-0" />
+                <div>
+                  <h3 className="text-lg font-semibold text-emerald-900 dark:text-emerald-100 mb-2">
+                    Configuration Tips
+                  </h3>
+                  <ul className="text-sm text-emerald-800 dark:text-emerald-200 space-y-1">
+                    <li>• CLI arguments always override YAML configuration</li>
+                    <li>• Use YAML for default settings and CLI for specific overrides</li>
+                    <li>• Configuration files are optional - you can use CLI only</li>
+                    <li>• Keep configuration files in version control for team consistency</li>
+                    <li>• Use environment variables for sensitive configuration</li>
+                  </ul>
                 </div>
               </div>
             </div>

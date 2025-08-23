@@ -1,19 +1,13 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
+import { ThemeProvider } from '@/components/ThemeProvider'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'SubdomainX Documentation',
   description: 'Comprehensive documentation for SubdomainX - All-in-one subdomain enumeration tool',
-  keywords: 'subdomain, enumeration, security, pentesting, cli, tool',
-  authors: [{ name: 'Muhammad Zeeshan' }],
-  openGraph: {
-    title: 'SubdomainX Documentation',
-    description: 'All-in-one subdomain enumeration tool documentation',
-    type: 'website',
-  },
 }
 
 export default function RootLayout({
@@ -22,9 +16,16 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="h-full">
-      <body className={`${inter.className} h-full bg-gray-50`}>
-        {children}
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.className} antialiased bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors`}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   )

@@ -1,192 +1,137 @@
 import Navigation from '@/components/Navigation'
 import { 
-  CommandLineIcon, 
+  BookOpenIcon, 
   CheckCircleIcon,
   ExclamationTriangleIcon,
-  ArrowRightIcon
+  InformationCircleIcon
 } from '@heroicons/react/24/outline'
 
 export default function Installation() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <Navigation />
       
       <div className="lg:pl-64">
         <div className="px-4 py-10 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-4xl">
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-900">Installation</h1>
-              <p className="mt-2 text-lg text-gray-600">
-                Get SubdomainX up and running on your system with these simple installation methods.
-              </p>
-            </div>
-
-            {/* Quick Install */}
-            <div className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Quick Install</h2>
-              <div className="rounded-lg bg-gradient-to-r from-indigo-50 to-purple-50 p-6 border border-indigo-100">
-                <div className="flex items-start">
-                  <CheckCircleIcon className="h-6 w-6 text-green-500 mt-1 mr-3" />
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900">Recommended Method</h3>
-                    <p className="text-gray-600 mt-1">
-                      Install directly using Go&apos;s package manager. This is the fastest and most reliable method.
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="mt-6 rounded-lg bg-gray-900 p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-gray-300">Install Command</span>
-                    <button className="text-xs text-gray-400 hover:text-gray-300">Copy</button>
-                  </div>
-                  <code className="text-sm text-green-400 block">
-                    go install github.com/itszeeshan/subdomainx/cmd/subdomainx@latest
-                  </code>
-                </div>
-
-                <div className="mt-4 rounded-lg bg-gray-900 p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-gray-300">Verify Installation</span>
-                    <button className="text-xs text-gray-400 hover:text-gray-300">Copy</button>
-                  </div>
-                  <code className="text-sm text-green-400 block">
-                    subdomainx --help
-                  </code>
-                </div>
+            {/* Header */}
+            <div className="mb-8 flex items-center">
+              <div className="bg-emerald-100 dark:bg-emerald-900/20 p-3 rounded-lg mr-4">
+                <BookOpenIcon className="h-8 w-8 text-emerald-600 dark:text-emerald-400" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Installation Guide</h1>
+                <p className="mt-2 text-lg text-gray-600 dark:text-gray-300">
+                  Get SubdomainX up and running on your system.
+                </p>
               </div>
             </div>
 
             {/* Prerequisites */}
             <div className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Prerequisites</h2>
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Required Software</h3>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Prerequisites</h2>
+              <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
                 <div className="space-y-4">
-                  <div className="flex items-start">
-                    <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3" />
-                    <div>
-                      <span className="font-medium text-gray-900">Go 1.21 or later</span>
-                      <p className="text-sm text-gray-600 mt-1">
-                        Required for building and running SubdomainX. Download from{' '}
-                        <a href="https://golang.org/dl/" className="text-indigo-600 hover:text-indigo-500">golang.org</a>
-                      </p>
+                  {[
+                    {
+                      title: 'Go 1.21 or later',
+                      description: 'Required for building and running the tool',
+                      check: 'go version'
+                    },
+                    {
+                      title: 'Git',
+                      description: 'For cloning the repository (if building from source)',
+                      check: 'git --version'
+                    },
+                    {
+                      title: 'External Tools',
+                      description: 'Various enumeration and scanning tools (optional, can be installed later)',
+                      check: 'See Supported Tools page'
+                    }
+                  ].map((prereq, index) => (
+                    <div key={index} className="flex items-start space-x-3">
+                      <CheckCircleIcon className="h-6 w-6 text-emerald-500 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <h3 className="font-semibold text-gray-900 dark:text-white">{prereq.title}</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">{prereq.description}</p>
+                        <code className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-2 py-1 rounded mt-1 inline-block">
+                          {prereq.check}
+                        </code>
+                      </div>
                     </div>
-                  </div>
-                  
-                  <div className="flex items-start">
-                    <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5 mr-3" />
-                    <div>
-                      <span className="font-medium text-gray-900">External Tools (Optional)</span>
-                      <p className="text-sm text-gray-600 mt-1">
-                        SubdomainX integrates with external tools for enhanced functionality. 
-                        These are optional but recommended for full feature access.
-                      </p>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>
 
             {/* Installation Methods */}
             <div className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Installation Methods</h2>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Installation Methods</h2>
               
-              {/* Method 1: Go Install */}
-              <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">1. Go Install (Recommended)</h3>
-                <p className="text-gray-600 mb-4">
-                  Install directly from the Go module registry. This method automatically handles dependencies and updates.
+              {/* Quick Install */}
+              <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm p-6 mb-6 border border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                  <CheckCircleIcon className="h-5 w-5 text-emerald-500 mr-2" />
+                  Quick Install (Recommended)
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                  Install directly from GitHub using Go's module system:
                 </p>
-                
-                <div className="space-y-3">
-                  <div className="rounded-lg bg-gray-900 p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-300">Install</span>
-                      <button className="text-xs text-gray-400 hover:text-gray-300">Copy</button>
+                <div className="bg-gray-900 dark:bg-gray-800 rounded-lg p-4">
+                  <code className="text-sm text-emerald-400 block">
+                    go install github.com/itszeeshan/subdomainx@latest
+                  </code>
+                </div>
+                <div className="mt-4 p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border border-emerald-200 dark:border-emerald-800">
+                  <div className="flex items-start">
+                    <InformationCircleIcon className="h-5 w-5 text-emerald-600 dark:text-emerald-400 mt-0.5 mr-2 flex-shrink-0" />
+                    <div className="text-sm text-emerald-700 dark:text-emerald-300">
+                      <strong>Note:</strong> This will install the binary to your Go bin directory. Make sure it's in your PATH.
                     </div>
-                    <code className="text-sm text-green-400 block">
-                      go install github.com/itszeeshan/subdomainx/cmd/subdomainx@latest
-                    </code>
-                  </div>
-                  
-                  <div className="rounded-lg bg-gray-900 p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-300">Make Global (Optional)</span>
-                      <button className="text-xs text-gray-400 hover:text-gray-300">Copy</button>
-                    </div>
-                    <code className="text-sm text-green-400 block">
-                      sudo mv $(go env GOPATH)/bin/subdomainx /usr/local/bin/
-                    </code>
                   </div>
                 </div>
               </div>
 
-              {/* Method 2: Build from Source */}
-              <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">2. Build from Source</h3>
-                <p className="text-gray-600 mb-4">
-                  Clone the repository and build locally. Useful for development or custom modifications.
+              {/* Build from Source */}
+              <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm p-6 mb-6 border border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Build from Source</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                  Clone the repository and build manually:
                 </p>
-                
                 <div className="space-y-3">
-                  <div className="rounded-lg bg-gray-900 p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-300">Clone Repository</span>
-                      <button className="text-xs text-gray-400 hover:text-gray-300">Copy</button>
-                    </div>
-                    <code className="text-sm text-green-400 block">
+                  <div className="bg-gray-900 dark:bg-gray-800 rounded-lg p-4">
+                    <code className="text-sm text-emerald-400 block">
                       git clone https://github.com/itszeeshan/subdomainx.git
                     </code>
                   </div>
-                  
-                  <div className="rounded-lg bg-gray-900 p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-300">Build Binary</span>
-                      <button className="text-xs text-gray-400 hover:text-gray-300">Copy</button>
-                    </div>
-                    <code className="text-sm text-green-400 block">
-                      cd subdomainx && go build -o subdomainx ./cmd/subdomainx
+                  <div className="bg-gray-900 dark:bg-gray-800 rounded-lg p-4">
+                    <code className="text-sm text-emerald-400 block">
+                      cd subdomainx
                     </code>
                   </div>
-                  
-                  <div className="rounded-lg bg-gray-900 p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-300">Install Globally</span>
-                      <button className="text-xs text-gray-400 hover:text-gray-300">Copy</button>
-                    </div>
-                    <code className="text-sm text-green-400 block">
-                      sudo mv subdomainx /usr/local/bin/
+                  <div className="bg-gray-900 dark:bg-gray-800 rounded-lg p-4">
+                    <code className="text-sm text-emerald-400 block">
+                      go build -o subdomainx cmd/subdomainx/main.go
                     </code>
                   </div>
                 </div>
               </div>
 
-              {/* Method 3: Using Makefile */}
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">3. Using Makefile</h3>
-                <p className="text-gray-600 mb-4">
-                  Use the provided Makefile for common development tasks and installation.
+              {/* Using Makefile */}
+              <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Using Makefile</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                  If you have the source code, you can use the provided Makefile:
                 </p>
-                
                 <div className="space-y-3">
-                  <div className="rounded-lg bg-gray-900 p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-300">Build and Install</span>
-                      <button className="text-xs text-gray-400 hover:text-gray-300">Copy</button>
-                    </div>
-                    <code className="text-sm text-green-400 block">
-                      make install
+                  <div className="bg-gray-900 dark:bg-gray-800 rounded-lg p-4">
+                    <code className="text-sm text-emerald-400 block">
+                      make build
                     </code>
                   </div>
-                  
-                  <div className="rounded-lg bg-gray-900 p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-300">Install from GitHub</span>
-                      <button className="text-xs text-gray-400 hover:text-gray-300">Copy</button>
-                    </div>
-                    <code className="text-sm text-green-400 block">
-                      make install-remote
+                  <div className="bg-gray-900 dark:bg-gray-800 rounded-lg p-4">
+                    <code className="text-sm text-emerald-400 block">
+                      make install
                     </code>
                   </div>
                 </div>
@@ -195,66 +140,105 @@ export default function Installation() {
 
             {/* Verification */}
             <div className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Verify Installation</h2>
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <p className="text-gray-600 mb-4">
-                  After installation, verify that SubdomainX is working correctly:
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Verification</h2>
+              <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                  Verify that SubdomainX is installed correctly:
                 </p>
-                
                 <div className="space-y-3">
-                  <div className="rounded-lg bg-gray-900 p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-300">Check Version</span>
-                      <button className="text-xs text-gray-400 hover:text-gray-300">Copy</button>
-                    </div>
-                    <code className="text-sm text-green-400 block">
+                  <div className="bg-gray-900 dark:bg-gray-800 rounded-lg p-4">
+                    <code className="text-sm text-emerald-400 block">
                       subdomainx --version
                     </code>
                   </div>
-                  
-                  <div className="rounded-lg bg-gray-900 p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-300">Show Help</span>
-                      <button className="text-xs text-gray-400 hover:text-gray-300">Copy</button>
-                    </div>
-                    <code className="text-sm text-green-400 block">
+                  <div className="bg-gray-900 dark:bg-gray-800 rounded-lg p-4">
+                    <code className="text-sm text-emerald-400 block">
                       subdomainx --help
                     </code>
                   </div>
-                  
-                  <div className="rounded-lg bg-gray-900 p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-300">Check Tools</span>
-                      <button className="text-xs text-gray-400 hover:text-gray-300">Copy</button>
+                </div>
+                <div className="mt-4 p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border border-emerald-200 dark:border-emerald-800">
+                  <div className="flex items-start">
+                    <CheckCircleIcon className="h-5 w-5 text-emerald-600 dark:text-emerald-400 mt-0.5 mr-2 flex-shrink-0" />
+                    <div className="text-sm text-emerald-700 dark:text-emerald-300">
+                      If you see the help output, SubdomainX is installed correctly!
                     </div>
-                    <code className="text-sm text-green-400 block">
-                      subdomainx --check-tools
-                    </code>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Next Steps */}
-            <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-6 border border-indigo-100">
-              <h2 className="text-xl font-bold text-gray-900 mb-3">Next Steps</h2>
-              <p className="text-gray-600 mb-4">
-                Now that you have SubdomainX installed, you can start using it for subdomain enumeration.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <a
-                  href="/cli-reference"
-                  className="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
-                >
-                  CLI Reference
-                  <ArrowRightIcon className="ml-2 h-4 w-4" />
-                </a>
-                <a
-                  href="/examples"
-                  className="inline-flex items-center rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                >
-                  View Examples
-                </a>
+            <div className="mb-12">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Next Steps</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-white dark:bg-gray-900 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Check Tool Availability</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                    Verify which enumeration tools are available on your system:
+                  </p>
+                  <div className="bg-gray-900 dark:bg-gray-800 rounded-lg p-4">
+                    <code className="text-sm text-emerald-400 block">
+                      subdomainx --check-tools
+                    </code>
+                  </div>
+                </div>
+
+                <div className="bg-white dark:bg-gray-900 rounded-lg p-6 border border-gray-200 dark:border-gray-700">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Get Installation Help</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                    Get instructions for installing missing tools:
+                  </p>
+                  <div className="bg-gray-900 dark:bg-gray-800 rounded-lg p-4">
+                    <code className="text-sm text-emerald-400 block">
+                      subdomainx --install-tools
+                    </code>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Troubleshooting */}
+            <div className="mb-12">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Troubleshooting</h2>
+              <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
+                      <ExclamationTriangleIcon className="h-5 w-5 text-yellow-500 mr-2" />
+                      Command Not Found
+                    </h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
+                      If you get a "command not found" error after installation:
+                    </p>
+                    <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                      <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
+                        <strong>Solution:</strong> Add your Go bin directory to your PATH:
+                      </p>
+                      <code className="text-sm bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-2 py-1 rounded">
+                        export PATH=$PATH:$(go env GOPATH)/bin
+                      </code>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
+                      <ExclamationTriangleIcon className="h-5 w-5 text-yellow-500 mr-2" />
+                      Permission Denied
+                    </h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
+                      If you encounter permission issues:
+                    </p>
+                    <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                      <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
+                        <strong>Solution:</strong> Make the binary executable:
+                      </p>
+                      <code className="text-sm bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-2 py-1 rounded">
+                        chmod +x $(go env GOPATH)/bin/subdomainx
+                      </code>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
