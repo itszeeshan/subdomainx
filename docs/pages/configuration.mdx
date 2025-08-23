@@ -91,6 +91,7 @@ scanners:
 | `retries`    | integer | `3`     | `--retries`    | Number of retry attempts     |
 | `timeout`    | integer | `30`    | `--timeout`    | Timeout in seconds           |
 | `rate_limit` | integer | `100`   | `--rate-limit` | Rate limit per second        |
+| `wordlist`   | string  | `""`    | `--wordlist`   | Custom wordlist file path    |
 
 ### Filter Configuration
 
@@ -226,6 +227,40 @@ export CENSYS_SECRET="your_secret"
 # Use APIs
 subdomainx --wildcard domains.txt --securitytrails --virustotal --censys
 ```
+
+### Wordlist Configuration
+
+Custom wordlists can be used with tools that support brute-forcing:
+
+**Single domain:**
+
+```bash
+# Use custom wordlist
+subdomainx --wordlist /path/to/wordlist.txt example.com
+
+# Wordlist should contain one subdomain per line
+# Example wordlist content:
+# www
+# mail
+# ftp
+# admin
+# api
+# dev
+# test
+```
+
+**Multiple domains:**
+
+```bash
+subdomainx --wildcard domains.txt --wordlist /path/to/wordlist.txt
+```
+
+**Supported tools for custom wordlists:**
+
+- **subfinder** - Uses `-w` flag for custom wordlists
+- **amass** - Uses `-w` flag for custom wordlists
+- **massdns** - Uses custom wordlist for DNS brute-forcing
+- **altdns** - Uses custom wordlist for subdomain permutations
 
 ### With Filters
 

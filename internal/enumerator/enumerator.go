@@ -64,6 +64,14 @@ func Run(cfg *config.Config, dnsCache *cache.DNSCache) ([]types.SubdomainResult,
 	subdomainChan := make(chan string, 1000)
 	var wg sync.WaitGroup
 
+	// Calculate total tasks for progress tracking
+	totalTasks := len(domains) * len(availableEnumerators)
+	completedTasks := 0
+	var progressMutex sync.Mutex
+
+	// Start progress tracking
+	utils.StartEnumerationProgress(totalTasks)
+
 	// Start a goroutine for each enabled and available enumerator and domain
 	for _, domain := range domains {
 		for name, enumerator := range availableEnumerators {
@@ -78,10 +86,15 @@ func Run(cfg *config.Config, dnsCache *cache.DNSCache) ([]types.SubdomainResult,
 
 				if err != nil {
 					fmt.Printf("❌ Error with %s on %s: %v\n", toolName, d, err)
-					return
+				} else {
+					fmt.Printf("✅ %s found %d subdomains for %s\n", toolName, len(subdomains), d)
 				}
 
-				fmt.Printf("✅ %s found %d subdomains for %s\n", toolName, len(subdomains), d)
+				// Update progress
+				progressMutex.Lock()
+				completedTasks++
+				utils.UpdateEnumerationProgress(completedTasks)
+				progressMutex.Unlock()
 
 				// Send subdomains to channel without DNS resolution
 				for _, subdomain := range subdomains {
@@ -94,7 +107,23 @@ func Run(cfg *config.Config, dnsCache *cache.DNSCache) ([]types.SubdomainResult,
 	// Wait for all enumerators to complete and close subdomain channel
 	go func() {
 		wg.Wait()
+		utils.FinishEnumerationProgress()
 		close(subdomainChan)
+	}()
+
+	// Periodic resource check during enumeration
+	go func() {
+		ticker := time.NewTicker(10 * time.Second)
+		defer ticker.Stop()
+
+		for {
+			select {
+			case <-ticker.C:
+				utils.CheckResources()
+			case <-ctx.Done():
+				return
+			}
+		}
 	}()
 
 	// Collect and deduplicate subdomains first

@@ -82,6 +82,30 @@ subdomainx --wildcard domains.txt --amass --virustotal --censys --waybackurls --
 
 > **Note**: Combines the speed of local tools with the breadth of API databases, historical data, and HTTP Link header discovery
 
+### Custom Wordlist Discovery
+
+Use custom wordlists for targeted brute-forcing:
+
+**Single domain:**
+
+```bash
+subdomainx --wordlist /path/to/wordlist.txt example.com
+```
+
+**Multiple domains:**
+
+```bash
+subdomainx --wildcard domains.txt --wordlist /path/to/wordlist.txt
+```
+
+**Combined with specific tools:**
+
+```bash
+subdomainx --subfinder --amass --wordlist /path/to/wordlist.txt example.com
+```
+
+> **Note**: Uses custom wordlist for brute-forcing with tools that support it (subfinder, amass, massdns, altdns)
+
 ### With HTTP Scanning
 
 Include HTTP scanning to discover web services:
@@ -176,7 +200,20 @@ subdomainx --wildcard domains.txt --threads 20 --timeout 60 --rate-limit 200
 
 ### Verbose Output
 
-Get detailed information about the scanning process:
+Get detailed information about the scanning process with resource monitoring:
+
+```bash
+# Enable verbose mode for progress and resource monitoring
+subdomainx --verbose --subfinder --amass example.com
+
+# Monitor with custom wordlist
+subdomainx --verbose --wordlist /path/to/wordlist.txt example.com
+
+# Monitor with multiple domains
+subdomainx --verbose --wildcard domains.txt --subfinder --amass
+```
+
+> **Note**: Shows real-time progress bars, ETA, memory usage, CPU cores, and goroutine count
 
 **Single domain:**
 

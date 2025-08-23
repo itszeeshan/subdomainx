@@ -97,12 +97,13 @@ Filter results based on specific criteria:
 
 ### Performance Options
 
-| Option           | Default | Description                  |
-| ---------------- | ------- | ---------------------------- |
-| `--threads N`    | `10`    | Number of concurrent threads |
-| `--retries N`    | `3`     | Number of retry attempts     |
-| `--timeout N`    | `30`    | Timeout in seconds           |
-| `--rate-limit N` | `100`   | Rate limit per second        |
+| Option            | Default | Description                            |
+| ----------------- | ------- | -------------------------------------- |
+| `--threads N`     | `10`    | Number of concurrent threads           |
+| `--retries N`     | `3`     | Number of retry attempts               |
+| `--timeout N`     | `30`    | Timeout in seconds                     |
+| `--rate-limit N`  | `100`   | Rate limit per second                  |
+| `--wordlist FILE` | `""`    | Custom wordlist file for brute-forcing |
 
 ### Utility Options
 
@@ -165,6 +166,28 @@ subdomainx --wildcard domains.txt --linkheader
 
 ```bash
 subdomainx --securitytrails --virustotal --censys example.com
+```
+
+### Custom Wordlist
+
+**Single domain:**
+
+```bash
+subdomainx --wordlist /path/to/wordlist.txt example.com
+```
+
+**Multiple domains:**
+
+```bash
+subdomainx --wildcard domains.txt --wordlist /path/to/wordlist.txt
+```
+
+### Progress Monitoring
+
+**Enable verbose mode for resource monitoring:**
+
+```bash
+subdomainx --verbose --subfinder --amass example.com
 ```
 
 **Multiple domains:**

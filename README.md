@@ -11,6 +11,9 @@ All-in-one subdomain enumeration tool that combines multiple popular tools into 
 - **Multiple Output Formats**: JSON, TXT, and beautiful HTML reports
 - **Flexible Input**: Support for both single domain and multiple domains
 - **Easy Configuration**: YAML config files with CLI override support
+- **Custom Wordlists**: Support for custom wordlists in brute-forcing tools
+- **Progress Reporting**: Real-time progress bars with ETA for long-running scans
+- **Resource Management**: Memory and CPU monitoring with optimization recommendations
 
 ## Quick Start 🚀
 
@@ -46,6 +49,20 @@ export CENSYS_SECRET="your_secret"
 
 # Use APIs
 subdomainx --securitytrails --virustotal --censys example.com
+```
+
+**With custom wordlist:**
+
+```bash
+# Use custom wordlist for brute-forcing
+subdomainx --wordlist /path/to/wordlist.txt example.com
+```
+
+**With progress monitoring:**
+
+```bash
+# Enable verbose mode for resource monitoring
+subdomainx --verbose --subfinder --amass example.com
 ```
 
 > **Important**: Flags must be placed before the domain argument:

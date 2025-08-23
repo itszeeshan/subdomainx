@@ -18,7 +18,14 @@ func (a *AltDNSEnumerator) Name() string {
 
 func (a *AltDNSEnumerator) Enumerate(ctx context.Context, domain string, cfg *config.Config, cache *cache.DNSCache) ([]string, error) {
 	// Build altdns command
-	args := []string{"-i", "/dev/stdin", "-o", "/dev/stdout", "-w", "/usr/share/altdns/words.txt"}
+	args := []string{"-i", "/dev/stdin", "-o", "/dev/stdout"}
+
+	// Use custom wordlist if provided, otherwise use default
+	if cfg.Wordlist != "" {
+		args = append(args, "-w", cfg.Wordlist)
+	} else {
+		args = append(args, "-w", "/usr/share/altdns/words.txt")
+	}
 
 	cmd := exec.CommandContext(ctx, "altdns", args...)
 

@@ -32,6 +32,7 @@ func main() {
 		retries      = flag.Int("retries", 3, "Number of retry attempts")
 		timeout      = flag.Int("timeout", 30, "Timeout in seconds")
 		rateLimit    = flag.Int("rate-limit", 100, "Rate limit per second")
+		wordlist     = flag.String("wordlist", "", "Custom wordlist file for brute-forcing")
 		verbose      = flag.Bool("verbose", false, "Verbose output")
 
 		// Filter flags
@@ -90,6 +91,12 @@ func main() {
 	// Display banner (always show, but can be controlled with verbose)
 	showBanner()
 
+	// Start resource monitoring if verbose mode is enabled
+	if *verbose {
+		utils.StartResourceMonitoring()
+		defer utils.StopResourceMonitoring()
+	}
+
 	// Check tool availability and prompt for installation
 	available, missing := utils.CheckAllTools()
 	if len(missing) > 0 && *verbose {
@@ -123,6 +130,9 @@ func main() {
 	}
 	if *outputFormat != "" {
 		cfg.OutputFormat = *outputFormat
+	}
+	if *wordlist != "" {
+		cfg.Wordlist = *wordlist
 	}
 
 	// Override filters with CLI flags
@@ -346,6 +356,7 @@ OPTIONS:
     --retries N            Number of retry attempts (default: 3)
     --timeout N            Timeout in seconds (default: 30)
     --rate-limit N         Rate limit per second (default: 100)
+    --wordlist FILE        Custom wordlist file for brute-forcing
     
     # Filter Options
     --status-codes CODES   Filter by HTTP status codes (e.g., '200,301,302')
@@ -392,6 +403,9 @@ EXAMPLES:
 
     # High-performance scan
     subdomainx example.com --threads 20 --timeout 60
+
+    # Custom wordlist scan
+    subdomainx --wordlist /path/to/wordlist.txt example.com
 
     # Check tool availability
     subdomainx --check-tools

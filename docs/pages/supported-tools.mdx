@@ -14,13 +14,15 @@ Enumeration tools discover subdomains through various techniques including passi
 
 **Description**: Fast subdomain discovery tool that uses passive online sources to find subdomains. It queries various search engines, certificate transparency logs, and other public sources to discover subdomains without directly interacting with the target.  
 **Website**: [GitHub](https://github.com/projectdiscovery/subfinder)  
-**Install**: `go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest`
+**Install**: `go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest`  
+**Wordlist Support**: Yes (`-w` flag)
 
 ### amass
 
 **Description**: Comprehensive network reconnaissance and attack surface mapping tool. It performs DNS enumeration, network mapping, and subdomain discovery using multiple techniques including brute forcing, certificate transparency, and passive reconnaissance.  
 **Website**: [GitHub](https://github.com/owasp-amass/amass)  
-**Install**: `go install -v github.com/owasp-amass/amass/v4/...@master`
+**Install**: `go install -v github.com/owasp-amass/amass/v4/...@master`  
+**Wordlist Support**: Yes (`-w` flag)
 
 ### findomain
 
@@ -62,13 +64,15 @@ Enumeration tools discover subdomains through various techniques including passi
 
 **Description**: High-performance DNS stub resolver designed for bulk DNS queries. It can process large wordlists efficiently and is often used in combination with other tools for subdomain enumeration and DNS bruteforcing.  
 **Website**: [GitHub](https://github.com/blechschmidt/massdns)  
-**Install**: `git clone https://github.com/blechschmidt/massdns.git && cd massdns && make`
+**Install**: `git clone https://github.com/blechschmidt/massdns.git && cd massdns && make`  
+**Wordlist Support**: Yes (custom wordlist for DNS brute-forcing)
 
 ### altdns
 
 **Description**: Generates permutations, alterations and mutations of subdomains to discover additional hosts. It takes existing subdomains and creates variations that might reveal additional assets through pattern-based discovery.  
 **Website**: [GitHub](https://github.com/infosec-au/altdns)  
-**Install**: `pip install py-altdns`
+**Install**: `pip install py-altdns`  
+**Wordlist Support**: Yes (`-w` flag for permutation words)
 
 ### waybackurls
 
