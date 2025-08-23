@@ -40,7 +40,9 @@ subdomainx --wildcard <domains_file> [OPTIONS]
 
 ### Tool Selection <a href="/supported-tools#enumeration-tools" className="details-link">details</a>
 
-Use specific tools, otherwise all available tools will be used.
+Use specific tools, otherwise all available enumeration tools will be used by default (API tools and scanners are disabled by default).
+
+#### Enumeration Tools
 
 | Option          | Description          |
 | --------------- | -------------------- |
@@ -55,7 +57,15 @@ Use specific tools, otherwise all available tools will be used.
 | `--massdns`     | Use massdns tool     |
 | `--altdns`      | Use altdns tool      |
 
-> **Note**: If no specific tools are specified, SubdomainX will use all available tools mentioned above.
+#### API Tools <a href="/supported-tools#api-tools" className="details-link">details</a>
+
+| Option             | Description            |
+| ------------------ | ---------------------- |
+| `--securitytrails` | Use SecurityTrails API |
+| `--virustotal`     | Use VirusTotal API     |
+| `--censys`         | Use Censys API         |
+
+> **Note**: If no specific tools are specified, SubdomainX will use all available enumeration tools by default. API tools and scanners must be explicitly enabled.
 
 ### Scanning Tools <a href="/supported-tools#scanning-tools" className="details-link">details</a>
 
@@ -131,6 +141,34 @@ subdomainx --amass --subfinder --httpx example.com
 
 ```bash
 subdomainx --wildcard domains.txt --amass --subfinder --httpx
+```
+
+### API Tools
+
+**Single domain:**
+
+```bash
+subdomainx --securitytrails --virustotal --censys example.com
+```
+
+**Multiple domains:**
+
+```bash
+subdomainx --wildcard domains.txt --securitytrails --virustotal --censys
+```
+
+### Mixed Approach
+
+**Single domain:**
+
+```bash
+subdomainx --subfinder --securitytrails --httpx example.com
+```
+
+**Multiple domains:**
+
+```bash
+subdomainx --wildcard domains.txt --amass --virustotal --censys --httpx
 ```
 
 ### With Filters

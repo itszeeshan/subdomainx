@@ -9,6 +9,7 @@ All-in-one subdomain enumeration tool that combines the power of multiple tools 
 ## Features
 
 - **Multiple Tools**: Integrates subfinder, amass, findomain, and more for comprehensive enumeration
+- **API Integration**: SecurityTrails, VirusTotal, and Censys APIs for enhanced discovery
 - **High Performance**: Concurrent execution with configurable threads and rate limiting
 - **HTTP Scanning**: Built-in httpx integration for web service discovery and analysis
 - **Flexible Output**: Generate reports in JSON, TXT, or beautiful HTML formats
@@ -38,6 +39,19 @@ echo "example.com" > domains.txt
 subdomainx --wildcard domains.txt --format html
 ```
 
+**With API integration:**
+
+```bash
+# Set API keys
+export SECURITYTRAILS_API_KEY="your_key"
+export VIRUSTOTAL_API_KEY="your_key"
+export CENSYS_API_ID="your_id"
+export CENSYS_SECRET="your_secret"
+
+# Use APIs
+subdomainx --securitytrails --virustotal --censys example.com
+```
+
 ## What's Included
 
 ### Enumeration Tools <a href="/supported-tools#enumeration-tools" className="details-link">details</a>
@@ -52,6 +66,12 @@ subdomainx --wildcard domains.txt --format html
 - **fierce** - DNS reconnaissance tool for locating non-contiguous IP space
 - **massdns** - High-performance DNS stub resolver
 - **altdns** - Generates permutations, alterations and mutations of subdomains
+
+### API Tools <a href="/supported-tools#api-tools" className="details-link">details</a>
+
+- **SecurityTrails** - Comprehensive subdomain database and historical data
+- **VirusTotal** - Security-focused subdomain discovery and threat intelligence
+- **Censys** - Internet-wide scanning data for subdomain enumeration
 
 ### Scanning Tools <a href="/supported-tools#scanning-tools" className="details-link">details</a>
 

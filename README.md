@@ -5,6 +5,7 @@ All-in-one subdomain enumeration tool that combines multiple popular tools into 
 ## Features ✨
 
 - **Multiple Tools**: Integrates subfinder, amass, findomain, assetfinder, and more
+- **API Integration**: SecurityTrails, VirusTotal, and Censys APIs for enhanced discovery
 - **HTTP & Port Scanning**: Built-in httpx and smap integration
 - **Concurrent Processing**: Multi-threaded execution for faster results
 - **Multiple Output Formats**: JSON, TXT, and beautiful HTML reports
@@ -34,6 +35,19 @@ echo "example.com" > domains.txt
 subdomainx --wildcard domains.txt --format html
 ```
 
+**With API integration:**
+
+```bash
+# Set API keys
+export SECURITYTRAILS_API_KEY="your_key"
+export VIRUSTOTAL_API_KEY="your_key"
+export CENSYS_API_ID="your_id"
+export CENSYS_SECRET="your_secret"
+
+# Use APIs
+subdomainx --securitytrails --virustotal --censys example.com
+```
+
 > **Important**: Flags must be placed before the domain argument:
 >
 > ```bash
@@ -46,6 +60,10 @@ subdomainx --wildcard domains.txt --format html
 ### Enumeration Tools
 
 subfinder, amass, findomain, assetfinder, sublist3r, knockpy, dnsrecon, fierce, massdns, altdns
+
+### API Tools
+
+SecurityTrails, VirusTotal, Censys
 
 ### Scanning Tools
 
@@ -87,6 +105,12 @@ subdomainx --threads 20 --timeout 60 example.com
 
 # With filters
 subdomainx --httpx --status-codes 200,301,302 --ports 80,443 example.com
+
+# API-powered enumeration
+subdomainx --securitytrails --virustotal --censys example.com
+
+# Mixed approach (CLI tools + APIs)
+subdomainx --subfinder --securitytrails --httpx example.com
 ```
 
 ## Contributing 🤝

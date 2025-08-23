@@ -16,7 +16,7 @@ Run a basic scan with all available tools on a single domain:
 subdomainx example.com
 ```
 
-> **Note**: Uses all available enumeration tools and generates JSON output by default
+> **Note**: Uses all available enumeration tools by default and generates JSON output
 
 ### Multiple Domains Scan
 
@@ -26,7 +26,7 @@ Run a scan on multiple domains from a file:
 subdomainx --wildcard domains.txt
 ```
 
-> **Note**: Uses all available enumeration tools and generates JSON output by default
+> **Note**: Uses all available enumeration tools by default and generates JSON output
 
 ### Specific Tools
 
@@ -45,6 +45,42 @@ subdomainx --wildcard domains.txt --subfinder --amass --findomain
 ```
 
 > **Note**: Limits the scan to only the specified tools for faster execution
+
+### API Tools
+
+Use API-based enumeration tools for enhanced discovery:
+
+**Single domain:**
+
+```bash
+subdomainx --securitytrails --virustotal --censys example.com
+```
+
+**Multiple domains:**
+
+```bash
+subdomainx --wildcard domains.txt --securitytrails --virustotal --censys
+```
+
+> **Note**: Requires API keys to be set as environment variables
+
+### Mixed Approach
+
+Combine command-line tools with API tools for maximum coverage:
+
+**Single domain:**
+
+```bash
+subdomainx --subfinder --securitytrails --httpx example.com
+```
+
+**Multiple domains:**
+
+```bash
+subdomainx --wildcard domains.txt --amass --virustotal --censys --httpx
+```
+
+> **Note**: Combines the speed of local tools with the breadth of API databases
 
 ### With HTTP Scanning
 
@@ -260,6 +296,38 @@ subdomainx --subfinder --amass --httpx --threads 10 example.com
 
 ```bash
 subdomainx --wildcard domains.txt --subfinder --amass --httpx --threads 10
+```
+
+### API-Enhanced Discovery
+
+Leverage external APIs for comprehensive subdomain discovery:
+
+**Single domain:**
+
+```bash
+subdomainx --securitytrails --virustotal --censys --httpx example.com
+```
+
+**Multiple domains:**
+
+```bash
+subdomainx --wildcard domains.txt --securitytrails --virustotal --censys --httpx
+```
+
+### Maximum Coverage
+
+Combine all available tools for maximum subdomain discovery:
+
+**Single domain:**
+
+```bash
+subdomainx --subfinder --amass --securitytrails --virustotal --censys --httpx --smap example.com
+```
+
+**Multiple domains:**
+
+```bash
+subdomainx --wildcard domains.txt --subfinder --amass --securitytrails --virustotal --censys --httpx --smap
 ```
 
 ### Asset Discovery

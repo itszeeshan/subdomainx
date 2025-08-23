@@ -70,6 +70,31 @@ Enumeration tools discover subdomains through various techniques including passi
 **Website**: [GitHub](https://github.com/infosec-au/altdns)  
 **Install**: `pip install py-altdns`
 
+## API Tools
+
+API tools leverage external services and databases to discover subdomains through comprehensive data sources and threat intelligence.
+
+### SecurityTrails
+
+**Description**: Comprehensive subdomain database and historical data provider. Offers extensive subdomain discovery through their massive database of DNS records, historical data, and passive reconnaissance sources.  
+**Website**: [SecurityTrails](https://securitytrails.com/)  
+**Setup**: Set `SECURITYTRAILS_API_KEY` environment variable  
+**API**: [SecurityTrails API](https://docs.securitytrails.com/)
+
+### VirusTotal
+
+**Description**: Security-focused subdomain discovery and threat intelligence platform. Provides subdomain enumeration through their comprehensive database of domains, IPs, and threat intelligence data.  
+**Website**: [VirusTotal](https://www.virustotal.com/)  
+**Setup**: Set `VIRUSTOTAL_API_KEY` environment variable  
+**API**: [VirusTotal API](https://developers.virustotal.com/)
+
+### Censys
+
+**Description**: Internet-wide scanning data for subdomain enumeration. Offers comprehensive data from their internet-wide scanning infrastructure, providing unique insights into subdomain discovery and infrastructure mapping.  
+**Website**: [Censys](https://censys.io/)  
+**Setup**: Set `CENSYS_API_ID` and `CENSYS_SECRET` environment variables  
+**API**: [Censys API](https://search.censys.io/api)
+
 ## Scanning Tools
 
 Scanning tools analyze discovered subdomains to identify open ports, web services, and gather additional information about the target infrastructure.
@@ -110,5 +135,6 @@ subdomainx --install-tools
 >
 > - Install tools as needed - SubdomainX will work with any combination
 > - More tools = better coverage and results
+> - API tools provide additional discovery capabilities without local tool installation
 > - Some tools may require API keys for optimal performance
 > - Check tool documentation for specific configuration requirements

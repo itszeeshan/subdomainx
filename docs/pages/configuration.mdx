@@ -43,18 +43,21 @@ filters:
   status_code: "" # Filter by HTTP status codes (e.g., "200,301,302")
   ports: "" # Filter by ports (e.g., "80,443,8080")
 
-# Tool selection (all false by default - use CLI flags)
+# Tool selection (enumeration tools enabled by default, APIs and scanners disabled)
 tools:
-  subfinder: false
-  amass: false
-  findomain: false
-  assetfinder: false
-  sublist3r: false
-  knockpy: false
-  dnsrecon: false
-  fierce: false
-  massdns: false
-  altdns: false
+  subfinder: true
+  findomain: true
+  assetfinder: true
+  amass: true
+  sublist3r: true
+  knockpy: true
+  dnsrecon: true
+  fierce: true
+  massdns: true
+  altdns: true
+  securitytrails: false
+  virustotal: false
+  censys: false
 
 # Scanning tools
 scanners:
@@ -98,7 +101,7 @@ scanners:
 
 ### Tool Configuration
 
-Tool selection is primarily controlled via CLI flags. YAML configuration provides default states:
+Tool selection is primarily controlled via CLI flags. YAML configuration provides default states. By default, enumeration tools are enabled while API tools and scanners are disabled:
 
 #### Enumeration Tools
 
@@ -112,6 +115,12 @@ Tool selection is primarily controlled via CLI flags. YAML configuration provide
 - `fierce` → `--fierce`
 - `massdns` → `--massdns`
 - `altdns` → `--altdns`
+
+#### API Tools
+
+- `securitytrails` → `--securitytrails`
+- `virustotal` → `--virustotal`
+- `censys` → `--censys`
 
 #### Scanning Tools
 
@@ -184,6 +193,36 @@ subdomainx --subfinder --httpx --format json example.com
 subdomainx --wildcard domains.txt --subfinder --httpx --format json
 ```
 
+### API Configuration
+
+Configure API tools using environment variables:
+
+**Single domain:**
+
+```bash
+# Set API keys
+export SECURITYTRAILS_API_KEY="your_key"
+export VIRUSTOTAL_API_KEY="your_key"
+export CENSYS_API_ID="your_id"
+export CENSYS_SECRET="your_secret"
+
+# Use APIs
+subdomainx --securitytrails --virustotal --censys example.com
+```
+
+**Multiple domains:**
+
+```bash
+# Set API keys
+export SECURITYTRAILS_API_KEY="your_key"
+export VIRUSTOTAL_API_KEY="your_key"
+export CENSYS_API_ID="your_id"
+export CENSYS_SECRET="your_secret"
+
+# Use APIs
+subdomainx --wildcard domains.txt --securitytrails --virustotal --censys
+```
+
 ### With Filters
 
 Use filters to focus on specific results:
@@ -208,5 +247,6 @@ subdomainx --wildcard domains.txt --httpx --smap --status-codes 200,301,302 --po
 > - Use YAML for default settings and CLI for specific overrides
 > - Configuration files are optional - you can use CLI only
 > - Keep configuration files in version control for team consistency
-> - Use environment variables for sensitive configuration
+> - Use environment variables for sensitive configuration (API keys)
 > - Filter options help focus on relevant results and reduce noise
+> - API tools require environment variables for authentication
