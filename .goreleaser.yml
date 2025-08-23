@@ -14,14 +14,13 @@ builds:
       - arm64
     binary: subdomainx
     main: ./cmd/subdomainx
+    ignore:
+      - goos: windows
+        goarch: arm64
 
 archives:
   - format: tar.gz
-    name_template: >-
-      {{ .ProjectName }}_
-      {{- title .Os }}_
-      {{- if eq .Arch "amd64" }}x86_64
-      {{- else }}{{ .Arch }}{{ end }}
+    name_template: '{{ .ProjectName }}-{{ .Version }}-{{ .Os }}-{{ .Arch }}'
     format_overrides:
       - goos: windows
         format: zip
@@ -47,5 +46,3 @@ release:
   github:
     owner: itszeeshan
     name: subdomainx
-  draft: false
-  prerelease: false
