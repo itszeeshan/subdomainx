@@ -358,14 +358,18 @@ func main() {
 		results, err = enumerator.Run(cfg, dnsCache)
 		if err != nil {
 			checkpoint.MarkError(fmt.Sprintf("Enumeration failed: %v", err))
-			utils.SaveCheckpoint(checkpoint, cfg.OutputDir)
+			if saveErr := utils.SaveCheckpoint(checkpoint, cfg.OutputDir); saveErr != nil {
+				log.Printf("Warning: Failed to save checkpoint: %v", saveErr)
+			}
 			log.Fatalf("Enumeration failed: %v", err)
 		}
 
 		// Update checkpoint with enumeration results
 		checkpoint.AddSubdomains(results)
 		checkpoint.UpdateProgress(len(results), len(results))
-		utils.SaveCheckpoint(checkpoint, cfg.OutputDir)
+		if saveErr := utils.SaveCheckpoint(checkpoint, cfg.OutputDir); saveErr != nil {
+			log.Printf("Warning: Failed to save checkpoint: %v", saveErr)
+		}
 	}
 	if err != nil {
 		log.Fatalf("Enumeration failed: %v", err)
@@ -381,7 +385,9 @@ func main() {
 			log.Printf("✅ HTTP scanning completed: %d results", len(httpResults))
 			// Update checkpoint with HTTP results
 			checkpoint.AddHTTPResults(httpResults)
-			utils.SaveCheckpoint(checkpoint, cfg.OutputDir)
+			if saveErr := utils.SaveCheckpoint(checkpoint, cfg.OutputDir); saveErr != nil {
+				log.Printf("Warning: Failed to save checkpoint: %v", saveErr)
+			}
 		}
 	}
 
@@ -395,7 +401,9 @@ func main() {
 			log.Printf("✅ Port scanning completed: %d results", len(portResults))
 			// Update checkpoint with port results
 			checkpoint.AddPortResults(portResults)
-			utils.SaveCheckpoint(checkpoint, cfg.OutputDir)
+			if saveErr := utils.SaveCheckpoint(checkpoint, cfg.OutputDir); saveErr != nil {
+				log.Printf("Warning: Failed to save checkpoint: %v", saveErr)
+			}
 		}
 	}
 
@@ -406,7 +414,9 @@ func main() {
 
 	// Mark checkpoint as completed
 	checkpoint.MarkCompleted()
-	utils.SaveCheckpoint(checkpoint, cfg.OutputDir)
+	if saveErr := utils.SaveCheckpoint(checkpoint, cfg.OutputDir); saveErr != nil {
+		log.Printf("Warning: Failed to save checkpoint: %v", saveErr)
+	}
 
 	log.Printf("Scan completed. Results saved to %s", cfg.OutputDir)
 }
