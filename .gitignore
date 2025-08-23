@@ -39,3 +39,6 @@ Thumbs.db
 # Go specific
 *.test
 *.prof
+
+# Development tests
+tests/dev_tests.sh

@@ -19,21 +19,23 @@ import (
 func main() {
 	// Parse command line flags
 	var (
-		showVersion  = flag.Bool("version", false, "Show version information")
-		showHelp     = flag.Bool("help", false, "Show help information")
-		checkTools   = flag.Bool("check-tools", false, "Check tool availability")
-		installTools = flag.Bool("install-tools", false, "Show tool installation instructions")
-		configFile   = flag.String("config", "", "Path to configuration file (optional)")
-		wildcardFile = flag.String("wildcard", "", "Path to wildcard file containing domains")
-		uniqueName   = flag.String("name", "scan", "Unique name for output files")
-		outputFormat = flag.String("format", "", "Output format (json, txt, html)")
-		outputDir    = flag.String("output", "output", "Output directory")
-		threads      = flag.Int("threads", 10, "Number of threads")
-		retries      = flag.Int("retries", 3, "Number of retry attempts")
-		timeout      = flag.Int("timeout", 30, "Timeout in seconds")
-		rateLimit    = flag.Int("rate-limit", 100, "Rate limit per second")
-		wordlist     = flag.String("wordlist", "", "Custom wordlist file for brute-forcing")
-		verbose      = flag.Bool("verbose", false, "Verbose output")
+		showVersion     = flag.Bool("version", false, "Show version information")
+		showHelp        = flag.Bool("help", false, "Show help information")
+		checkTools      = flag.Bool("check-tools", false, "Check tool availability")
+		installTools    = flag.Bool("install-tools", false, "Show tool installation instructions")
+		configFile      = flag.String("config", "", "Path to configuration file (optional)")
+		wildcardFile    = flag.String("wildcard", "", "Path to wildcard file containing domains")
+		uniqueName      = flag.String("name", "scan", "Unique name for output files")
+		outputFormat    = flag.String("format", "", "Output format (json, txt, html)")
+		outputDir       = flag.String("output", "output", "Output directory")
+		threads         = flag.Int("threads", 10, "Number of threads")
+		retries         = flag.Int("retries", 3, "Number of retry attempts")
+		timeout         = flag.Int("timeout", 30, "Timeout in seconds")
+		rateLimit       = flag.Int("rate-limit", 100, "Rate limit per second")
+		wordlist        = flag.String("wordlist", "", "Custom wordlist file for brute-forcing")
+		resume          = flag.String("resume", "", "Resume scan from checkpoint (scan ID)")
+		listCheckpoints = flag.Bool("list-checkpoints", false, "List available checkpoints")
+		verbose         = flag.Bool("verbose", false, "Verbose output")
 
 		// Filter flags
 		statusCodes = flag.String("status-codes", "", "Filter by HTTP status codes (e.g., '200,301,302')")
@@ -84,6 +86,25 @@ func main() {
 		_, missing := utils.CheckAllTools()
 		if err := utils.PromptToolInstallation(missing); err != nil {
 			log.Fatalf("Failed to show installation instructions: %v", err)
+		}
+		return
+	}
+
+	// List available checkpoints
+	if *listCheckpoints {
+		checkpoints, err := utils.ListCheckpoints(*outputDir)
+		if err != nil {
+			log.Fatalf("Failed to list checkpoints: %v", err)
+		}
+
+		if len(checkpoints) == 0 {
+			fmt.Println("📋 No checkpoints found.")
+		} else {
+			fmt.Println("📋 Available checkpoints:")
+			for _, cp := range checkpoints {
+				fmt.Printf("  • %s\n", cp)
+			}
+			fmt.Printf("\n💡 Resume with: subdomainx --resume <scan_id>\n")
 		}
 		return
 	}
@@ -143,9 +164,9 @@ func main() {
 		cfg.Filters["ports"] = *ports
 	}
 
-	// Check if we have either a wildcard file or a single domain argument
-	if cfg.WildcardFile == "" && len(args) == 0 {
-		log.Fatalf("Error: Either --wildcard file or a domain argument is required. Use --help for usage information.")
+	// Check if we have either a wildcard file, a single domain argument, or are resuming
+	if cfg.WildcardFile == "" && len(args) == 0 && *resume == "" {
+		log.Fatalf("Error: Either --wildcard file, a domain argument, or --resume is required. Use --help for usage information.")
 	}
 
 	// If no wildcard file but domain argument provided, create a temporary file
@@ -195,9 +216,9 @@ func main() {
 		}
 		// Merge config file with CLI flags (CLI takes precedence)
 		cfg = mergeConfig(fileCfg, cfg)
-	} else if !hasDomainArg {
-		// Only load default config if we don't have a domain argument
-		// This prevents loading default wildcard_file when using single domain mode
+	} else if !hasDomainArg && *resume == "" {
+		// Only load default config if we don't have a domain argument and not resuming
+		// This prevents loading default wildcard_file when using single domain mode or resuming
 		if defaultCfg, err := config.LoadConfig(); err == nil {
 			cfg = mergeConfig(defaultCfg, cfg)
 		}
@@ -276,33 +297,105 @@ func main() {
 	// Initialize DNS cache
 	dnsCache := cache.NewDNSCache()
 
-	// Run subdomain enumeration
-	results, err := enumerator.Run(cfg, dnsCache)
+	// Handle resume functionality
+	var checkpoint *utils.Checkpoint
+	var results []types.SubdomainResult
+	var httpResults []types.HTTPResult
+	var portResults []types.PortResult
+	var err error
+
+	if *resume != "" {
+		// Load checkpoint
+		checkpoint, err = utils.LoadCheckpoint(*resume, cfg.OutputDir)
+		if err != nil {
+			log.Fatalf("Failed to load checkpoint: %v", err)
+		}
+
+		fmt.Printf("🔄 Resuming scan from checkpoint: %s\n", *resume)
+		fmt.Printf("📊 Previous progress: %d/%d tasks completed\n",
+			checkpoint.Progress.CompletedTasks, checkpoint.Progress.TotalTasks)
+		fmt.Printf("🔍 Previous subdomains found: %d\n", len(checkpoint.Subdomains))
+		fmt.Printf("🌐 Previous HTTP results: %d\n", len(checkpoint.HTTPResults))
+		fmt.Printf("🔌 Previous port results: %d\n", len(checkpoint.PortResults))
+
+		// Use results from checkpoint
+		results = checkpoint.Subdomains
+		httpResults = checkpoint.HTTPResults
+		portResults = checkpoint.PortResults
+
+		// Update config with checkpoint data
+		if checkpoint.Domain != "" {
+			cfg.WildcardFile = checkpoint.WildcardFile
+		}
+	} else {
+		// Create new checkpoint
+		scanID := cfg.UniqueName
+		domain := ""
+		if len(args) > 0 {
+			domain = args[0]
+			if scanID == "scan" {
+				scanID = args[0] // Use domain as scan ID
+			}
+		}
+
+		configMap := map[string]interface{}{
+			"threads":   cfg.Threads,
+			"retries":   cfg.Retries,
+			"timeout":   cfg.Timeout,
+			"rateLimit": cfg.RateLimit,
+			"wordlist":  cfg.Wordlist,
+		}
+
+		checkpoint = utils.CreateCheckpoint(scanID, domain, cfg.WildcardFile, configMap)
+	}
+
+	// Initialize signal handler for graceful interruption
+	signalHandler := utils.NewSignalHandler(checkpoint, cfg.OutputDir)
+	signalHandler.Start()
+
+	// Run subdomain enumeration (only if not resuming or if resuming but enumeration not complete)
+	if *resume == "" || len(results) == 0 {
+		results, err = enumerator.Run(cfg, dnsCache)
+		if err != nil {
+			checkpoint.MarkError(fmt.Sprintf("Enumeration failed: %v", err))
+			utils.SaveCheckpoint(checkpoint, cfg.OutputDir)
+			log.Fatalf("Enumeration failed: %v", err)
+		}
+
+		// Update checkpoint with enumeration results
+		checkpoint.AddSubdomains(results)
+		checkpoint.UpdateProgress(len(results), len(results))
+		utils.SaveCheckpoint(checkpoint, cfg.OutputDir)
+	}
 	if err != nil {
 		log.Fatalf("Enumeration failed: %v", err)
 	}
 
 	// Run HTTP scanning only if httpx is enabled
-	var httpResults []types.HTTPResult
-	if cfg.Tools["httpx"] {
+	if cfg.Tools["httpx"] && (*resume == "" || len(httpResults) == 0) {
 		log.Println("🔍 Running HTTP scanning with httpx...")
 		httpResults, err = scanner.RunHTTPx(cfg, results)
 		if err != nil {
 			log.Printf("HTTP scanning failed: %v", err)
 		} else {
 			log.Printf("✅ HTTP scanning completed: %d results", len(httpResults))
+			// Update checkpoint with HTTP results
+			checkpoint.AddHTTPResults(httpResults)
+			utils.SaveCheckpoint(checkpoint, cfg.OutputDir)
 		}
 	}
 
 	// Run port scanning only if smap is enabled
-	var portResults []types.PortResult
-	if cfg.Tools["smap"] {
+	if cfg.Tools["smap"] && (*resume == "" || len(portResults) == 0) {
 		log.Println("🔍 Running port scanning with smap...")
 		portResults, err = scanner.RunSmap(cfg, results)
 		if err != nil {
 			log.Printf("Port scanning failed: %v", err)
 		} else {
 			log.Printf("✅ Port scanning completed: %d results", len(portResults))
+			// Update checkpoint with port results
+			checkpoint.AddPortResults(portResults)
+			utils.SaveCheckpoint(checkpoint, cfg.OutputDir)
 		}
 	}
 
@@ -310,6 +403,10 @@ func main() {
 	if err := output.Generate(cfg, results, httpResults, portResults); err != nil {
 		log.Fatalf("Failed to generate output: %v", err)
 	}
+
+	// Mark checkpoint as completed
+	checkpoint.MarkCompleted()
+	utils.SaveCheckpoint(checkpoint, cfg.OutputDir)
 
 	log.Printf("Scan completed. Results saved to %s", cfg.OutputDir)
 }
@@ -357,6 +454,8 @@ OPTIONS:
     --timeout N            Timeout in seconds (default: 30)
     --rate-limit N         Rate limit per second (default: 100)
     --wordlist FILE        Custom wordlist file for brute-forcing
+    --resume SCAN_ID       Resume scan from checkpoint (scan ID)
+    --list-checkpoints     List available checkpoints
     
     # Filter Options
     --status-codes CODES   Filter by HTTP status codes (e.g., '200,301,302')
@@ -406,6 +505,12 @@ EXAMPLES:
 
     # Custom wordlist scan
     subdomainx --wordlist /path/to/wordlist.txt example.com
+
+    # Resume interrupted scan
+    subdomainx --resume my_scan
+
+    # List available checkpoints
+    subdomainx --list-checkpoints
 
     # Check tool availability
     subdomainx --check-tools
@@ -490,8 +595,8 @@ func mergeConfig(cfg1, cfg2 *config.Config) *config.Config {
 
 // validateCLIInput validates the CLI configuration
 func validateCLIInput(cfg *config.Config) error {
-	// Validate wildcard file exists (skip for temporary files created for single domain)
-	if !strings.Contains(cfg.WildcardFile, "subdomainx_domain_") && !utils.FileExists(cfg.WildcardFile) {
+	// Validate wildcard file exists (skip for temporary files created for single domain and resume mode)
+	if cfg.WildcardFile != "" && !strings.Contains(cfg.WildcardFile, "subdomainx_domain_") && !utils.FileExists(cfg.WildcardFile) {
 		return fmt.Errorf("wildcard file not found: %s", cfg.WildcardFile)
 	}
 

@@ -14,6 +14,7 @@ All-in-one subdomain enumeration tool that combines multiple popular tools into 
 - **Custom Wordlists**: Support for custom wordlists in brute-forcing tools
 - **Progress Reporting**: Real-time progress bars with ETA for long-running scans
 - **Resource Management**: Memory and CPU monitoring with optimization recommendations
+- **Resume Capability**: Save and resume interrupted scans from checkpoints
 
 ## Quick Start 🚀
 
@@ -63,6 +64,16 @@ subdomainx --wordlist /path/to/wordlist.txt example.com
 ```bash
 # Enable verbose mode for resource monitoring
 subdomainx --verbose --subfinder --amass example.com
+```
+
+**Resume interrupted scans:**
+
+```bash
+# List available checkpoints
+subdomainx --list-checkpoints
+
+# Resume from checkpoint
+subdomainx --resume my_scan
 ```
 
 > **Important**: Flags must be placed before the domain argument:

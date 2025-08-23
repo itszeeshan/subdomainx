@@ -215,6 +215,30 @@ subdomainx --verbose --wildcard domains.txt --subfinder --amass
 
 > **Note**: Shows real-time progress bars, ETA, memory usage, CPU cores, and goroutine count
 
+### Resume Interrupted Scans
+
+Resume scans that were interrupted or failed:
+
+**List available checkpoints:**
+
+```bash
+subdomainx --list-checkpoints
+```
+
+**Resume from checkpoint:**
+
+```bash
+subdomainx --resume my_scan
+```
+
+**Resume with additional tools:**
+
+```bash
+subdomainx --resume my_scan --httpx --smap
+```
+
+> **Note**: Checkpoints are automatically saved during scans and when interrupted with Ctrl+C. Resume functionality skips completed steps and continues from where it left off.
+
 **Single domain:**
 
 ```bash

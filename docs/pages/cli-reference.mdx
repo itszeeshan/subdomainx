@@ -97,13 +97,15 @@ Filter results based on specific criteria:
 
 ### Performance Options
 
-| Option            | Default | Description                            |
-| ----------------- | ------- | -------------------------------------- |
-| `--threads N`     | `10`    | Number of concurrent threads           |
-| `--retries N`     | `3`     | Number of retry attempts               |
-| `--timeout N`     | `30`    | Timeout in seconds                     |
-| `--rate-limit N`  | `100`   | Rate limit per second                  |
-| `--wordlist FILE` | `""`    | Custom wordlist file for brute-forcing |
+| Option               | Default | Description                            |
+| -------------------- | ------- | -------------------------------------- |
+| `--threads N`        | `10`    | Number of concurrent threads           |
+| `--retries N`        | `3`     | Number of retry attempts               |
+| `--timeout N`        | `30`    | Timeout in seconds                     |
+| `--rate-limit N`     | `100`   | Rate limit per second                  |
+| `--wordlist FILE`    | `""`    | Custom wordlist file for brute-forcing |
+| `--resume SCAN_ID`   | `""`    | Resume scan from checkpoint (scan ID)  |
+| `--list-checkpoints` | `false` | List available checkpoints             |
 
 ### Utility Options
 
@@ -188,6 +190,26 @@ subdomainx --wildcard domains.txt --wordlist /path/to/wordlist.txt
 
 ```bash
 subdomainx --verbose --subfinder --amass example.com
+```
+
+### Resume Functionality
+
+**List available checkpoints:**
+
+```bash
+subdomainx --list-checkpoints
+```
+
+**Resume interrupted scan:**
+
+```bash
+subdomainx --resume my_scan
+```
+
+**Resume with additional scanning:**
+
+```bash
+subdomainx --resume my_scan --httpx --smap
 ```
 
 **Multiple domains:**
