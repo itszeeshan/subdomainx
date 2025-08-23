@@ -39,18 +39,21 @@ func main() {
 		ports       = flag.String("ports", "", "Filter by ports (e.g., '80,443,8080')")
 
 		// Tool-specific flags
-		useSubfinder   = flag.Bool("subfinder", false, "Use subfinder tool")
-		useAmass       = flag.Bool("amass", false, "Use amass tool")
-		useFindomain   = flag.Bool("findomain", false, "Use findomain tool")
-		useAssetfinder = flag.Bool("assetfinder", false, "Use assetfinder tool")
-		useSublist3r   = flag.Bool("sublist3r", false, "Use sublist3r tool")
-		useKnockpy     = flag.Bool("knockpy", false, "Use knockpy tool")
-		useDnsrecon    = flag.Bool("dnsrecon", false, "Use dnsrecon tool")
-		useFierce      = flag.Bool("fierce", false, "Use fierce tool")
-		useMassdns     = flag.Bool("massdns", false, "Use massdns tool")
-		useAltdns      = flag.Bool("altdns", false, "Use altdns tool")
-		useHttpx       = flag.Bool("httpx", false, "Use httpx for HTTP scanning")
-		useSmap        = flag.Bool("smap", false, "Use smap for port scanning")
+		useSubfinder      = flag.Bool("subfinder", false, "Use subfinder tool")
+		useAmass          = flag.Bool("amass", false, "Use amass tool")
+		useFindomain      = flag.Bool("findomain", false, "Use findomain tool")
+		useAssetfinder    = flag.Bool("assetfinder", false, "Use assetfinder tool")
+		useSublist3r      = flag.Bool("sublist3r", false, "Use sublist3r tool")
+		useKnockpy        = flag.Bool("knockpy", false, "Use knockpy tool")
+		useDnsrecon       = flag.Bool("dnsrecon", false, "Use dnsrecon tool")
+		useFierce         = flag.Bool("fierce", false, "Use fierce tool")
+		useMassdns        = flag.Bool("massdns", false, "Use massdns tool")
+		useAltdns         = flag.Bool("altdns", false, "Use altdns tool")
+		useSecurityTrails = flag.Bool("securitytrails", false, "Use SecurityTrails API")
+		useVirusTotal     = flag.Bool("virustotal", false, "Use VirusTotal API")
+		useCensys         = flag.Bool("censys", false, "Use Censys API")
+		useHttpx          = flag.Bool("httpx", false, "Use httpx for HTTP scanning")
+		useSmap           = flag.Bool("smap", false, "Use smap for port scanning")
 	)
 	flag.Parse()
 
@@ -170,7 +173,7 @@ func main() {
 	// Otherwise, use all available tools from config
 	specificToolsSelected := *useSubfinder || *useAmass || *useFindomain || *useAssetfinder ||
 		*useSublist3r || *useKnockpy || *useDnsrecon || *useFierce || *useMassdns || *useAltdns ||
-		*useHttpx || *useSmap
+		*useSecurityTrails || *useVirusTotal || *useCensys || *useHttpx || *useSmap
 
 	// Load config file if specified (optional)
 	if *configFile != "" {
@@ -203,6 +206,9 @@ func main() {
 		cfg.Tools["fierce"] = *useFierce
 		cfg.Tools["massdns"] = *useMassdns
 		cfg.Tools["altdns"] = *useAltdns
+		cfg.Tools["securitytrails"] = *useSecurityTrails
+		cfg.Tools["virustotal"] = *useVirusTotal
+		cfg.Tools["censys"] = *useCensys
 		cfg.Tools["httpx"] = *useHttpx
 		cfg.Tools["smap"] = *useSmap
 
@@ -234,6 +240,9 @@ func main() {
 		cfg.Tools["fierce"] = true
 		cfg.Tools["massdns"] = true
 		cfg.Tools["altdns"] = true
+		cfg.Tools["securitytrails"] = true
+		cfg.Tools["virustotal"] = true
+		cfg.Tools["censys"] = true
 		cfg.Tools["httpx"] = true
 		cfg.Tools["smap"] = true
 	}
@@ -347,6 +356,9 @@ OPTIONS:
     --fierce               Use fierce tool
     --massdns              Use massdns tool
     --altdns               Use altdns tool
+    --securitytrails       Use SecurityTrails API
+    --virustotal           Use VirusTotal API
+    --censys               Use Censys API
     --httpx                Use httpx for HTTP scanning
     --smap                 Use smap for port scanning
     

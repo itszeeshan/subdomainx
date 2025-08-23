@@ -153,13 +153,64 @@ func GetRequiredTools() []Tool {
 			},
 			Required: false,
 		},
+		{
+			Name:        "securitytrails",
+			Command:     "securitytrails",
+			Description: "SecurityTrails API for subdomain enumeration",
+			InstallCmd: map[string]string{
+				"linux":   "Set SECURITYTRAILS_API_KEY environment variable",
+				"darwin":  "Set SECURITYTRAILS_API_KEY environment variable",
+				"windows": "Set SECURITYTRAILS_API_KEY environment variable",
+			},
+			Required: false,
+		},
+		{
+			Name:        "virustotal",
+			Command:     "virustotal",
+			Description: "VirusTotal API for subdomain enumeration",
+			InstallCmd: map[string]string{
+				"linux":   "Set VIRUSTOTAL_API_KEY environment variable",
+				"darwin":  "Set VIRUSTOTAL_API_KEY environment variable",
+				"windows": "Set VIRUSTOTAL_API_KEY environment variable",
+			},
+			Required: false,
+		},
+		{
+			Name:        "censys",
+			Command:     "censys",
+			Description: "Censys API for subdomain enumeration",
+			InstallCmd: map[string]string{
+				"linux":   "Set CENSYS_API_ID and CENSYS_SECRET environment variables",
+				"darwin":  "Set CENSYS_API_ID and CENSYS_SECRET environment variables",
+				"windows": "Set CENSYS_API_ID and CENSYS_SECRET environment variables",
+			},
+			Required: false,
+		},
 	}
 }
 
-// CheckToolAvailability checks if a tool is available in PATH
+// CheckToolAvailability checks if a tool is available in PATH or as an API
 func CheckToolAvailability(toolName string) bool {
-	_, err := exec.LookPath(toolName)
-	return err == nil
+	// Special handling for API-based tools
+	switch toolName {
+	case "securitytrails":
+		// Check if API key is configured
+		apiKey := strings.TrimSpace(os.Getenv("SECURITYTRAILS_API_KEY"))
+		return apiKey != ""
+	case "virustotal":
+		// Check if API key is configured
+		apiKey := strings.TrimSpace(os.Getenv("VIRUSTOTAL_API_KEY"))
+		return apiKey != ""
+	case "censys":
+		// Check if API credentials are configured
+		apiID := strings.TrimSpace(os.Getenv("CENSYS_API_ID"))
+		secret := strings.TrimSpace(os.Getenv("CENSYS_SECRET"))
+		return apiID != "" && secret != ""
+	default:
+		// For command-line tools, check if they're in PATH
+		_, err := exec.LookPath(toolName)
+		return err == nil
+	}
 }
 
 // CheckAllTools checks the availability of all tools and returns missing ones

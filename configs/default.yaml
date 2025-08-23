@@ -21,6 +21,9 @@ tools:
   fierce: true
   massdns: true
   altdns: true
+  securitytrails: false
+  virustotal: false
+  censys: false
 scanners:
   httpx: false
   smap: false
