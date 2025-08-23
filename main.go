@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/itszeeshan/subdomainx/internal/cache"
 	"github.com/itszeeshan/subdomainx/internal/config"
@@ -66,13 +67,13 @@ func main() {
 		return
 	}
 
-	// Check tools
+	// Check tools (doesn't require domain or wildcard file)
 	if *checkTools {
 		utils.DisplayToolStatus()
 		return
 	}
 
-	// Show installation instructions
+	// Show installation instructions (doesn't require domain or wildcard file)
 	if *installTools {
 		_, missing := utils.CheckAllTools()
 		if err := utils.PromptToolInstallation(missing); err != nil {
@@ -104,20 +105,9 @@ func main() {
 		Filters:      make(map[string]string),
 	}
 
-	// Load config file if specified (optional)
-	if *configFile != "" {
-		fileCfg, err := config.LoadConfigFromFile(*configFile)
-		if err != nil {
-			log.Fatalf("Failed to load config file: %v", err)
-		}
-		// Merge config file with CLI flags (CLI takes precedence)
-		cfg = mergeConfig(fileCfg, cfg)
-	} else {
-		// Try to load default config if no CLI config specified
-		if defaultCfg, err := config.LoadConfig(); err == nil {
-			cfg = mergeConfig(defaultCfg, cfg)
-		}
-	}
+	// Check if we have a domain argument
+	args := flag.Args()
+	hasDomainArg := len(args) > 0
 
 	// Override with CLI flags (CLI takes highest precedence)
 	if *wildcardFile != "" {
@@ -138,19 +128,70 @@ func main() {
 		cfg.Filters["ports"] = *ports
 	}
 
-	// Validate that wildcard file is provided for scans
-	if cfg.WildcardFile == "" {
-		log.Fatalf("Error: --wildcard file is required for scanning. Use --help for usage information.")
+	// Check if we have either a wildcard file or a single domain argument
+	if cfg.WildcardFile == "" && len(args) == 0 {
+		log.Fatalf("Error: Either --wildcard file or a domain argument is required. Use --help for usage information.")
+	}
+
+	// If no wildcard file but domain argument provided, create a temporary file
+	if cfg.WildcardFile == "" && len(args) > 0 {
+		// Use the first argument as the domain
+		domain := args[0]
+
+		// Validate the domain
+		if err := utils.ValidateDomain(domain); err != nil {
+			log.Fatalf("Error: Invalid domain '%s': %v", domain, err)
+		}
+
+		// Create a temporary file with the single domain
+		tmpFile, err := os.CreateTemp("", "subdomainx_domain_*.txt")
+		if err != nil {
+			log.Fatalf("Error: Failed to create temporary file: %v", err)
+		}
+		defer os.Remove(tmpFile.Name()) // Clean up temp file
+
+		// Write the domain to the temporary file
+		if _, err := tmpFile.WriteString(domain + "\n"); err != nil {
+			log.Fatalf("Error: Failed to write domain to temporary file: %v", err)
+		}
+		tmpFile.Close()
+
+		// Set the wildcard file to our temporary file
+		cfg.WildcardFile = tmpFile.Name()
+
+		// Use the domain as the unique name if not specified
+		if cfg.UniqueName == "scan" {
+			cfg.UniqueName = domain
+		}
 	}
 
 	// Handle tool selection
 	// If any specific tools are specified via CLI, use only those
 	// Otherwise, use all available tools from config
 	specificToolsSelected := *useSubfinder || *useAmass || *useFindomain || *useAssetfinder ||
-		*useSublist3r || *useKnockpy || *useDnsrecon || *useFierce || *useMassdns || *useAltdns
+		*useSublist3r || *useKnockpy || *useDnsrecon || *useFierce || *useMassdns || *useAltdns ||
+		*useHttpx || *useSmap
 
+	// Load config file if specified (optional)
+	if *configFile != "" {
+		fileCfg, err := config.LoadConfigFromFile(*configFile)
+		if err != nil {
+			log.Fatalf("Failed to load config file: %v", err)
+		}
+		// Merge config file with CLI flags (CLI takes precedence)
+		cfg = mergeConfig(fileCfg, cfg)
+	} else if !hasDomainArg {
+		// Only load default config if we don't have a domain argument
+		// This prevents loading default wildcard_file when using single domain mode
+		if defaultCfg, err := config.LoadConfig(); err == nil {
+			cfg = mergeConfig(defaultCfg, cfg)
+		}
+	}
+
+	// Now handle tool selection - this MUST happen after config loading
 	if specificToolsSelected {
 		// Clear all tools and set only the specified ones
+		// This completely overrides any config file settings
 		cfg.Tools = make(map[string]bool)
 		cfg.Tools["subfinder"] = *useSubfinder
 		cfg.Tools["amass"] = *useAmass
@@ -164,9 +205,25 @@ func main() {
 		cfg.Tools["altdns"] = *useAltdns
 		cfg.Tools["httpx"] = *useHttpx
 		cfg.Tools["smap"] = *useSmap
+
+		// Debug: Print selected tools
+		if *verbose {
+			fmt.Printf("🔧 CLI Tools selected: ")
+			var selectedTools []string
+			for tool, enabled := range cfg.Tools {
+				if enabled {
+					selectedTools = append(selectedTools, tool)
+				}
+			}
+			fmt.Printf("%s\n", strings.Join(selectedTools, ", "))
+		}
+
 	} else {
-		// If no specific tools selected, enable all available tools by default
+		// If no specific tools selected, ensure all tools are enabled
 		// This ensures the tool works even without a config file
+		if cfg.Tools == nil {
+			cfg.Tools = make(map[string]bool)
+		}
 		cfg.Tools["subfinder"] = true
 		cfg.Tools["amass"] = true
 		cfg.Tools["findomain"] = true
@@ -251,10 +308,12 @@ func showUsage() {
 	fmt.Println(`SubdomainX - All-in-one Subdomain Enumeration Tool
 
 USAGE:
-    subdomainx --wildcard <domains_file> [OPTIONS]
+    subdomainx <domain> [OPTIONS]                    # Single domain scan
+    subdomainx --wildcard <domains_file> [OPTIONS]   # Multiple domains scan
 
-REQUIRED:
-    --wildcard FILE        Path to file containing target domains (one per line)
+REQUIRED (choose one):
+    <domain>              Target domain for single domain scan
+    --wildcard FILE       Path to file containing target domains (one per line)
 
 OPTIONS:
     --version              Show version information
@@ -296,17 +355,23 @@ OPTIONS:
     --verbose              Enable verbose output
 
 EXAMPLES:
-    # Basic scan with all available tools
+    # Single domain scan with all available tools
+    subdomainx example.com
+
+    # Single domain with specific tools
+    subdomainx example.com --subfinder --amass --httpx
+
+    # Multiple domains scan
     subdomainx --wildcard domains.txt
 
-    # Use only specific tools
+    # Multiple domains with specific tools
     subdomainx --wildcard domains.txt --amass --subfinder --httpx
 
-    # Generate HTML report
-    subdomainx --wildcard domains.txt --format html --name my_scan
+    # Generate HTML report for single domain
+    subdomainx example.com --format html --name my_scan
 
     # High-performance scan
-    subdomainx --wildcard domains.txt --threads 20 --timeout 60
+    subdomainx example.com --threads 20 --timeout 60
 
     # Check tool availability
     subdomainx --check-tools
@@ -391,8 +456,8 @@ func mergeConfig(cfg1, cfg2 *config.Config) *config.Config {
 
 // validateCLIInput validates the CLI configuration
 func validateCLIInput(cfg *config.Config) error {
-	// Validate wildcard file exists
-	if !utils.FileExists(cfg.WildcardFile) {
+	// Validate wildcard file exists (skip for temporary files created for single domain)
+	if !strings.Contains(cfg.WildcardFile, "subdomainx_domain_") && !utils.FileExists(cfg.WildcardFile) {
 		return fmt.Errorf("wildcard file not found: %s", cfg.WildcardFile)
 	}
 
