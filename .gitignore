@@ -1,0 +1,41 @@
+# Binary files
+subdomainx
+subdomainx.exe
+subdomainx-*
+
+# Output directory
+output/
+
+# Build artifacts
+dist/
+build/
+*.exe
+*.dmg
+*.deb
+*.rpm
+*.tar.gz
+*.zip
+
+# Test coverage
+coverage.out
+*.cover
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# Go specific
+*.test
+*.prof
