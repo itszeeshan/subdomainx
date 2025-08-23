@@ -8,9 +8,19 @@ Practical examples and use cases for SubdomainX.
 
 ## Basic Examples
 
-### Simple Scan
+### Single Domain Scan
 
 Run a basic scan with all available tools on a single domain:
+
+```bash
+subdomainx example.com
+```
+
+> **Note**: Uses all available enumeration tools and generates JSON output by default
+
+### Multiple Domains Scan
+
+Run a scan on multiple domains from a file:
 
 ```bash
 subdomainx --wildcard domains.txt
@@ -22,6 +32,14 @@ subdomainx --wildcard domains.txt
 
 Use only specific enumeration tools for targeted scanning:
 
+**Single domain:**
+
+```bash
+subdomainx --subfinder --amass --findomain example.com
+```
+
+**Multiple domains:**
+
 ```bash
 subdomainx --wildcard domains.txt --subfinder --amass --findomain
 ```
@@ -31,6 +49,14 @@ subdomainx --wildcard domains.txt --subfinder --amass --findomain
 ### With HTTP Scanning
 
 Include HTTP scanning to discover web services:
+
+**Single domain:**
+
+```bash
+subdomainx --httpx example.com
+```
+
+**Multiple domains:**
 
 ```bash
 subdomainx --wildcard domains.txt --httpx
@@ -42,6 +68,14 @@ subdomainx --wildcard domains.txt --httpx
 
 Full enumeration with both HTTP and port scanning:
 
+**Single domain:**
+
+```bash
+subdomainx --httpx --smap example.com
+```
+
+**Multiple domains:**
+
 ```bash
 subdomainx --wildcard domains.txt --httpx --smap
 ```
@@ -51,6 +85,14 @@ subdomainx --wildcard domains.txt --httpx --smap
 ### Filtered Results
 
 Filter results by specific status codes and ports:
+
+**Single domain:**
+
+```bash
+subdomainx --httpx --smap --status-codes 200,301,302 --ports 80,443,8080 example.com
+```
+
+**Multiple domains:**
 
 ```bash
 subdomainx --wildcard domains.txt --httpx --smap --status-codes 200,301,302 --ports 80,443,8080
@@ -64,6 +106,14 @@ subdomainx --wildcard domains.txt --httpx --smap --status-codes 200,301,302 --po
 
 Generate a beautiful HTML report with custom naming:
 
+**Single domain:**
+
+```bash
+subdomainx --format html --name my_scan --output reports/ example.com
+```
+
+**Multiple domains:**
+
 ```bash
 subdomainx --wildcard domains.txt --format html --name my_scan --output reports/
 ```
@@ -73,6 +123,14 @@ subdomainx --wildcard domains.txt --format html --name my_scan --output reports/
 ### High Performance
 
 Optimize for speed with increased threads and timeout:
+
+**Single domain:**
+
+```bash
+subdomainx --threads 20 --timeout 60 --rate-limit 200 example.com
+```
+
+**Multiple domains:**
 
 ```bash
 subdomainx --wildcard domains.txt --threads 20 --timeout 60 --rate-limit 200
@@ -84,6 +142,14 @@ subdomainx --wildcard domains.txt --threads 20 --timeout 60 --rate-limit 200
 
 Get detailed information about the scanning process:
 
+**Single domain:**
+
+```bash
+subdomainx --verbose example.com
+```
+
+**Multiple domains:**
+
 ```bash
 subdomainx --wildcard domains.txt --verbose
 ```
@@ -94,6 +160,14 @@ subdomainx --wildcard domains.txt --verbose
 
 Use a custom configuration file:
 
+**Single domain:**
+
+```bash
+subdomainx --config my-config.yaml example.com
+```
+
+**Multiple domains:**
+
 ```bash
 subdomainx --wildcard domains.txt --config my-config.yaml
 ```
@@ -103,6 +177,14 @@ subdomainx --wildcard domains.txt --config my-config.yaml
 ### Advanced Filtering
 
 Combine multiple filters for precise results:
+
+**Single domain:**
+
+```bash
+subdomainx --httpx --smap --status-codes 200,403 --ports 80,443,8080,8443 --verbose example.com
+```
+
+**Multiple domains:**
 
 ```bash
 subdomainx --wildcard domains.txt --httpx --smap --status-codes 200,403 --ports 80,443,8080,8443 --verbose
@@ -152,6 +234,14 @@ output_dir: scans/
 
 Comprehensive subdomain discovery for bug bounty programs:
 
+**Single target:**
+
+```bash
+subdomainx --httpx --smap --format html --name bugbounty_scan target.com
+```
+
+**Multiple targets:**
+
 ```bash
 subdomainx --wildcard targets.txt --httpx --smap --format html --name bugbounty_scan
 ```
@@ -159,6 +249,14 @@ subdomainx --wildcard targets.txt --httpx --smap --format html --name bugbounty_
 ### Security Assessment
 
 Quick reconnaissance for security assessments:
+
+**Single domain:**
+
+```bash
+subdomainx --subfinder --amass --httpx --threads 10 example.com
+```
+
+**Multiple domains:**
 
 ```bash
 subdomainx --wildcard domains.txt --subfinder --amass --httpx --threads 10
@@ -168,6 +266,14 @@ subdomainx --wildcard domains.txt --subfinder --amass --httpx --threads 10
 
 Discover all assets belonging to an organization:
 
+**Single domain:**
+
+```bash
+subdomainx --format json --output assets/ example.com
+```
+
+**Multiple domains:**
+
 ```bash
 subdomainx --wildcard org_domains.txt --format json --output assets/
 ```
@@ -176,6 +282,14 @@ subdomainx --wildcard org_domains.txt --format json --output assets/
 
 Focus on web applications with specific status codes:
 
+**Single domain:**
+
+```bash
+subdomainx --httpx --status-codes 200,301,302,403 --format html --name webapp_scan example.com
+```
+
+**Multiple domains:**
+
 ```bash
 subdomainx --wildcard webapps.txt --httpx --status-codes 200,301,302,403 --format html --name webapp_scan
 ```
@@ -183,6 +297,14 @@ subdomainx --wildcard webapps.txt --httpx --status-codes 200,301,302,403 --forma
 ### Port Scanning
 
 Comprehensive port discovery for network assessment:
+
+**Single domain:**
+
+```bash
+subdomainx --smap --ports 21,22,23,25,53,80,443,8080 --verbose example.com
+```
+
+**Multiple domains:**
 
 ```bash
 subdomainx --wildcard network.txt --smap --ports 21,22,23,25,53,80,443,8080 --verbose

@@ -124,6 +124,14 @@ Tool selection is primarily controlled via CLI flags. YAML configuration provide
 
 Run with default settings from config file:
 
+**Single domain:**
+
+```bash
+subdomainx example.com
+```
+
+**Multiple domains:**
+
 ```bash
 subdomainx --wildcard domains.txt
 ```
@@ -131,6 +139,14 @@ subdomainx --wildcard domains.txt
 ### Override Configuration
 
 Override specific settings via CLI:
+
+**Single domain:**
+
+```bash
+subdomainx --threads 20 --format html example.com
+```
+
+**Multiple domains:**
 
 ```bash
 subdomainx --wildcard domains.txt --threads 20 --format html
@@ -140,6 +156,14 @@ subdomainx --wildcard domains.txt --threads 20 --format html
 
 Use a custom configuration file:
 
+**Single domain:**
+
+```bash
+subdomainx --config my-config.yaml example.com
+```
+
+**Multiple domains:**
+
 ```bash
 subdomainx --wildcard domains.txt --config my-config.yaml
 ```
@@ -148,6 +172,14 @@ subdomainx --wildcard domains.txt --config my-config.yaml
 
 Ignore config file and use only CLI arguments:
 
+**Single domain:**
+
+```bash
+subdomainx --subfinder --httpx --format json example.com
+```
+
+**Multiple domains:**
+
 ```bash
 subdomainx --wildcard domains.txt --subfinder --httpx --format json
 ```
@@ -155,6 +187,14 @@ subdomainx --wildcard domains.txt --subfinder --httpx --format json
 ### With Filters
 
 Use filters to focus on specific results:
+
+**Single domain:**
+
+```bash
+subdomainx --httpx --smap --status-codes 200,301,302 --ports 80,443,8080 example.com
+```
+
+**Multiple domains:**
 
 ```bash
 subdomainx --wildcard domains.txt --httpx --smap --status-codes 200,301,302 --ports 80,443,8080

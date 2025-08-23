@@ -8,11 +8,26 @@ Complete command-line interface reference for SubdomainX.
 
 ## Basic Usage
 
+**Single domain:**
+
+```bash
+subdomainx <domain> [OPTIONS]
+```
+
+**Multiple domains:**
+
 ```bash
 subdomainx --wildcard <domains_file> [OPTIONS]
 ```
 
-> **Required**: You must provide a file containing target domains using the `--wildcard` flag.
+> **Required**: You must provide either a single domain as a positional argument or a file containing target domains using the `--wildcard` flag.
+
+> **Important**: Flags must be placed before the domain argument. For example:
+>
+> ```bash
+> subdomainx --subfinder --httpx example.com  # Correct
+> subdomainx example.com --subfinder --httpx  # Incorrect
+> ```
 
 ## Command Options
 
@@ -20,6 +35,7 @@ subdomainx --wildcard <domains_file> [OPTIONS]
 
 | Option            | Description                                           |
 | ----------------- | ----------------------------------------------------- |
+| `<domain>`        | Target domain for single domain scan                  |
 | `--wildcard FILE` | Path to file containing target domains (one per line) |
 
 ### Tool Selection <a href="/supported-tools#enumeration-tools" className="details-link">details</a>
@@ -91,7 +107,13 @@ Filter results based on specific criteria:
 
 ### Basic Scan
 
-Run a basic scan with all available tools:
+**Single domain:**
+
+```bash
+subdomainx example.com
+```
+
+**Multiple domains:**
 
 ```bash
 subdomainx --wildcard domains.txt
@@ -99,7 +121,13 @@ subdomainx --wildcard domains.txt
 
 ### Specific Tools
 
-Use only specific enumeration and scanning tools:
+**Single domain:**
+
+```bash
+subdomainx --amass --subfinder --httpx example.com
+```
+
+**Multiple domains:**
 
 ```bash
 subdomainx --wildcard domains.txt --amass --subfinder --httpx
@@ -107,7 +135,13 @@ subdomainx --wildcard domains.txt --amass --subfinder --httpx
 
 ### With Filters
 
-Filter results by specific status codes and ports:
+**Single domain:**
+
+```bash
+subdomainx --httpx --smap --status-codes 200,301,302 --ports 80,443,8080 example.com
+```
+
+**Multiple domains:**
 
 ```bash
 subdomainx --wildcard domains.txt --httpx --smap --status-codes 200,301,302 --ports 80,443,8080
@@ -115,7 +149,13 @@ subdomainx --wildcard domains.txt --httpx --smap --status-codes 200,301,302 --po
 
 ### HTML Report
 
-Generate a beautiful HTML report with custom name:
+**Single domain:**
+
+```bash
+subdomainx --format html --name my_scan example.com
+```
+
+**Multiple domains:**
 
 ```bash
 subdomainx --wildcard domains.txt --format html --name my_scan
@@ -123,7 +163,13 @@ subdomainx --wildcard domains.txt --format html --name my_scan
 
 ### High Performance
 
-Optimize for speed with more threads and longer timeout:
+**Single domain:**
+
+```bash
+subdomainx --threads 20 --timeout 60 example.com
+```
+
+**Multiple domains:**
 
 ```bash
 subdomainx --wildcard domains.txt --threads 20 --timeout 60

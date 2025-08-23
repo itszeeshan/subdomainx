@@ -23,15 +23,18 @@ All-in-one subdomain enumeration tool that combines the power of multiple tools 
 go install github.com/itszeeshan/subdomainx@latest
 ```
 
-### 2. Create domains file
+### 2. Run scan
+
+**Single domain:**
+
+```bash
+subdomainx --subfinder --httpx example.com
+```
+
+**Multiple domains:**
 
 ```bash
 echo "example.com" > domains.txt
-```
-
-### 3. Run scan
-
-```bash
 subdomainx --wildcard domains.txt --format html
 ```
 
