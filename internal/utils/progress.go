@@ -79,9 +79,9 @@ func (p *ProgressTracker) PrintProgress() {
 	etaStr := "N/A"
 	if eta > 0 {
 		if eta.Hours() >= 1 {
-			etaStr = fmt.Sprintf("%.0fh %.0fm", eta.Hours(), int(eta.Minutes())%60)
+			etaStr = fmt.Sprintf("%.0fh %dm", eta.Hours(), int(eta.Minutes())%60)
 		} else if eta.Minutes() >= 1 {
-			etaStr = fmt.Sprintf("%.0fm %.0fs", eta.Minutes(), int(eta.Seconds())%60)
+			etaStr = fmt.Sprintf("%.0fm %ds", eta.Minutes(), int(eta.Seconds())%60)
 		} else {
 			etaStr = fmt.Sprintf("%.0fs", eta.Seconds())
 		}
