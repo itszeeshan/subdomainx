@@ -67,18 +67,6 @@ func (s *SmapScanner) Scan(ctx context.Context, targets []string, cfg *config.Co
 			continue
 		}
 
-		// Convert to PortResult
-		var ports []types.Port
-		for _, port := range smapResult.Ports {
-			ports = append(ports, types.Port{
-				Number:   port.Number,
-				Protocol: port.Protocol,
-				State:    port.State,
-				Service:  port.Service,
-				Version:  port.Version,
-			})
-		}
-
 		// Convert to HTTPResult for compatibility
 		// This is a workaround since the scanner interface expects HTTPResult
 		// In a real implementation, you might want to separate these
