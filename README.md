@@ -59,7 +59,7 @@ subdomainx --securitytrails --virustotal --censys example.com
 
 ### Enumeration Tools
 
-subfinder, amass, findomain, assetfinder, sublist3r, knockpy, dnsrecon, fierce, massdns, altdns
+subfinder, amass, findomain, assetfinder, sublist3r, knockpy, dnsrecon, fierce, massdns, altdns, waybackurls
 
 ### API Tools
 
@@ -110,7 +110,7 @@ subdomainx --httpx --status-codes 200,301,302 --ports 80,443 example.com
 subdomainx --securitytrails --virustotal --censys example.com
 
 # Mixed approach (CLI tools + APIs)
-subdomainx --subfinder --securitytrails --httpx example.com
+subdomainx --subfinder --securitytrails --waybackurls example.com
 ```
 
 ## Contributing 🤝

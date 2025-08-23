@@ -24,6 +24,7 @@ tools:
   securitytrails: false
   virustotal: false
   censys: false
+  waybackurls: false
 scanners:
   httpx: false
   smap: false

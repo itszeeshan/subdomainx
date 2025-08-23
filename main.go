@@ -52,6 +52,7 @@ func main() {
 		useSecurityTrails = flag.Bool("securitytrails", false, "Use SecurityTrails API")
 		useVirusTotal     = flag.Bool("virustotal", false, "Use VirusTotal API")
 		useCensys         = flag.Bool("censys", false, "Use Censys API")
+		useWaybackURLs    = flag.Bool("waybackurls", false, "Use waybackurls tool")
 		useHttpx          = flag.Bool("httpx", false, "Use httpx for HTTP scanning")
 		useSmap           = flag.Bool("smap", false, "Use smap for port scanning")
 	)
@@ -173,7 +174,7 @@ func main() {
 	// Otherwise, use all available tools from config
 	specificToolsSelected := *useSubfinder || *useAmass || *useFindomain || *useAssetfinder ||
 		*useSublist3r || *useKnockpy || *useDnsrecon || *useFierce || *useMassdns || *useAltdns ||
-		*useSecurityTrails || *useVirusTotal || *useCensys || *useHttpx || *useSmap
+		*useSecurityTrails || *useVirusTotal || *useCensys || *useWaybackURLs || *useHttpx || *useSmap
 
 	// Load config file if specified (optional)
 	if *configFile != "" {
@@ -209,6 +210,7 @@ func main() {
 		cfg.Tools["securitytrails"] = *useSecurityTrails
 		cfg.Tools["virustotal"] = *useVirusTotal
 		cfg.Tools["censys"] = *useCensys
+		cfg.Tools["waybackurls"] = *useWaybackURLs
 		cfg.Tools["httpx"] = *useHttpx
 		cfg.Tools["smap"] = *useSmap
 
@@ -243,6 +245,7 @@ func main() {
 		cfg.Tools["securitytrails"] = true
 		cfg.Tools["virustotal"] = true
 		cfg.Tools["censys"] = true
+		cfg.Tools["waybackurls"] = true
 		cfg.Tools["httpx"] = true
 		cfg.Tools["smap"] = true
 	}
@@ -359,6 +362,7 @@ OPTIONS:
     --securitytrails       Use SecurityTrails API
     --virustotal           Use VirusTotal API
     --censys               Use Censys API
+    --waybackurls          Use waybackurls tool
     --httpx                Use httpx for HTTP scanning
     --smap                 Use smap for port scanning
     

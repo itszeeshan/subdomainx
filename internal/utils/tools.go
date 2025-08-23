@@ -186,6 +186,17 @@ func GetRequiredTools() []Tool {
 			},
 			Required: false,
 		},
+		{
+			Name:        "waybackurls",
+			Command:     "waybackurls",
+			Description: "Fetch URLs from Wayback Machine for subdomain discovery",
+			InstallCmd: map[string]string{
+				"linux":   "go install github.com/tomnomnom/waybackurls@latest",
+				"darwin":  "go install github.com/tomnomnom/waybackurls@latest",
+				"windows": "go install github.com/tomnomnom/waybackurls@latest",
+			},
+			Required: false,
+		},
 	}
 }
 

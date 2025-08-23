@@ -56,6 +56,7 @@ Use specific tools, otherwise all available enumeration tools will be used by de
 | `--fierce`      | Use fierce tool      |
 | `--massdns`     | Use massdns tool     |
 | `--altdns`      | Use altdns tool      |
+| `--waybackurls` | Use waybackurls tool |
 
 #### API Tools <a href="/supported-tools#api-tools" className="details-link">details</a>
 
@@ -134,13 +135,13 @@ subdomainx --wildcard domains.txt
 **Single domain:**
 
 ```bash
-subdomainx --amass --subfinder --httpx example.com
+subdomainx --amass --subfinder --waybackurls example.com
 ```
 
 **Multiple domains:**
 
 ```bash
-subdomainx --wildcard domains.txt --amass --subfinder --httpx
+subdomainx --wildcard domains.txt --amass --subfinder --waybackurls
 ```
 
 ### API Tools
