@@ -48,6 +48,17 @@ Use specific tools, otherwise all available tools will be used.
 | `--httpx` | Use httpx for HTTP scanning (discovers web services, extracts titles, status codes, and technologies) |
 | `--smap`  | Use smap for port scanning (identifies open ports and services on discovered hosts)                   |
 
+### Filter Options
+
+Filter results based on specific criteria:
+
+| Option           | Description                                   | Example                      |
+| ---------------- | --------------------------------------------- | ---------------------------- |
+| `--status-codes` | Filter by HTTP status codes (comma-separated) | `--status-codes 200,301,302` |
+| `--ports`        | Filter by ports (comma-separated)             | `--ports 80,443,8080`        |
+
+> **Note**: Filter options work with HTTP scanning (`--httpx`) and port scanning (`--smap`) results.
+
 ### Output Options
 
 | Option            | Default  | Description                          |
@@ -74,7 +85,7 @@ Use specific tools, otherwise all available tools will be used.
 | `--check-tools`   | Check availability of enumeration tools          |
 | `--install-tools` | Show installation instructions for missing tools |
 | `--config FILE`   | Use custom configuration file                    |
-| `-v, --verbose`   | Enable verbose output                            |
+| `--verbose`       | Enable verbose output                            |
 
 ## Examples
 
@@ -92,6 +103,14 @@ Use only specific enumeration and scanning tools:
 
 ```bash
 subdomainx --wildcard domains.txt --amass --subfinder --httpx
+```
+
+### With Filters
+
+Filter results by specific status codes and ports:
+
+```bash
+subdomainx --wildcard domains.txt --httpx --smap --status-codes 200,301,302 --ports 80,443,8080
 ```
 
 ### HTML Report

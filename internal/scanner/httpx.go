@@ -25,7 +25,6 @@ func (h *HTTPXScanner) Scan(ctx context.Context, targets []string, cfg *config.C
 	// Build httpx command
 	args := []string{
 		"-l", "/dev/stdin",
-		"-o", "/dev/stdout",
 		"-json",
 		"-title",
 		"-tech-detect",
@@ -41,6 +40,11 @@ func (h *HTTPXScanner) Scan(ctx context.Context, targets []string, cfg *config.C
 
 	output, err := cmd.Output()
 	if err != nil {
+		// Try to get stderr for better error reporting
+		if exitErr, ok := err.(*exec.ExitError); ok {
+			stderr := string(exitErr.Stderr)
+			return nil, fmt.Errorf("httpx execution failed (exit %d): %s", exitErr.ExitCode(), stderr)
+		}
 		return nil, fmt.Errorf("httpx execution failed: %v", err)
 	}
 
@@ -57,10 +61,10 @@ func (h *HTTPXScanner) Scan(ctx context.Context, targets []string, cfg *config.C
 		// Parse JSON result
 		var httpxResult struct {
 			URL           string   `json:"url"`
-			StatusCode    int      `json:"status-code"`
+			StatusCode    int      `json:"status_code"`
 			Title         string   `json:"title"`
-			ContentLength int      `json:"content-length"`
-			Technologies  []string `json:"technologies"`
+			ContentLength int      `json:"content_length"`
+			Technologies  []string `json:"tech"`
 		}
 
 		if err := json.Unmarshal([]byte(line), &httpxResult); err != nil {

@@ -38,8 +38,7 @@ func (s *SubfinderEnumerator) Enumerate(ctx context.Context, domain string, cfg 
 		line = strings.TrimSpace(line)
 		if line != "" {
 			subdomains = append(subdomains, line)
-			// Cache the DNS result
-			cache.Store(line, []string{}) // IPs would be populated by massdns later
+			// DNS resolution will be done later in the main enumerator
 		}
 	}
 

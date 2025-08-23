@@ -190,7 +190,7 @@ tools:
 --check-tools          Check tool availability
 --install-tools        Show installation instructions
 --config FILE          Use custom configuration file (optional)
--v, --verbose          Enable verbose output
+--verbose              Enable verbose output
 ```
 
 ## Output 📊

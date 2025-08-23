@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"net"
 	"sync"
 	"time"
 )
@@ -40,6 +41,32 @@ func (d *DNSCache) Lookup(domain string) []string {
 	}
 
 	return nil
+}
+
+// Resolve performs DNS resolution for a domain and caches the result
+func (d *DNSCache) Resolve(domain string) []string {
+	// Check cache first
+	if ips := d.Lookup(domain); ips != nil {
+		return ips
+	}
+
+	// Perform DNS resolution
+	ips, err := net.LookupIP(domain)
+	if err != nil {
+		// Store empty result to avoid repeated failed lookups
+		d.Store(domain, []string{})
+		return []string{}
+	}
+
+	// Convert IP addresses to strings
+	var ipStrings []string
+	for _, ip := range ips {
+		ipStrings = append(ipStrings, ip.String())
+	}
+
+	// Store in cache
+	d.Store(domain, ipStrings)
+	return ipStrings
 }
 
 func (d *DNSCache) Cleanup(maxAge time.Duration) {

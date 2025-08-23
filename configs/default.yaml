@@ -21,3 +21,6 @@ tools:
   fierce: true
   massdns: true
   altdns: true
+scanners:
+  httpx: false
+  smap: false

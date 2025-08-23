@@ -17,16 +17,15 @@ func (s *SmapScanner) Name() string {
 	return "smap"
 }
 
-func (s *SmapScanner) Scan(ctx context.Context, targets []string, cfg *config.Config) ([]types.HTTPResult, error) {
+func (s *SmapScanner) Scan(ctx context.Context, targets []string, cfg *config.Config) ([]types.PortResult, error) {
 	if len(targets) == 0 {
-		return []types.HTTPResult{}, nil
+		return []types.PortResult{}, nil
 	}
 
 	// Build smap command
 	args := []string{
-		"-i", "/dev/stdin",
-		"-o", "/dev/stdout",
-		"-json",
+		"-iL", "-",
+		"-oJ", "-",
 	}
 
 	cmd := exec.CommandContext(ctx, "smap", args...)
@@ -37,12 +36,17 @@ func (s *SmapScanner) Scan(ctx context.Context, targets []string, cfg *config.Co
 
 	output, err := cmd.Output()
 	if err != nil {
+		// Try to get stderr for better error reporting
+		if exitErr, ok := err.(*exec.ExitError); ok {
+			stderr := string(exitErr.Stderr)
+			return nil, fmt.Errorf("smap execution failed (exit %d): %s", exitErr.ExitCode(), stderr)
+		}
 		return nil, fmt.Errorf("smap execution failed: %v", err)
 	}
 
 	// Parse JSON output
 	lines := strings.Split(string(output), "\n")
-	var results []types.HTTPResult
+	var results []types.PortResult
 
 	for _, line := range lines {
 		line = strings.TrimSpace(line)
@@ -67,20 +71,30 @@ func (s *SmapScanner) Scan(ctx context.Context, targets []string, cfg *config.Co
 			continue
 		}
 
-		// Convert to HTTPResult for compatibility
-		// This is a workaround since the scanner interface expects HTTPResult
-		// In a real implementation, you might want to separate these
-		httpResult := types.HTTPResult{
-			URL:        fmt.Sprintf("http://%s", smapResult.Host),
-			StatusCode: 0, // Not applicable for port scan
+		// Convert to PortResult
+		var ports []types.Port
+		for _, port := range smapResult.Ports {
+			ports = append(ports, types.Port{
+				Number:   port.Number,
+				Protocol: port.Protocol,
+				State:    port.State,
+				Service:  port.Service,
+				Version:  port.Version,
+			})
 		}
 
-		results = append(results, httpResult)
+		portResult := types.PortResult{
+			Host:  smapResult.Host,
+			IP:    smapResult.IP,
+			Ports: ports,
+		}
+
+		results = append(results, portResult)
 	}
 
 	return results, nil
 }
 
 func init() {
-	RegisterScanner(&SmapScanner{})
+	RegisterPortScanner(&SmapScanner{})
 }

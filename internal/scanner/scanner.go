@@ -3,6 +3,7 @@ package scanner
 import (
 	"context"
 	"fmt"
+	"net"
 	"net/http"
 	"sync"
 	"time"
@@ -18,11 +19,23 @@ type Scanner interface {
 	Scan(ctx context.Context, targets []string, cfg *config.Config) ([]types.HTTPResult, error)
 }
 
+// PortScanner interface for port scanning
+type PortScanner interface {
+	Name() string
+	Scan(ctx context.Context, targets []string, cfg *config.Config) ([]types.PortResult, error)
+}
+
 var scanners = make(map[string]Scanner)
+var portScanners = make(map[string]PortScanner)
 
 // RegisterScanner registers a new scanner
 func RegisterScanner(s Scanner) {
 	scanners[s.Name()] = s
+}
+
+// RegisterPortScanner registers a new port scanner
+func RegisterPortScanner(s PortScanner) {
+	portScanners[s.Name()] = s
 }
 
 // RunHTTPx runs HTTP scanning on discovered subdomains
@@ -36,6 +49,11 @@ func RunHTTPx(cfg *config.Config, subdomains []types.SubdomainResult) ([]types.H
 	for _, subdomain := range subdomains {
 		urls = append(urls, fmt.Sprintf("http://%s", subdomain.Subdomain))
 		urls = append(urls, fmt.Sprintf("https://%s", subdomain.Subdomain))
+	}
+
+	// Use httpx scanner if available
+	if httpxScanner, exists := scanners["httpx"]; exists {
+		return httpxScanner.Scan(context.Background(), urls, cfg)
 	}
 
 	// Create context with timeout
@@ -110,6 +128,11 @@ func RunSmap(cfg *config.Config, subdomains []types.SubdomainResult) ([]types.Po
 	var uniqueHosts []string
 	for host := range hosts {
 		uniqueHosts = append(uniqueHosts, host)
+	}
+
+	// Use smap scanner if available
+	if smapScanner, exists := portScanners["smap"]; exists {
+		return smapScanner.Scan(context.Background(), uniqueHosts, cfg)
 	}
 
 	// Create context with timeout
@@ -264,8 +287,8 @@ func scanPorts(ctx context.Context, host string, cfg *config.Config) (types.Port
 
 // extractTitle extracts the title from an HTTP response
 func extractTitle(resp *http.Response) string {
-	// Basic title extraction - in a real implementation, parse HTML
-	// For now, return a placeholder
+	// For now, return a placeholder since we're using httpx for real scanning
+	// httpx will handle title extraction properly
 	return "Page Title"
 }
 
@@ -287,9 +310,13 @@ func extractTechnologies(resp *http.Response) []string {
 
 // isPortOpen checks if a port is open (basic implementation)
 func isPortOpen(host string, port int) bool {
-	// Basic implementation - in real implementation, use proper TCP connection
-	// For now, just return false to avoid actual network calls
-	return false
+	// Basic TCP connection check
+	conn, err := net.DialTimeout("tcp", fmt.Sprintf("%s:%d", host, port), 3*time.Second)
+	if err != nil {
+		return false
+	}
+	defer conn.Close()
+	return true
 }
 
 // getServiceName returns the service name for a port

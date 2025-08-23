@@ -11,6 +11,7 @@ import (
 	"github.com/itszeeshan/subdomainx/internal/enumerator"
 	"github.com/itszeeshan/subdomainx/internal/output"
 	"github.com/itszeeshan/subdomainx/internal/scanner"
+	"github.com/itszeeshan/subdomainx/internal/types"
 	"github.com/itszeeshan/subdomainx/internal/utils"
 )
 
@@ -30,7 +31,11 @@ func main() {
 		retries      = flag.Int("retries", 3, "Number of retry attempts")
 		timeout      = flag.Int("timeout", 30, "Timeout in seconds")
 		rateLimit    = flag.Int("rate-limit", 100, "Rate limit per second")
-		verbose      = flag.Bool("v", false, "Verbose output")
+		verbose      = flag.Bool("verbose", false, "Verbose output")
+
+		// Filter flags
+		statusCodes = flag.String("status-codes", "", "Filter by HTTP status codes (e.g., '200,301,302')")
+		ports       = flag.String("ports", "", "Filter by ports (e.g., '80,443,8080')")
 
 		// Tool-specific flags
 		useSubfinder   = flag.Bool("subfinder", false, "Use subfinder tool")
@@ -76,10 +81,8 @@ func main() {
 		return
 	}
 
-	// Display banner
-	if *verbose {
-		showBanner()
-	}
+	// Display banner (always show, but can be controlled with verbose)
+	showBanner()
 
 	// Check tool availability and prompt for installation
 	available, missing := utils.CheckAllTools()
@@ -125,6 +128,14 @@ func main() {
 	}
 	if *outputFormat != "" {
 		cfg.OutputFormat = *outputFormat
+	}
+
+	// Override filters with CLI flags
+	if *statusCodes != "" {
+		cfg.Filters["status_code"] = *statusCodes
+	}
+	if *ports != "" {
+		cfg.Filters["ports"] = *ports
 	}
 
 	// Validate that wildcard file is provided for scans
@@ -189,16 +200,28 @@ func main() {
 		log.Fatalf("Enumeration failed: %v", err)
 	}
 
-	// Run HTTP scanning
-	httpResults, err := scanner.RunHTTPx(cfg, results)
-	if err != nil {
-		log.Printf("HTTP scanning failed: %v", err)
+	// Run HTTP scanning only if httpx is enabled
+	var httpResults []types.HTTPResult
+	if cfg.Tools["httpx"] {
+		log.Println("🔍 Running HTTP scanning with httpx...")
+		httpResults, err = scanner.RunHTTPx(cfg, results)
+		if err != nil {
+			log.Printf("HTTP scanning failed: %v", err)
+		} else {
+			log.Printf("✅ HTTP scanning completed: %d results", len(httpResults))
+		}
 	}
 
-	// Run port scanning
-	portResults, err := scanner.RunSmap(cfg, results)
-	if err != nil {
-		log.Printf("Port scanning failed: %v", err)
+	// Run port scanning only if smap is enabled
+	var portResults []types.PortResult
+	if cfg.Tools["smap"] {
+		log.Println("🔍 Running port scanning with smap...")
+		portResults, err = scanner.RunSmap(cfg, results)
+		if err != nil {
+			log.Printf("Port scanning failed: %v", err)
+		} else {
+			log.Printf("✅ Port scanning completed: %d results", len(portResults))
+		}
 	}
 
 	// Generate output
@@ -250,6 +273,10 @@ OPTIONS:
     --timeout N            Timeout in seconds (default: 30)
     --rate-limit N         Rate limit per second (default: 100)
     
+    # Filter Options
+    --status-codes CODES   Filter by HTTP status codes (e.g., '200,301,302')
+    --ports PORTS          Filter by ports (e.g., '80,443,8080')
+    
     # Tool Selection (use specific tools, otherwise all available)
     --subfinder            Use subfinder tool
     --amass                Use amass tool
@@ -266,7 +293,7 @@ OPTIONS:
     
     # Configuration
     --config FILE          Use custom configuration file (optional)
-    -v, --verbose          Enable verbose output
+    --verbose              Enable verbose output
 
 EXAMPLES:
     # Basic scan with all available tools

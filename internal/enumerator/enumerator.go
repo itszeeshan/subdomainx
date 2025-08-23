@@ -52,7 +52,12 @@ func Run(cfg *config.Config, dnsCache *cache.DNSCache) ([]types.SubdomainResult,
 	}
 	fmt.Printf("%s\n", strings.Join(toolNames, ", "))
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(cfg.Timeout*len(domains)*len(availableEnumerators))*time.Second)
+	// Use a more reasonable timeout calculation
+	totalTimeout := cfg.Timeout * len(domains) * len(availableEnumerators)
+	if totalTimeout > 300 { // Cap at 5 minutes
+		totalTimeout = 300
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(totalTimeout)*time.Second)
 	defer cancel()
 
 	// Create a worker pool for concurrent enumeration
@@ -79,10 +84,12 @@ func Run(cfg *config.Config, dnsCache *cache.DNSCache) ([]types.SubdomainResult,
 				fmt.Printf("✅ %s found %d subdomains for %s\n", toolName, len(subdomains), d)
 
 				for _, subdomain := range subdomains {
+					// Resolve DNS for the subdomain
+					ips := dnsCache.Resolve(subdomain)
 					results <- types.SubdomainResult{
 						Subdomain: subdomain,
 						Source:    toolName,
-						IPs:       dnsCache.Lookup(subdomain),
+						IPs:       ips,
 					}
 				}
 			}(enumerator, domain, name)

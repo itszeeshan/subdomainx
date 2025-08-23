@@ -48,6 +48,16 @@ subdomainx --wildcard domains.txt --httpx --smap
 
 > **Note**: Comprehensive scan including port discovery and service identification
 
+### Filtered Results
+
+Filter results by specific status codes and ports:
+
+```bash
+subdomainx --wildcard domains.txt --httpx --smap --status-codes 200,301,302 --ports 80,443,8080
+```
+
+> **Note**: Only shows results with specified HTTP status codes and open ports
+
 ## Advanced Examples
 
 ### Custom Output Format
@@ -90,6 +100,16 @@ subdomainx --wildcard domains.txt --config my-config.yaml
 
 > **Note**: Loads settings from a custom YAML configuration file
 
+### Advanced Filtering
+
+Combine multiple filters for precise results:
+
+```bash
+subdomainx --wildcard domains.txt --httpx --smap --status-codes 200,403 --ports 80,443,8080,8443 --verbose
+```
+
+> **Note**: Filters for specific status codes and ports while showing detailed output
+
 ## Sample Files
 
 ### domains.txt
@@ -123,6 +143,8 @@ output_dir: scans/
 - **Monitor Resources**: Keep an eye on system resources when using high thread counts
 - **Organize Output**: Use meaningful names and organize output directories
 - **Verify Results**: Always verify discovered subdomains and validate findings
+- **Use Filters**: Leverage status code and port filters to focus on relevant results
+- **Combine Tools**: Use both enumeration and scanning tools for comprehensive results
 
 ## Common Use Cases
 
@@ -148,4 +170,20 @@ Discover all assets belonging to an organization:
 
 ```bash
 subdomainx --wildcard org_domains.txt --format json --output assets/
+```
+
+### Web Application Testing
+
+Focus on web applications with specific status codes:
+
+```bash
+subdomainx --wildcard webapps.txt --httpx --status-codes 200,301,302,403 --format html --name webapp_scan
+```
+
+### Port Scanning
+
+Comprehensive port discovery for network assessment:
+
+```bash
+subdomainx --wildcard network.txt --smap --ports 21,22,23,25,53,80,443,8080 --verbose
 ```

@@ -38,6 +38,11 @@ retries: 3
 timeout: 30
 rate_limit: 100
 
+# Filter settings
+filters:
+  status_code: "" # Filter by HTTP status codes (e.g., "200,301,302")
+  ports: "" # Filter by ports (e.g., "80,443,8080")
+
 # Tool selection (all false by default - use CLI flags)
 tools:
   subfinder: false
@@ -81,6 +86,15 @@ scanners:
 | `retries`    | integer | `3`     | `--retries`    | Number of retry attempts     |
 | `timeout`    | integer | `30`    | `--timeout`    | Timeout in seconds           |
 | `rate_limit` | integer | `100`   | `--rate-limit` | Rate limit per second        |
+
+### Filter Configuration
+
+| Parameter     | Type   | Default | CLI Flag         | Description                                   |
+| ------------- | ------ | ------- | ---------------- | --------------------------------------------- |
+| `status_code` | string | `""`    | `--status-codes` | Filter by HTTP status codes (comma-separated) |
+| `ports`       | string | `""`    | `--ports`        | Filter by ports (comma-separated)             |
+
+> **Note**: Filter options work with HTTP scanning (`--httpx`) and port scanning (`--smap`) results.
 
 ### Tool Configuration
 
@@ -138,6 +152,14 @@ Ignore config file and use only CLI arguments:
 subdomainx --wildcard domains.txt --subfinder --httpx --format json
 ```
 
+### With Filters
+
+Use filters to focus on specific results:
+
+```bash
+subdomainx --wildcard domains.txt --httpx --smap --status-codes 200,301,302 --ports 80,443,8080
+```
+
 ## Configuration Tips
 
 > **Tip**:
@@ -147,3 +169,4 @@ subdomainx --wildcard domains.txt --subfinder --httpx --format json
 > - Configuration files are optional - you can use CLI only
 > - Keep configuration files in version control for team consistency
 > - Use environment variables for sensitive configuration
+> - Filter options help focus on relevant results and reduce noise
