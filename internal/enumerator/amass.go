@@ -7,7 +7,6 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/itszeeshan/subdomainx/internal/cache"
 	"github.com/itszeeshan/subdomainx/internal/config"
 )
 
@@ -17,7 +16,7 @@ func (a *AmassEnumerator) Name() string {
 	return "amass"
 }
 
-func (a *AmassEnumerator) Enumerate(ctx context.Context, domain string, cfg *config.Config, cache *cache.DNSCache) ([]string, error) {
+func (a *AmassEnumerator) Enumerate(ctx context.Context, domain string, cfg *config.Config, ) ([]string, error) {
 	// Build amass command with more robust options
 	args := []string{
 		"enum",

@@ -10,7 +10,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/itszeeshan/subdomainx/internal/cache"
 	"github.com/itszeeshan/subdomainx/internal/config"
 )
 
@@ -30,7 +29,7 @@ func (s *SecurityTrailsEnumerator) Name() string {
 	return "securitytrails"
 }
 
-func (s *SecurityTrailsEnumerator) Enumerate(ctx context.Context, domain string, cfg *config.Config, cache *cache.DNSCache) ([]string, error) {
+func (s *SecurityTrailsEnumerator) Enumerate(ctx context.Context, domain string, cfg *config.Config, ) ([]string, error) {
 	// Check if API key is configured
 	if s.apiKey == "" {
 		return nil, fmt.Errorf("securitytrails API key not configured")

@@ -10,7 +10,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/itszeeshan/subdomainx/internal/cache"
 	"github.com/itszeeshan/subdomainx/internal/config"
 )
 
@@ -33,7 +32,7 @@ func (v *VirusTotalEnumerator) Name() string {
 	return "virustotal"
 }
 
-func (v *VirusTotalEnumerator) Enumerate(ctx context.Context, domain string, cfg *config.Config, cache *cache.DNSCache) ([]string, error) {
+func (v *VirusTotalEnumerator) Enumerate(ctx context.Context, domain string, cfg *config.Config, ) ([]string, error) {
 	// Check if API key is configured
 	if v.apiKey == "" {
 		return nil, fmt.Errorf("virustotal API key not configured")

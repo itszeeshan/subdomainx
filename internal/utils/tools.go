@@ -208,6 +208,50 @@ func GetRequiredTools() []Tool {
 			},
 			Required: false,
 		},
+		{
+			Name:        "crtsh",
+			Command:     "crtsh",
+			Description: "Certificate Transparency database for subdomain discovery",
+			InstallCmd: map[string]string{
+				"linux":   "Built-in (no installation required)",
+				"darwin":  "Built-in (no installation required)",
+				"windows": "Built-in (no installation required)",
+			},
+			Required: false,
+		},
+		{
+			Name:        "urlscan",
+			Command:     "urlscan",
+			Description: "URLScan.io API for subdomain enumeration",
+			InstallCmd: map[string]string{
+				"linux":   "Set URLSCAN_API_KEY environment variable (optional)",
+				"darwin":  "Set URLSCAN_API_KEY environment variable (optional)",
+				"windows": "Set URLSCAN_API_KEY environment variable (optional)",
+			},
+			Required: false,
+		},
+		{
+			Name:        "threatcrowd",
+			Command:     "threatcrowd",
+			Description: "ThreatCrowd API for subdomain enumeration",
+			InstallCmd: map[string]string{
+				"linux":   "Built-in (no installation required)",
+				"darwin":  "Built-in (no installation required)",
+				"windows": "Built-in (no installation required)",
+			},
+			Required: false,
+		},
+		{
+			Name:        "hackertarget",
+			Command:     "hackertarget",
+			Description: "HackerTarget API for subdomain enumeration",
+			InstallCmd: map[string]string{
+				"linux":   "Set HACKERTARGET_API_KEY environment variable (optional)",
+				"darwin":  "Set HACKERTARGET_API_KEY environment variable (optional)",
+				"windows": "Set HACKERTARGET_API_KEY environment variable (optional)",
+			},
+			Required: false,
+		},
 	}
 }
 
@@ -231,6 +275,20 @@ func CheckToolAvailability(toolName string) bool {
 	case "linkheader":
 		// Link header enumerator is built-in, always available
 		return true
+	case "crtsh":
+		// crt.sh is a public API, always available
+		return true
+	case "urlscan":
+		// URLScan.io can work without API key, but better with one
+		_ = strings.TrimSpace(os.Getenv("URLSCAN_API_KEY"))
+		return true // Always available, API key is optional
+	case "threatcrowd":
+		// ThreatCrowd is a public API, always available
+		return true
+	case "hackertarget":
+		// HackerTarget can work without API key, but better with one
+		_ = strings.TrimSpace(os.Getenv("HACKERTARGET_API_KEY"))
+		return true // Always available, API key is optional
 	default:
 		// For command-line tools, check if they're in PATH
 		_, err := exec.LookPath(toolName)

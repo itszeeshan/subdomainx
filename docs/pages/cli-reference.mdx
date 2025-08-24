@@ -61,11 +61,15 @@ Use specific tools, otherwise all available enumeration tools will be used by de
 
 #### API Tools <a href="/supported-tools#api-tools" className="details-link">details</a>
 
-| Option             | Description            |
-| ------------------ | ---------------------- |
-| `--securitytrails` | Use SecurityTrails API |
-| `--virustotal`     | Use VirusTotal API     |
-| `--censys`         | Use Censys API         |
+| Option             | Description                             |
+| ------------------ | --------------------------------------- |
+| `--securitytrails` | Use SecurityTrails API                  |
+| `--virustotal`     | Use VirusTotal API                      |
+| `--censys`         | Use Censys API                          |
+| `--crtsh`          | Use crt.sh Certificate Transparency API |
+| `--urlscan`        | Use URLScan.io API                      |
+| `--threatcrowd`    | Use ThreatCrowd API                     |
+| `--hackertarget`   | Use HackerTarget API                    |
 
 > **Note**: If no specific tools are specified, SubdomainX will use all available enumeration tools by default. API tools and scanners must be explicitly enabled.
 
@@ -97,15 +101,16 @@ Filter results based on specific criteria:
 
 ### Performance Options
 
-| Option               | Default | Description                            |
-| -------------------- | ------- | -------------------------------------- |
-| `--threads N`        | `10`    | Number of concurrent threads           |
-| `--retries N`        | `3`     | Number of retry attempts               |
-| `--timeout N`        | `30`    | Timeout in seconds                     |
-| `--rate-limit N`     | `100`   | Rate limit per second                  |
-| `--wordlist FILE`    | `""`    | Custom wordlist file for brute-forcing |
-| `--resume SCAN_ID`   | `""`    | Resume scan from checkpoint (scan ID)  |
-| `--list-checkpoints` | `false` | List available checkpoints             |
+| Option                 | Default | Description                            |
+| ---------------------- | ------- | -------------------------------------- |
+| `--threads N`          | `10`    | Number of concurrent threads           |
+| `--retries N`          | `3`     | Number of retry attempts               |
+| `--timeout N`          | `30`    | Timeout in seconds                     |
+| `--rate-limit N`       | `100`   | Rate limit per second                  |
+| `--wordlist FILE`      | `""`    | Custom wordlist file for brute-forcing |
+| `--max-http-targets N` | `1000`  | Maximum subdomains to scan with httpx  |
+| `--resume SCAN_ID`     | `""`    | Resume scan from checkpoint (scan ID)  |
+| `--list-checkpoints`   | `false` | List available checkpoints             |
 
 ### Utility Options
 
@@ -167,7 +172,13 @@ subdomainx --wildcard domains.txt --linkheader
 **Single domain:**
 
 ```bash
-subdomainx --securitytrails --virustotal --censys example.com
+subdomainx --securitytrails --virustotal --censys --crtsh --urlscan --threatcrowd --hackertarget example.com
+```
+
+**Multiple domains:**
+
+```bash
+subdomainx --wildcard domains.txt --securitytrails --virustotal --censys --crtsh --urlscan --threatcrowd --hackertarget
 ```
 
 ### Custom Wordlist
@@ -182,6 +193,20 @@ subdomainx --wordlist /path/to/wordlist.txt example.com
 
 ```bash
 subdomainx --wildcard domains.txt --wordlist /path/to/wordlist.txt
+```
+
+### Performance Optimization
+
+**Limit HTTP scanning for large subdomain lists:**
+
+```bash
+subdomainx --subfinder --httpx --max-http-targets 500 example.com
+```
+
+**High-performance scan with custom limits:**
+
+```bash
+subdomainx --subfinder --httpx --max-http-targets 200 --threads 20 --timeout 60 example.com
 ```
 
 ### Progress Monitoring

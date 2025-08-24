@@ -6,7 +6,6 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/itszeeshan/subdomainx/internal/cache"
 	"github.com/itszeeshan/subdomainx/internal/config"
 )
 
@@ -16,7 +15,7 @@ func (f *FierceEnumerator) Name() string {
 	return "fierce"
 }
 
-func (f *FierceEnumerator) Enumerate(ctx context.Context, domain string, cfg *config.Config, cache *cache.DNSCache) ([]string, error) {
+func (f *FierceEnumerator) Enumerate(ctx context.Context, domain string, cfg *config.Config, ) ([]string, error) {
 	// Build fierce command
 	args := []string{"--domain", domain, "--output", "/dev/stdout"}
 
@@ -36,7 +35,6 @@ func (f *FierceEnumerator) Enumerate(ctx context.Context, domain string, cfg *co
 		if line != "" && !strings.HasPrefix(line, "#") {
 			subdomains = append(subdomains, line)
 			// Cache the DNS result
-			cache.Store(line, []string{}) // IPs would be populated by massdns later
 		}
 	}
 

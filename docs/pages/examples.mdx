@@ -53,16 +53,16 @@ Use API-based enumeration tools for enhanced discovery:
 **Single domain:**
 
 ```bash
-subdomainx --securitytrails --virustotal --censys example.com
+subdomainx --securitytrails --virustotal --censys --crtsh --urlscan --threatcrowd --hackertarget example.com
 ```
 
 **Multiple domains:**
 
 ```bash
-subdomainx --wildcard domains.txt --securitytrails --virustotal --censys
+subdomainx --wildcard domains.txt --securitytrails --virustotal --censys --crtsh --urlscan --threatcrowd --hackertarget
 ```
 
-> **Note**: Requires API keys to be set as environment variables
+> **Note**: Requires API keys to be set as environment variables. Some APIs (crt.sh, ThreatCrowd) work without API keys.
 
 ### Mixed Approach
 
@@ -97,6 +97,24 @@ subdomainx --wordlist /path/to/wordlist.txt example.com
 ```bash
 subdomainx --wildcard domains.txt --wordlist /path/to/wordlist.txt
 ```
+
+### Performance Optimization
+
+Limit HTTP scanning for large subdomain lists to improve performance:
+
+**Single domain:**
+
+```bash
+subdomainx --subfinder --httpx --max-http-targets 500 example.com
+```
+
+**Multiple domains:**
+
+```bash
+subdomainx --wildcard domains.txt --subfinder --httpx --max-http-targets 200
+```
+
+> **Note**: Use `--max-http-targets` to limit the number of subdomains scanned with httpx for better performance with large subdomain lists
 
 **Combined with specific tools:**
 
@@ -187,16 +205,16 @@ Optimize for speed with increased threads and timeout:
 **Single domain:**
 
 ```bash
-subdomainx --threads 20 --timeout 60 --rate-limit 200 example.com
+subdomainx --threads 20 --timeout 60 --rate-limit 200 --max-http-targets 1000 example.com
 ```
 
 **Multiple domains:**
 
 ```bash
-subdomainx --wildcard domains.txt --threads 20 --timeout 60 --rate-limit 200
+subdomainx --wildcard domains.txt --threads 20 --timeout 60 --rate-limit 200 --max-http-targets 500
 ```
 
-> **Note**: Uses more threads and higher rate limits for faster scanning
+> **Note**: Uses more threads, higher rate limits, and optimized HTTP scanning for faster execution
 
 ### Verbose Output
 
@@ -278,7 +296,13 @@ Combine multiple filters for precise results:
 **Single domain:**
 
 ```bash
-subdomainx --httpx --smap --status-codes 200,403 --ports 80,443,8080,8443 --verbose example.com
+subdomainx --httpx --smap --status-codes 200,403 --ports 80,443,8080,8443 --max-http-targets 500 --verbose example.com
+```
+
+**Multiple domains:**
+
+```bash
+subdomainx --wildcard domains.txt --httpx --smap --status-codes 200,403 --ports 80,443,8080,8443 --max-http-targets 200
 ```
 
 **Multiple domains:**
@@ -366,13 +390,13 @@ Leverage external APIs for comprehensive subdomain discovery:
 **Single domain:**
 
 ```bash
-subdomainx --securitytrails --virustotal --censys --linkheader example.com
+subdomainx --securitytrails --virustotal --censys --crtsh --urlscan --threatcrowd --hackertarget --linkheader example.com
 ```
 
 **Multiple domains:**
 
 ```bash
-subdomainx --wildcard domains.txt --securitytrails --virustotal --censys --linkheader
+subdomainx --wildcard domains.txt --securitytrails --virustotal --censys --crtsh --urlscan --threatcrowd --hackertarget --linkheader
 ```
 
 ### Maximum Coverage
@@ -382,13 +406,13 @@ Combine all available tools for maximum subdomain discovery:
 **Single domain:**
 
 ```bash
-subdomainx --subfinder --amass --securitytrails --virustotal --censys --waybackurls --linkheader --httpx --smap example.com
+subdomainx --subfinder --amass --securitytrails --virustotal --censys --crtsh --urlscan --threatcrowd --hackertarget --waybackurls --linkheader --httpx --smap example.com
 ```
 
 **Multiple domains:**
 
 ```bash
-subdomainx --wildcard domains.txt --subfinder --amass --securitytrails --virustotal --censys --waybackurls --linkheader --httpx --smap
+subdomainx --wildcard domains.txt --subfinder --amass --securitytrails --virustotal --censys --crtsh --urlscan --threatcrowd --hackertarget --waybackurls --linkheader --httpx --smap
 ```
 
 ### Asset Discovery

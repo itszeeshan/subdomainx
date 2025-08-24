@@ -6,7 +6,6 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/itszeeshan/subdomainx/internal/cache"
 	"github.com/itszeeshan/subdomainx/internal/config"
 )
 
@@ -16,7 +15,7 @@ func (k *KnockpyEnumerator) Name() string {
 	return "knockpy"
 }
 
-func (k *KnockpyEnumerator) Enumerate(ctx context.Context, domain string, cfg *config.Config, cache *cache.DNSCache) ([]string, error) {
+func (k *KnockpyEnumerator) Enumerate(ctx context.Context, domain string, cfg *config.Config, ) ([]string, error) {
 	// Build knockpy command
 	args := []string{domain, "--no-http"}
 
@@ -36,7 +35,6 @@ func (k *KnockpyEnumerator) Enumerate(ctx context.Context, domain string, cfg *c
 		if line != "" && !strings.HasPrefix(line, "#") {
 			subdomains = append(subdomains, line)
 			// Cache the DNS result
-			cache.Store(line, []string{}) // IPs would be populated by massdns later
 		}
 	}
 

@@ -85,13 +85,14 @@ scanners:
 
 ### Performance Configuration
 
-| Parameter    | Type    | Default | CLI Flag       | Description                  |
-| ------------ | ------- | ------- | -------------- | ---------------------------- |
-| `threads`    | integer | `10`    | `--threads`    | Number of concurrent threads |
-| `retries`    | integer | `3`     | `--retries`    | Number of retry attempts     |
-| `timeout`    | integer | `30`    | `--timeout`    | Timeout in seconds           |
-| `rate_limit` | integer | `100`   | `--rate-limit` | Rate limit per second        |
-| `wordlist`   | string  | `""`    | `--wordlist`   | Custom wordlist file path    |
+| Parameter          | Type    | Default | CLI Flag             | Description                           |
+| ------------------ | ------- | ------- | -------------------- | ------------------------------------- |
+| `threads`          | integer | `10`    | `--threads`          | Number of concurrent threads          |
+| `retries`          | integer | `3`     | `--retries`          | Number of retry attempts              |
+| `timeout`          | integer | `30`    | `--timeout`          | Timeout in seconds                    |
+| `rate_limit`       | integer | `100`   | `--rate-limit`       | Rate limit per second                 |
+| `wordlist`         | string  | `""`    | `--wordlist`         | Custom wordlist file path             |
+| `max_http_targets` | integer | `1000`  | `--max-http-targets` | Maximum subdomains to scan with httpx |
 
 ### Filter Configuration
 
@@ -126,6 +127,10 @@ Tool selection is primarily controlled via CLI flags. YAML configuration provide
 - `securitytrails` → `--securitytrails`
 - `virustotal` → `--virustotal`
 - `censys` → `--censys`
+- `crtsh` → `--crtsh`
+- `urlscan` → `--urlscan`
+- `threatcrowd` → `--threatcrowd`
+- `hackertarget` → `--hackertarget`
 
 #### Scanning Tools
 
@@ -157,13 +162,13 @@ Override specific settings via CLI:
 **Single domain:**
 
 ```bash
-subdomainx --threads 20 --format html example.com
+subdomainx --threads 20 --format html --max-http-targets 500 example.com
 ```
 
 **Multiple domains:**
 
 ```bash
-subdomainx --wildcard domains.txt --threads 20 --format html
+subdomainx --wildcard domains.txt --threads 20 --format html --max-http-targets 200
 ```
 
 ### Custom Config File
@@ -210,9 +215,11 @@ export SECURITYTRAILS_API_KEY="your_key"
 export VIRUSTOTAL_API_KEY="your_key"
 export CENSYS_API_ID="your_id"
 export CENSYS_SECRET="your_secret"
+export URLSCAN_API_KEY="your_key"
+export HACKERTARGET_API_KEY="your_key"
 
 # Use APIs
-subdomainx --securitytrails --virustotal --censys example.com
+subdomainx --securitytrails --virustotal --censys --crtsh --urlscan --threatcrowd --hackertarget example.com
 ```
 
 **Multiple domains:**
@@ -223,9 +230,11 @@ export SECURITYTRAILS_API_KEY="your_key"
 export VIRUSTOTAL_API_KEY="your_key"
 export CENSYS_API_ID="your_id"
 export CENSYS_SECRET="your_secret"
+export URLSCAN_API_KEY="your_key"
+export HACKERTARGET_API_KEY="your_key"
 
 # Use APIs
-subdomainx --wildcard domains.txt --securitytrails --virustotal --censys
+subdomainx --wildcard domains.txt --securitytrails --virustotal --censys --crtsh --urlscan --threatcrowd --hackertarget
 ```
 
 ### Wordlist Configuration

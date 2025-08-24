@@ -6,7 +6,6 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/itszeeshan/subdomainx/internal/cache"
 	"github.com/itszeeshan/subdomainx/internal/config"
 	"github.com/itszeeshan/subdomainx/internal/utils"
 )
@@ -17,7 +16,7 @@ func (m *MassDNSEnumerator) Name() string {
 	return "massdns"
 }
 
-func (m *MassDNSEnumerator) Enumerate(ctx context.Context, domain string, cfg *config.Config, cache *cache.DNSCache) ([]string, error) {
+func (m *MassDNSEnumerator) Enumerate(ctx context.Context, domain string, cfg *config.Config) ([]string, error) {
 	// Build massdns command
 	args := []string{"-r", "/usr/share/massdns/lists/resolvers.txt", "-t", "A", "-o", "S", "/dev/stdin"}
 
@@ -65,11 +64,9 @@ func (m *MassDNSEnumerator) Enumerate(ctx context.Context, domain string, cfg *c
 			parts := strings.Fields(line)
 			if len(parts) >= 3 && parts[1] == "A" {
 				subdomain := parts[0]
-				ip := parts[2]
+				_ = parts[2] // IP not used for performance
 
 				results = append(results, subdomain)
-				// Cache the DNS result with IP
-				cache.Store(subdomain, []string{ip})
 			}
 		}
 	}

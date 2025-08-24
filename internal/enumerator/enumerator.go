@@ -7,7 +7,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/itszeeshan/subdomainx/internal/cache"
 	"github.com/itszeeshan/subdomainx/internal/config"
 	"github.com/itszeeshan/subdomainx/internal/types"
 	"github.com/itszeeshan/subdomainx/internal/utils"
@@ -15,7 +14,7 @@ import (
 
 type Enumerator interface {
 	Name() string
-	Enumerate(ctx context.Context, domain string, cfg *config.Config, cache *cache.DNSCache) ([]string, error)
+	Enumerate(ctx context.Context, domain string, cfg *config.Config) ([]string, error)
 }
 
 var enumerators = make(map[string]Enumerator)
@@ -24,7 +23,7 @@ func RegisterEnumerator(e Enumerator) {
 	enumerators[e.Name()] = e
 }
 
-func Run(cfg *config.Config, dnsCache *cache.DNSCache) ([]types.SubdomainResult, error) {
+func Run(cfg *config.Config) ([]types.SubdomainResult, error) {
 	// Read domains from wildcard file
 	domains, err := utils.ReadLines(cfg.WildcardFile)
 	if err != nil {
@@ -81,7 +80,7 @@ func Run(cfg *config.Config, dnsCache *cache.DNSCache) ([]types.SubdomainResult,
 
 				// Use retry mechanism
 				subdomains, err := utils.Retry(func() ([]string, error) {
-					return e.Enumerate(ctx, d, cfg, dnsCache)
+					return e.Enumerate(ctx, d, cfg)
 				}, cfg.Retries, cfg.Timeout)
 
 				if err != nil {
@@ -134,15 +133,13 @@ func Run(cfg *config.Config, dnsCache *cache.DNSCache) ([]types.SubdomainResult,
 
 	fmt.Printf("📊 Total unique subdomains found: %d\n", len(uniqueSubdomains))
 
-	// Now perform DNS resolution only for unique subdomains
+	// Create results without DNS resolution for better performance
 	var finalResults []types.SubdomainResult
 	for subdomain := range uniqueSubdomains {
-		// Resolve DNS for the subdomain
-		ips := dnsCache.Resolve(subdomain)
 		finalResults = append(finalResults, types.SubdomainResult{
 			Subdomain: subdomain,
 			Source:    "combined", // Since we deduplicated, we can't track individual sources
-			IPs:       ips,
+			IPs:       []string{}, // Empty IPs for better performance
 		})
 	}
 

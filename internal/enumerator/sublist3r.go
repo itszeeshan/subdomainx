@@ -6,7 +6,6 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/itszeeshan/subdomainx/internal/cache"
 	"github.com/itszeeshan/subdomainx/internal/config"
 )
 
@@ -16,7 +15,7 @@ func (s *Sublist3rEnumerator) Name() string {
 	return "sublist3r"
 }
 
-func (s *Sublist3rEnumerator) Enumerate(ctx context.Context, domain string, cfg *config.Config, cache *cache.DNSCache) ([]string, error) {
+func (s *Sublist3rEnumerator) Enumerate(ctx context.Context, domain string, cfg *config.Config, ) ([]string, error) {
 	// Build sublist3r command
 	args := []string{"-d", domain, "-o", "/dev/stdout"}
 
@@ -36,7 +35,6 @@ func (s *Sublist3rEnumerator) Enumerate(ctx context.Context, domain string, cfg 
 		if line != "" && !strings.HasPrefix(line, "#") {
 			subdomains = append(subdomains, line)
 			// Cache the DNS result
-			cache.Store(line, []string{}) // IPs would be populated by massdns later
 		}
 	}
 

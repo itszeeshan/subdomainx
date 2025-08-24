@@ -72,14 +72,14 @@ sudo mv subdomainx /usr/local/bin/
 **🔍 Single Domain Enumeration:**
 
 ```bash
-subdomainx --subfinder --httpx example.com
+subdomainx --subfinder --httpx --max-http-targets 1000 example.com
 ```
 
 **📁 Multiple Domains:**
 
 ```bash
 echo "example.com" > domains.txt
-subdomainx --wildcard domains.txt --format html
+subdomainx --wildcard domains.txt --format html --max-http-targets 500
 ```
 
 **🔧 Security Tool Integration:**
@@ -194,6 +194,10 @@ subdomainx --resume example_com_scan
 | **SecurityTrails** | Historical DNS data         | ✅               |
 | **VirusTotal**     | Threat intelligence         | ✅               |
 | **Censys**         | Internet-wide scanning data | ✅               |
+| **crt.sh**         | Certificate Transparency    | ❌               |
+| **URLScan.io**     | Web scanning service        | ✅ (optional)    |
+| **ThreatCrowd**    | Threat intelligence         | ❌               |
+| **HackerTarget**   | Security research platform  | ✅ (optional)    |
 
 ### Scanning Tools <a href="/supported-tools#scanning-tools" className="details-link">details</a>
 

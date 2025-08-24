@@ -22,7 +22,7 @@ func (h *HTTPXScanner) Scan(ctx context.Context, targets []string, cfg *config.C
 		return []types.HTTPResult{}, nil
 	}
 
-	// Build httpx command
+	// Build httpx command with performance optimizations
 	args := []string{
 		"-l", "/dev/stdin",
 		"-json",
@@ -30,6 +30,11 @@ func (h *HTTPXScanner) Scan(ctx context.Context, targets []string, cfg *config.C
 		"-tech-detect",
 		"-status-code",
 		"-content-length",
+		"-rate-limit", "1000", // Increase rate limit
+		"-threads", "50", // Increase threads
+		"-timeout", "10", // Reduce timeout
+		"-follow-redirects", // Follow redirects
+		"-no-color",         // Disable colors for faster output
 	}
 
 	cmd := exec.CommandContext(ctx, "httpx", args...)

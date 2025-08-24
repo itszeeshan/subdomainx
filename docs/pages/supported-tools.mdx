@@ -111,6 +111,34 @@ API tools leverage external services and databases to discover subdomains throug
 **Setup**: Set `CENSYS_API_ID` and `CENSYS_SECRET` environment variables  
 **API**: [Censys API](https://search.censys.io/api)
 
+### crt.sh
+
+**Description**: Certificate Transparency database for subdomain discovery. Queries the Certificate Transparency logs to find SSL certificates issued for subdomains, revealing hidden or forgotten subdomains through certificate data.  
+**Website**: [crt.sh](https://crt.sh/)  
+**Setup**: No setup required (public API)  
+**API**: [crt.sh API](https://crt.sh/)
+
+### URLScan.io
+
+**Description**: Web scanning service for subdomain enumeration. Provides comprehensive data about websites and their infrastructure, including subdomain discovery through their extensive scanning database.  
+**Website**: [URLScan.io](https://urlscan.io/)  
+**Setup**: Set `URLSCAN_API_KEY` environment variable (optional, for higher rate limits)  
+**API**: [URLScan.io API](https://urlscan.io/docs/api/)
+
+### ThreatCrowd
+
+**Description**: Threat intelligence platform for subdomain enumeration. Provides subdomain discovery through their threat intelligence database, offering insights into malicious infrastructure and related domains.  
+**Website**: [ThreatCrowd](https://www.threatcrowd.org/)  
+**Setup**: No setup required (public API)  
+**API**: [ThreatCrowd API](https://www.threatcrowd.org/api/)
+
+### HackerTarget
+
+**Description**: Security research platform for subdomain enumeration. Offers subdomain discovery through their comprehensive database of domains, IPs, and security research data.  
+**Website**: [HackerTarget](https://hackertarget.com/)  
+**Setup**: Set `HACKERTARGET_API_KEY` environment variable (optional, for higher rate limits)  
+**API**: [HackerTarget API](https://hackertarget.com/api/)
+
 ## Scanning Tools
 
 Scanning tools analyze discovered subdomains to identify open ports, web services, and gather additional information about the target infrastructure.

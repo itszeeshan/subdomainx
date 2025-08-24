@@ -49,7 +49,7 @@
 ### 🔍 **Intelligent Enumeration**
 
 - **12+ Tools Integrated**: subfinder, amass, findomain, assetfinder, sublist3r, knockpy, dnsrecon, fierce, massdns, altdns, waybackurls, linkheader
-- **API-Powered Discovery**: SecurityTrails, VirusTotal, Censys integration
+- **7+ API Services**: SecurityTrails, VirusTotal, Censys, crt.sh, URLScan.io, ThreatCrowd, HackerTarget
 - **Custom Wordlists**: Support for custom brute-forcing dictionaries
 - **Smart Filtering**: Advanced filtering and deduplication
 
@@ -126,15 +126,17 @@ export SECURITYTRAILS_API_KEY="your_key"
 export VIRUSTOTAL_API_KEY="your_key"
 export CENSYS_API_ID="your_id"
 export CENSYS_SECRET="your_secret"
+export URLSCAN_API_KEY="your_key"
+export HACKERTARGET_API_KEY="your_key"
 
 # Use APIs
-subdomainx --securitytrails --virustotal --censys example.com
+subdomainx --securitytrails --virustotal --censys --crtsh --urlscan --threatcrowd --hackertarget example.com
 ```
 
 **⚡ High-Performance Scan:**
 
 ```bash
-subdomainx --threads 20 --timeout 60 --subfinder --amass example.com
+subdomainx --threads 20 --timeout 60 --subfinder --amass --max-http-targets 1000 example.com
 ```
 
 **🔄 Resume Interrupted Scan:**
@@ -177,6 +179,10 @@ subdomainx --resume my_scan
 | **SecurityTrails** | Historical DNS data         | ✅               |
 | **VirusTotal**     | Threat intelligence         | ✅               |
 | **Censys**         | Internet-wide scanning data | ✅               |
+| **crt.sh**         | Certificate Transparency    | ❌               |
+| **URLScan.io**     | Web scanning service        | ✅ (optional)    |
+| **ThreatCrowd**    | Threat intelligence         | ❌               |
+| **HackerTarget**   | Security research platform  | ✅ (optional)    |
 
 ### Scanning Tools
 
@@ -212,7 +218,7 @@ subdomainx --subfinder --amass --findomain --assetfinder --sublist3r \
 ```bash
 # Focus on specific tools for speed
 subdomainx --subfinder --httpx --status-codes 200,301,302 \
-           --ports 80,443,8080,8443 example.com
+           --ports 80,443,8080,8443 --max-http-targets 500 example.com
 ```
 
 ### 📊 Custom Wordlist Brute Force
@@ -226,7 +232,7 @@ subdomainx --altdns --wordlist /path/to/custom_wordlist.txt example.com
 
 ```bash
 # Start scan with monitoring
-subdomainx --verbose --subfinder --amass example.com
+subdomainx --verbose --subfinder --amass --max-http-targets 1000 example.com
 
 # Later resume if interrupted
 subdomainx --resume example_com_scan

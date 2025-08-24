@@ -9,17 +9,18 @@ import (
 )
 
 type Config struct {
-	WildcardFile string            `yaml:"wildcard_file" json:"wildcard_file"`
-	UniqueName   string            `yaml:"unique_name" json:"unique_name"`
-	OutputDir    string            `yaml:"output_dir" json:"output_dir"`
-	OutputFormat string            `yaml:"output_format" json:"output_format"`
-	Tools        map[string]bool   `yaml:"tools" json:"tools"`
-	Wordlist     string            `yaml:"wordlist" json:"wordlist"`
-	Threads      int               `yaml:"threads" json:"threads"`
-	Retries      int               `yaml:"retries" json:"retries"`
-	Timeout      int               `yaml:"timeout" json:"timeout"`
-	RateLimit    int               `yaml:"rate_limit" json:"rate_limit"`
-	Filters      map[string]string `yaml:"filters" json:"filters"`
+	WildcardFile   string            `yaml:"wildcard_file" json:"wildcard_file"`
+	UniqueName     string            `yaml:"unique_name" json:"unique_name"`
+	OutputDir      string            `yaml:"output_dir" json:"output_dir"`
+	OutputFormat   string            `yaml:"output_format" json:"output_format"`
+	Tools          map[string]bool   `yaml:"tools" json:"tools"`
+	Wordlist       string            `yaml:"wordlist" json:"wordlist"`
+	Threads        int               `yaml:"threads" json:"threads"`
+	Retries        int               `yaml:"retries" json:"retries"`
+	Timeout        int               `yaml:"timeout" json:"timeout"`
+	RateLimit      int               `yaml:"rate_limit" json:"rate_limit"`
+	Filters        map[string]string `yaml:"filters" json:"filters"`
+	MaxHTTPTargets int               `yaml:"max_http_targets" json:"max_http_targets"`
 }
 
 func LoadConfig() (*Config, error) {

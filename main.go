@@ -7,7 +7,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/itszeeshan/subdomainx/internal/cache"
 	"github.com/itszeeshan/subdomainx/internal/config"
 	"github.com/itszeeshan/subdomainx/internal/enumerator"
 	"github.com/itszeeshan/subdomainx/internal/output"
@@ -55,10 +54,15 @@ func main() {
 		useSecurityTrails = flag.Bool("securitytrails", false, "Use SecurityTrails API")
 		useVirusTotal     = flag.Bool("virustotal", false, "Use VirusTotal API")
 		useCensys         = flag.Bool("censys", false, "Use Censys API")
+		useCrtSh          = flag.Bool("crtsh", false, "Use crt.sh Certificate Transparency API")
+		useURLScan        = flag.Bool("urlscan", false, "Use URLScan.io API")
+		useThreatCrowd    = flag.Bool("threatcrowd", false, "Use ThreatCrowd API")
+		useHackerTarget   = flag.Bool("hackertarget", false, "Use HackerTarget API")
 		useWaybackURLs    = flag.Bool("waybackurls", false, "Use waybackurls tool")
 		useLinkHeader     = flag.Bool("linkheader", false, "Use Link Header enumeration")
 		useHttpx          = flag.Bool("httpx", false, "Use httpx for HTTP scanning")
 		useSmap           = flag.Bool("smap", false, "Use smap for port scanning")
+		maxHTTPTargets    = flag.Int("max-http-targets", 1000, "Maximum number of subdomains to scan with httpx")
 	)
 	flag.Parse()
 
@@ -163,6 +167,9 @@ func main() {
 		cfg.Filters["ports"] = *ports
 	}
 
+	// Set max HTTP targets
+	cfg.MaxHTTPTargets = *maxHTTPTargets
+
 	// Check if we have either a wildcard file, a single domain argument, or are resuming
 	if cfg.WildcardFile == "" && len(args) == 0 && *resume == "" {
 		log.Fatalf("Error: Either --wildcard file, a domain argument, or --resume is required. Use --help for usage information.")
@@ -205,7 +212,7 @@ func main() {
 	// Otherwise, use all available tools from config
 	specificToolsSelected := *useSubfinder || *useAmass || *useFindomain || *useAssetfinder ||
 		*useSublist3r || *useKnockpy || *useDnsrecon || *useFierce || *useMassdns || *useAltdns ||
-		*useSecurityTrails || *useVirusTotal || *useCensys || *useWaybackURLs || *useLinkHeader || *useHttpx || *useSmap
+		*useSecurityTrails || *useVirusTotal || *useCensys || *useCrtSh || *useURLScan || *useThreatCrowd || *useHackerTarget || *useWaybackURLs || *useLinkHeader || *useHttpx || *useSmap
 
 	// Load config file if specified (optional)
 	if *configFile != "" {
@@ -241,6 +248,10 @@ func main() {
 		cfg.Tools["securitytrails"] = *useSecurityTrails
 		cfg.Tools["virustotal"] = *useVirusTotal
 		cfg.Tools["censys"] = *useCensys
+		cfg.Tools["crtsh"] = *useCrtSh
+		cfg.Tools["urlscan"] = *useURLScan
+		cfg.Tools["threatcrowd"] = *useThreatCrowd
+		cfg.Tools["hackertarget"] = *useHackerTarget
 		cfg.Tools["waybackurls"] = *useWaybackURLs
 		cfg.Tools["linkheader"] = *useLinkHeader
 		cfg.Tools["httpx"] = *useHttpx
@@ -277,6 +288,10 @@ func main() {
 		cfg.Tools["securitytrails"] = true
 		cfg.Tools["virustotal"] = true
 		cfg.Tools["censys"] = true
+		cfg.Tools["crtsh"] = true
+		cfg.Tools["urlscan"] = true
+		cfg.Tools["threatcrowd"] = true
+		cfg.Tools["hackertarget"] = true
 		cfg.Tools["waybackurls"] = true
 		cfg.Tools["linkheader"] = true
 		cfg.Tools["httpx"] = true
@@ -293,8 +308,7 @@ func main() {
 		log.Fatalf("Failed to create output directory: %v", err)
 	}
 
-	// Initialize DNS cache
-	dnsCache := cache.NewDNSCache()
+	// DNS cache removed for better performance
 
 	// Handle resume functionality
 	var checkpoint *utils.Checkpoint
@@ -354,7 +368,7 @@ func main() {
 
 	// Run subdomain enumeration (only if not resuming or if resuming but enumeration not complete)
 	if *resume == "" || len(results) == 0 {
-		results, err = enumerator.Run(cfg, dnsCache)
+		results, err = enumerator.Run(cfg)
 		if err != nil {
 			checkpoint.MarkError(fmt.Sprintf("Enumeration failed: %v", err))
 			if saveErr := utils.SaveCheckpoint(checkpoint, cfg.OutputDir); saveErr != nil {
@@ -463,6 +477,7 @@ OPTIONS:
     --timeout N            Timeout in seconds (default: 30)
     --rate-limit N         Rate limit per second (default: 100)
     --wordlist FILE        Custom wordlist file for brute-forcing
+    --max-http-targets N   Maximum subdomains to scan with httpx (default: 1000)
     --resume SCAN_ID       Resume scan from checkpoint (scan ID)
     --list-checkpoints     List available checkpoints
     
@@ -484,6 +499,10 @@ OPTIONS:
     --securitytrails       Use SecurityTrails API
     --virustotal           Use VirusTotal API
     --censys               Use Censys API
+    --crtsh                Use crt.sh Certificate Transparency API
+    --urlscan              Use URLScan.io API
+    --threatcrowd          Use ThreatCrowd API
+    --hackertarget         Use HackerTarget API
     --waybackurls          Use waybackurls tool
     --linkheader           Use Link Header enumeration
     --httpx                Use httpx for HTTP scanning
@@ -511,6 +530,9 @@ EXAMPLES:
 
     # High-performance scan
     subdomainx example.com --threads 20 --timeout 60
+
+    # Limit HTTP scanning for large subdomain lists
+    subdomainx example.com --httpx --max-http-targets 500
 
     # Custom wordlist scan
     subdomainx --wordlist /path/to/wordlist.txt example.com

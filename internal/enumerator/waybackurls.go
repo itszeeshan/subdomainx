@@ -6,7 +6,6 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/itszeeshan/subdomainx/internal/cache"
 	"github.com/itszeeshan/subdomainx/internal/config"
 )
 
@@ -16,7 +15,7 @@ func (w *WaybackURLsEnumerator) Name() string {
 	return "waybackurls"
 }
 
-func (w *WaybackURLsEnumerator) Enumerate(ctx context.Context, domain string, cfg *config.Config, cache *cache.DNSCache) ([]string, error) {
+func (w *WaybackURLsEnumerator) Enumerate(ctx context.Context, domain string, cfg *config.Config, ) ([]string, error) {
 	// Build waybackurls command
 	// waybackurls expects domains on stdin, so we'll echo the domain and pipe it
 	cmd := exec.CommandContext(ctx, "sh", "-c", fmt.Sprintf("echo %s | waybackurls", domain))

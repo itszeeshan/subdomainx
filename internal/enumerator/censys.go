@@ -10,7 +10,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/itszeeshan/subdomainx/internal/cache"
 	"github.com/itszeeshan/subdomainx/internal/config"
 )
 
@@ -33,7 +32,7 @@ func (c *CensysEnumerator) Name() string {
 	return "censys"
 }
 
-func (c *CensysEnumerator) Enumerate(ctx context.Context, domain string, cfg *config.Config, cache *cache.DNSCache) ([]string, error) {
+func (c *CensysEnumerator) Enumerate(ctx context.Context, domain string, cfg *config.Config, ) ([]string, error) {
 	// Check if API credentials are configured
 	if c.apiID == "" || c.secret == "" {
 		return nil, fmt.Errorf("censys API credentials not configured")

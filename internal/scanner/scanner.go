@@ -44,9 +44,15 @@ func RunHTTPx(cfg *config.Config, subdomains []types.SubdomainResult) ([]types.H
 		return []types.HTTPResult{}, nil
 	}
 
-	// Convert subdomains to URLs
+	// Convert subdomains to URLs with limit for performance
 	var urls []string
-	for _, subdomain := range subdomains {
+	maxTargets := cfg.MaxHTTPTargets // Use configurable limit
+
+	for i, subdomain := range subdomains {
+		if i >= maxTargets {
+			fmt.Printf("⚠️  Limiting HTTP scan to first %d subdomains for performance\n", maxTargets)
+			break
+		}
 		urls = append(urls, fmt.Sprintf("http://%s", subdomain.Subdomain))
 		urls = append(urls, fmt.Sprintf("https://%s", subdomain.Subdomain))
 	}

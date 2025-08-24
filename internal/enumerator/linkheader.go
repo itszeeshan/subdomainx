@@ -8,7 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/itszeeshan/subdomainx/internal/cache"
 	"github.com/itszeeshan/subdomainx/internal/config"
 	"github.com/tomnomnom/linkheader"
 )
@@ -21,7 +20,7 @@ func (l *LinkHeaderEnumerator) Name() string {
 	return "linkheader"
 }
 
-func (l *LinkHeaderEnumerator) Enumerate(ctx context.Context, domain string, cfg *config.Config, cache *cache.DNSCache) ([]string, error) {
+func (l *LinkHeaderEnumerator) Enumerate(ctx context.Context, domain string, cfg *config.Config, ) ([]string, error) {
 	// This enumerator works by checking discovered subdomains for Link headers
 	// It needs to be run after other enumerators have discovered initial subdomains
 	// For now, we'll check the main domain and common subdomains
