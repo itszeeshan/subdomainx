@@ -68,7 +68,8 @@
 
 ### 📊 **Professional Reporting**
 
-- **Multiple Formats**: JSON, TXT, and beautiful HTML reports
+- **Multiple Formats**: JSON, TXT, HTML, CSV, and security tool formats
+- **Security Tool Integration**: Export to OWASP ZAP, Burp Suite, and Nessus formats
 - **Customizable Output**: Flexible naming and directory structure
 - **Rich Metadata**: Detailed scan information and statistics
 - **Export Ready**: Compatible with other security tools and platforms
@@ -99,6 +100,22 @@ subdomainx --subfinder --httpx example.com
 ```bash
 echo "example.com" > domains.txt
 subdomainx --wildcard domains.txt --format html
+```
+
+**🔧 Security Tool Integration:**
+
+```bash
+# Export to OWASP ZAP format
+subdomainx --subfinder --httpx --format zap example.com
+
+# Export to Burp Suite format
+subdomainx --subfinder --httpx --format burp example.com
+
+# Export to Nessus format
+subdomainx --subfinder --httpx --format nessus example.com
+
+# Export to CSV for spreadsheet analysis
+subdomainx --subfinder --httpx --format csv example.com
 ```
 
 **🔌 API-Powered Discovery:**

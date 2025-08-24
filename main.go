@@ -455,7 +455,7 @@ OPTIONS:
     
     # Output Options
     --name NAME            Unique name for output files (default: scan)
-    --format FORMAT        Output format: json, txt, html (default: json)
+    --format FORMAT        Output format: json, txt, html, zap, burp, nessus, csv (default: json)
     --output DIR           Output directory (default: output)
     
     # Performance Options
@@ -617,12 +617,16 @@ func validateCLIInput(cfg *config.Config) error {
 
 	// Validate output format
 	validFormats := map[string]bool{
-		"json": true,
-		"txt":  true,
-		"html": true,
+		"json":   true,
+		"txt":    true,
+		"html":   true,
+		"zap":    true,
+		"burp":   true,
+		"nessus": true,
+		"csv":    true,
 	}
 	if !validFormats[cfg.OutputFormat] {
-		return fmt.Errorf("invalid output format: %s. Supported formats: json, txt, html", cfg.OutputFormat)
+		return fmt.Errorf("invalid output format: %s. Supported formats: json, txt, html, zap, burp, nessus, csv", cfg.OutputFormat)
 	}
 
 	// Validate threads

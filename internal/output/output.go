@@ -25,8 +25,16 @@ func Generate(cfg *config.Config, subdomainResults []types.SubdomainResult, http
 		return generateTXT(cfg, results)
 	case "html":
 		return generateHTML(cfg, results)
+	case "zap":
+		return generateZAP(cfg, results)
+	case "burp":
+		return generateBurp(cfg, results)
+	case "nessus":
+		return generateNessus(cfg, results)
+	case "csv":
+		return generateCSV(cfg, results)
 	default:
-		return fmt.Errorf("unsupported output format: %s", cfg.OutputFormat)
+		return fmt.Errorf("unsupported output format: %s. Supported formats: json, txt, html, zap, burp, nessus, csv", cfg.OutputFormat)
 	}
 }
 
@@ -96,6 +104,50 @@ func generateHTML(cfg *config.Config, results *types.ScanResults) error {
 	htmlFile := filepath.Join(cfg.OutputDir, fmt.Sprintf("%s_report.html", cfg.UniqueName))
 	if err := WriteHTML(htmlFile, results); err != nil {
 		return fmt.Errorf("failed to write HTML report: %v", err)
+	}
+
+	return nil
+}
+
+// generateZAP creates ZAP-compatible XML output files
+func generateZAP(cfg *config.Config, results *types.ScanResults) error {
+	// Main ZAP file
+	zapFile := filepath.Join(cfg.OutputDir, fmt.Sprintf("%s_zap.xml", cfg.UniqueName))
+	if err := WriteZAP(zapFile, results); err != nil {
+		return fmt.Errorf("failed to write ZAP file: %v", err)
+	}
+
+	return nil
+}
+
+// generateBurp creates Burp Suite-compatible XML output files
+func generateBurp(cfg *config.Config, results *types.ScanResults) error {
+	// Main Burp file
+	burpFile := filepath.Join(cfg.OutputDir, fmt.Sprintf("%s_burp.xml", cfg.UniqueName))
+	if err := WriteBurp(burpFile, results); err != nil {
+		return fmt.Errorf("failed to write Burp file: %v", err)
+	}
+
+	return nil
+}
+
+// generateNessus creates Nessus-compatible XML output files
+func generateNessus(cfg *config.Config, results *types.ScanResults) error {
+	// Main Nessus file
+	nessusFile := filepath.Join(cfg.OutputDir, fmt.Sprintf("%s_nessus.xml", cfg.UniqueName))
+	if err := WriteNessus(nessusFile, results); err != nil {
+		return fmt.Errorf("failed to write Nessus file: %v", err)
+	}
+
+	return nil
+}
+
+// generateCSV creates CSV output files
+func generateCSV(cfg *config.Config, results *types.ScanResults) error {
+	// Main CSV file
+	csvFile := filepath.Join(cfg.OutputDir, fmt.Sprintf("%s_results.csv", cfg.UniqueName))
+	if err := WriteCSV(csvFile, results); err != nil {
+		return fmt.Errorf("failed to write CSV file: %v", err)
 	}
 
 	return nil

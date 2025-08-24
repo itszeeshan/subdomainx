@@ -48,7 +48,8 @@ title: "Overview"
 
 ### 📊 **Professional Reporting**
 
-- **Multiple Formats**: JSON, TXT, and beautiful HTML reports
+- **Multiple Formats**: JSON, TXT, HTML, CSV, and security tool formats
+- **Security Tool Integration**: Export to OWASP ZAP, Burp Suite, and Nessus formats
 - **Customizable Output**: Flexible naming and directory structure
 - **Rich Metadata**: Detailed scan information and statistics
 - **Export Ready**: Compatible with other security tools and platforms
@@ -79,6 +80,22 @@ subdomainx --subfinder --httpx example.com
 ```bash
 echo "example.com" > domains.txt
 subdomainx --wildcard domains.txt --format html
+```
+
+**🔧 Security Tool Integration:**
+
+```bash
+# Export to OWASP ZAP format
+subdomainx --subfinder --httpx --format zap example.com
+
+# Export to Burp Suite format
+subdomainx --subfinder --httpx --format burp example.com
+
+# Export to Nessus format
+subdomainx --subfinder --httpx --format nessus example.com
+
+# Export to CSV for spreadsheet analysis
+subdomainx --subfinder --httpx --format csv example.com
 ```
 
 **🔌 API-Powered Discovery:**
@@ -184,6 +201,26 @@ subdomainx --resume example_com_scan
 | --------- | --------------- | ------------------------------------------------------------------ |
 | **httpx** | Fast HTTP probe | `go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest` |
 | **smap**  | Port scanner    | `go install github.com/s0md3v/smap/cmd/smap@latest`                |
+
+## 🔧 Security Tool Integration
+
+SubdomainX now supports direct export to popular security tools, making it easy to integrate with your existing security workflows:
+
+### **OWASP ZAP Integration**
+
+Export scan results in ZAP-compatible XML format for seamless integration with OWASP ZAP for web application security testing.
+
+### **Burp Suite Integration**
+
+Generate Burp Suite-compatible XML files that can be imported directly into Burp Suite for further analysis and testing.
+
+### **Nessus Integration**
+
+Create Nessus-compatible XML reports for vulnerability assessment and compliance reporting.
+
+### **CSV Export**
+
+Export results in CSV format for analysis in spreadsheet applications or integration with other security platforms.
 
 ## Next Steps
 
