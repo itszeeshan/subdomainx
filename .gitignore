@@ -5,6 +5,7 @@ subdomainx-*
 
 # Output directory
 output/
+!internal/output/
 
 # Build artifacts
 dist/
