@@ -8,13 +8,13 @@ title: "Overview"
 
 ### Why Choose SubdomainX?
 
-- **🔧 All-in-One Solution**: Combines 12+ popular enumeration tools into a single, unified interface
-- **🚀 High Performance**: Multi-threaded architecture with intelligent resource management
-- **🔌 API Integration**: Native integration with SecurityTrails, VirusTotal, Censys, and more
-- **📊 Advanced Reporting**: Beautiful HTML reports, JSON exports, and real-time progress tracking
-- **🔄 Resume Capability**: Never lose progress with intelligent checkpointing system
-- **⚡ Smart Optimization**: Built-in resource monitoring and performance recommendations
-- **🛡️ Production Ready**: Comprehensive error handling, logging, and validation
+- **All-in-One Solution**: Combines 12+ popular enumeration tools into a single, unified interface
+- **High Performance**: Multi-threaded architecture with intelligent resource management
+- **API Integration**: Native integration with SecurityTrails, VirusTotal, Censys, and more
+- **Advanced Reporting**: Beautiful HTML reports, JSON exports, and real-time progress tracking
+- **Resume Capability**: Never lose progress with intelligent checkpointing system
+- **Smart Optimization**: Built-in resource monitoring and performance recommendations
+- **Production Ready**: Comprehensive error handling, logging, and validation
 
 ### Perfect For:
 
@@ -26,27 +26,27 @@ title: "Overview"
 
 ## Key Features
 
-### 🔍 **Intelligent Enumeration**
+### Intelligent Enumeration
 
 - **12+ Tools Integrated**: subfinder, amass, findomain, assetfinder, sublist3r, knockpy, dnsrecon, fierce, massdns, altdns, waybackurls, linkheader
 - **API-Powered Discovery**: SecurityTrails, VirusTotal, Censys integration
 - **Custom Wordlists**: Support for custom brute-forcing dictionaries
 - **Smart Filtering**: Advanced filtering and deduplication
 
-### 🌐 **HTTP & Port Scanning**
+### HTTP & Port Scanning
 
 - **httpx Integration**: Comprehensive HTTP probing with status codes, headers, and technologies
 - **smap Integration**: Fast port scanning with service detection
 - **Customizable Filters**: Filter by status codes, ports, and response patterns
 
-### 📈 **Advanced Monitoring**
+### Advanced Monitoring
 
 - **Real-time Progress**: Live progress bars with ETA calculations
 - **Resource Management**: CPU and memory monitoring with optimization tips
 - **Checkpoint System**: Save and resume interrupted scans seamlessly
 - **Comprehensive Logging**: Detailed logs for debugging and analysis
 
-### 📊 **Professional Reporting**
+### Professional Reporting
 
 - **Multiple Formats**: JSON, TXT, HTML, CSV, and security tool formats
 - **Security Tool Integration**: Export to OWASP ZAP, Burp Suite, and Nessus formats
@@ -69,20 +69,20 @@ sudo mv subdomainx /usr/local/bin/
 
 ### 2. Basic Usage
 
-**🔍 Single Domain Enumeration:**
+**Single Domain Enumeration:**
 
 ```bash
 subdomainx --subfinder --httpx --max-http-targets 1000 example.com
 ```
 
-**📁 Multiple Domains:**
+**Multiple Domains:**
 
 ```bash
 echo "example.com" > domains.txt
 subdomainx --wildcard domains.txt --format html --max-http-targets 500
 ```
 
-**🔧 Security Tool Integration:**
+**Security Tool Integration:**
 
 ```bash
 # Export to OWASP ZAP format
@@ -98,7 +98,7 @@ subdomainx --subfinder --httpx --format nessus example.com
 subdomainx --subfinder --httpx --format csv example.com
 ```
 
-**🔌 API-Powered Discovery:**
+**API-Powered Discovery:**
 
 ```bash
 # Set API keys
@@ -111,29 +111,29 @@ export CENSYS_SECRET="your_secret"
 subdomainx --securitytrails --virustotal --censys example.com
 ```
 
-**⚡ High-Performance Scan:**
+**High-Performance Scan:**
 
 ```bash
 subdomainx --threads 20 --timeout 60 --subfinder --amass example.com
 ```
 
-**🔄 Resume Interrupted Scan:**
+**Resume Interrupted Scan:**
 
 ```bash
 # Resume from checkpoint
 subdomainx --resume my_scan
 ```
 
-> **💡 Pro Tip**: Always place flags before the domain argument:
+> **Pro Tip**: Always place flags before the domain argument:
 >
 > ```bash
-> subdomainx --tools domain.com  # ✅ Correct
-> subdomainx domain.com --tools  # ❌ Incorrect
+> subdomainx --tools domain.com  # Correct
+> subdomainx domain.com --tools  # Incorrect
 > ```
 
 ## Advanced Examples
 
-### 🔍 Comprehensive Reconnaissance
+### Comprehensive Reconnaissance
 
 ```bash
 # Full enumeration with all tools
@@ -143,7 +143,7 @@ subdomainx --subfinder --amass --findomain --assetfinder --sublist3r \
            --format html --name comprehensive_scan example.com
 ```
 
-### 🎯 Targeted Enumeration
+### Targeted Enumeration
 
 ```bash
 # Focus on specific tools for speed
@@ -151,14 +151,14 @@ subdomainx --subfinder --httpx --status-codes 200,301,302 \
            --ports 80,443,8080,8443 example.com
 ```
 
-### 📊 Custom Wordlist Brute Force
+### Custom Wordlist Brute Force
 
 ```bash
 # Use custom wordlist for altdns
 subdomainx --altdns --wordlist /path/to/custom_wordlist.txt example.com
 ```
 
-### 🔄 Resume and Monitor
+### Resume and Monitor
 
 ```bash
 # Start scan with monitoring
@@ -206,7 +206,7 @@ subdomainx --resume example_com_scan
 | **httpx** | Fast HTTP probe | `go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest` |
 | **smap**  | Port scanner    | `go install github.com/s0md3v/smap/cmd/smap@latest`                |
 
-## 🔧 Security Tool Integration
+## Security Tool Integration
 
 SubdomainX now supports direct export to popular security tools, making it easy to integrate with your existing security workflows:
 

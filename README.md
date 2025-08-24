@@ -22,21 +22,21 @@
 
 ---
 
-## 🎯 What is SubdomainX?
+## What is SubdomainX?
 
 **SubdomainX** is a powerful, all-in-one subdomain enumeration and reconnaissance tool designed for modern cybersecurity professionals, penetration testers, and security researchers.
 
-### 🌟 Why SubdomainX?
+### Why Choose SubdomainX?
 
-- **🔧 All-in-One Solution**: Combines 12+ popular enumeration tools into a single, unified interface
-- **🚀 High Performance**: Multi-threaded architecture with intelligent resource management
-- **🔌 API Integration**: Native integration with SecurityTrails, VirusTotal, Censys, and more
-- **📊 Advanced Reporting**: Beautiful HTML reports, JSON exports, and real-time progress tracking
-- **🔄 Resume Capability**: Never lose progress with intelligent checkpointing system
-- **⚡ Smart Optimization**: Built-in resource monitoring and performance recommendations
-- **🛡️ Production Ready**: Comprehensive error handling, logging, and validation
+- **All-in-One Solution**: Combines 12+ popular enumeration tools into a single, unified interface
+- **High Performance**: Multi-threaded architecture with intelligent resource management
+- **API Integration**: Native integration with SecurityTrails, VirusTotal, Censys, and more
+- **Advanced Reporting**: Beautiful HTML reports, JSON exports, and real-time progress tracking
+- **Resume Capability**: Never lose progress with intelligent checkpointing system
+- **Smart Optimization**: Built-in resource monitoring and performance recommendations
+- **Production Ready**: Comprehensive error handling, logging, and validation
 
-### 🎯 Perfect For:
+### Perfect For:
 
 - **Security Researchers** conducting comprehensive domain reconnaissance
 - **Penetration Testers** performing thorough attack surface analysis
@@ -44,29 +44,29 @@
 - **Security Teams** monitoring their organization's digital footprint
 - **Red Teams** gathering intelligence for advanced persistent threats
 
-## ✨ Key Features
+## Key Features
 
-### 🔍 **Intelligent Enumeration**
+### Intelligent Enumeration
 
 - **12+ Tools Integrated**: subfinder, amass, findomain, assetfinder, sublist3r, knockpy, dnsrecon, fierce, massdns, altdns, waybackurls, linkheader
 - **7+ API Services**: SecurityTrails, VirusTotal, Censys, crt.sh, URLScan.io, ThreatCrowd, HackerTarget
 - **Custom Wordlists**: Support for custom brute-forcing dictionaries
 - **Smart Filtering**: Advanced filtering and deduplication
 
-### 🌐 **HTTP & Port Scanning**
+### HTTP & Port Scanning
 
 - **httpx Integration**: Comprehensive HTTP probing with status codes, headers, and technologies
 - **smap Integration**: Fast port scanning with service detection
 - **Customizable Filters**: Filter by status codes, ports, and response patterns
 
-### 📈 **Advanced Monitoring**
+### Advanced Monitoring
 
 - **Real-time Progress**: Live progress bars with ETA calculations
 - **Resource Management**: CPU and memory monitoring with optimization tips
 - **Checkpoint System**: Save and resume interrupted scans seamlessly
 - **Comprehensive Logging**: Detailed logs for debugging and analysis
 
-### 📊 **Professional Reporting**
+### Professional Reporting
 
 - **Multiple Formats**: JSON, TXT, HTML, CSV, and security tool formats
 - **Security Tool Integration**: Export to OWASP ZAP, Burp Suite, and Nessus formats
@@ -74,7 +74,7 @@
 - **Rich Metadata**: Detailed scan information and statistics
 - **Export Ready**: Compatible with other security tools and platforms
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Installation
 
@@ -89,20 +89,20 @@ sudo mv subdomainx /usr/local/bin/
 
 ### Basic Usage
 
-**🔍 Single Domain Enumeration:**
+**Single Domain Enumeration:**
 
 ```bash
 subdomainx --subfinder --httpx example.com
 ```
 
-**📁 Multiple Domains:**
+**Multiple Domains:**
 
 ```bash
 echo "example.com" > domains.txt
 subdomainx --wildcard domains.txt --format html
 ```
 
-**🔧 Security Tool Integration:**
+**Security Tool Integration:**
 
 ```bash
 # Export to OWASP ZAP format
@@ -118,7 +118,7 @@ subdomainx --subfinder --httpx --format nessus example.com
 subdomainx --subfinder --httpx --format csv example.com
 ```
 
-**🔌 API-Powered Discovery:**
+**API-Powered Discovery:**
 
 ```bash
 # Set API keys
@@ -133,27 +133,27 @@ export HACKERTARGET_API_KEY="your_key"
 subdomainx --securitytrails --virustotal --censys --crtsh --urlscan --threatcrowd --hackertarget example.com
 ```
 
-**⚡ High-Performance Scan:**
+**High-Performance Scan:**
 
 ```bash
 subdomainx --threads 20 --timeout 60 --subfinder --amass --max-http-targets 1000 example.com
 ```
 
-**🔄 Resume Interrupted Scan:**
+**Resume Interrupted Scan:**
 
 ```bash
 # Resume from checkpoint
 subdomainx --resume my_scan
 ```
 
-> **💡 Pro Tip**: Always place flags before the domain argument:
+> **Pro Tip**: Always place flags before the domain argument:
 >
 > ```bash
-> subdomainx --tools domain.com  # ✅ Correct
-> subdomainx domain.com --tools  # ❌ Incorrect
+> subdomainx --tools domain.com  # Correct
+> subdomainx domain.com --tools  # Incorrect
 > ```
 
-## 🛠️ Supported Tools
+## Supported Tools
 
 ### Enumeration Tools
 
@@ -191,19 +191,19 @@ subdomainx --resume my_scan
 | **httpx** | Fast HTTP probe | `go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest` |
 | **smap**  | Port scanner    | `go install github.com/s0md3v/smap/cmd/smap@latest`                |
 
-## 📚 Documentation
+## Documentation
 
-**🌐 [View Full Documentation](https://subdomainx.vercel.app)**
+**[View Full Documentation](https://subdomainx.vercel.app)**
 
-- [📖 Installation Guide](https://subdomainx.vercel.app/installation)
-- [🔧 CLI Reference](https://subdomainx.vercel.app/cli-reference)
-- [💡 Examples & Use Cases](https://subdomainx.vercel.app/examples)
-- [⚙️ Configuration](https://subdomainx.vercel.app/configuration)
-- [🛠️ Supported Tools](https://subdomainx.vercel.app/supported-tools)
+- [Installation Guide](https://subdomainx.vercel.app/installation)
+- [CLI Reference](https://subdomainx.vercel.app/cli-reference)
+- [Examples & Use Cases](https://subdomainx.vercel.app/examples)
+- [Configuration](https://subdomainx.vercel.app/configuration)
+- [Supported Tools](https://subdomainx.vercel.app/supported-tools)
 
-## 💡 Advanced Examples
+## Advanced Examples
 
-### 🔍 Comprehensive Reconnaissance
+### Comprehensive Reconnaissance
 
 ```bash
 # Full enumeration with all tools
@@ -213,7 +213,7 @@ subdomainx --subfinder --amass --findomain --assetfinder --sublist3r \
            --format html --name comprehensive_scan example.com
 ```
 
-### 🎯 Targeted Enumeration
+### Targeted Enumeration
 
 ```bash
 # Focus on specific tools for speed
@@ -221,14 +221,14 @@ subdomainx --subfinder --httpx --status-codes 200,301,302 \
            --ports 80,443,8080,8443 --max-http-targets 500 example.com
 ```
 
-### 📊 Custom Wordlist Brute Force
+### Custom Wordlist Brute Force
 
 ```bash
 # Use custom wordlist for altdns
 subdomainx --altdns --wordlist /path/to/custom_wordlist.txt example.com
 ```
 
-### 🔄 Resume and Monitor
+### Resume and Monitor
 
 ```bash
 # Start scan with monitoring
@@ -238,15 +238,15 @@ subdomainx --verbose --subfinder --amass --max-http-targets 1000 example.com
 subdomainx --resume example_com_scan
 ```
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions! Here's how you can help:
 
-1. **🐛 Report Bugs**: [Create an issue](https://github.com/itszeeshan/subdomainx/issues)
-2. **💡 Suggest Features**: [Start a discussion](https://github.com/itszeeshan/subdomainx/discussions)
-3. **🔧 Submit PRs**: Fork the repo and submit pull requests
-4. **📖 Improve Docs**: Help us make the documentation better
-5. **⭐ Star the Repo**: Show your support!
+1. **Report Bugs**: [Create an issue](https://github.com/itszeeshan/subdomainx/issues)
+2. **Suggest Features**: [Start a discussion](https://github.com/itszeeshan/subdomainx/discussions)
+3. **Submit PRs**: Fork the repo and submit pull requests
+4. **Improve Docs**: Help us make the documentation better
+5. **Star the Repo**: Show your support!
 
 ### Development Setup
 
@@ -257,11 +257,11 @@ go mod download
 go build -o subdomainx .
 ```
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## ⚠️ Disclaimer
+## Disclaimer
 
 **SubdomainX is designed for authorized security testing and research purposes only.**
 
@@ -270,7 +270,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Use responsibly and ethically
 - The authors are not responsible for any misuse of this tool
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - All the amazing open-source tools that make SubdomainX possible
 - The security community for continuous feedback and improvements
