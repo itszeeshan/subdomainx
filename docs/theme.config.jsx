@@ -11,7 +11,7 @@ export default {
         borderRadius: '12px',
         fontWeight: '500'
       }}>
-        v1.3.0
+        v1.4.1
       </span>
     </div>
   ),

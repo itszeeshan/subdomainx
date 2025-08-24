@@ -68,7 +68,7 @@ func main() {
 
 	// Show version
 	if *showVersion {
-		fmt.Println("SubdomainX v1.3.0")
+		fmt.Println("SubdomainX v1.4.1")
 		return
 	}
 
