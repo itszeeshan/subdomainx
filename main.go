@@ -64,8 +64,7 @@ func main() {
 
 	// Show version
 	if *showVersion {
-		fmt.Println("SubdomainX v1.2.0")
-		fmt.Println("All-in-one subdomain enumeration tool")
+		fmt.Println("SubdomainX v1.3.0")
 		return
 	}
 

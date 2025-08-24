@@ -1,8 +1,18 @@
 export default {
   logo: (
-    <div style={{ display: 'flex', alignItems: 'center' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
       <img src="/logo.png" alt="SubdomainX" style={{ height: '32px', width: 'auto' }} />
       <span>SubdomainX</span>
+      <span style={{ 
+        fontSize: '12px', 
+        padding: '2px 6px', 
+        backgroundColor: '#16a34a', 
+        color: 'white', 
+        borderRadius: '12px',
+        fontWeight: '500'
+      }}>
+        v1.3.0
+      </span>
     </div>
   ),
   project: {
@@ -54,7 +64,7 @@ export default {
     <>
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <meta property="og:title" content="SubdomainX" />
-      <meta property="og:description" content="All-in-one subdomain enumeration tool" />
+      <meta property="og:description" content="Advanced Subdomain Discovery & Security Reconnaissance Tool" />
       <link rel="stylesheet" href="/styles/globals.css" />
       <link rel="icon" type="image/png" href="/logo.png" />
       <link rel="apple-touch-icon" href="/logo.png" />
