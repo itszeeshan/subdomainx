@@ -101,7 +101,7 @@ func TestValidateInputInvalidOutputFormat(t *testing.T) {
 		t.Error("Expected error for invalid output format")
 	}
 
-	expectedMsg := "invalid output format: invalid. Supported formats: json, txt, html"
+	expectedMsg := "invalid output format: invalid. Supported formats: json, txt, html, zap, burp, nessus, csv"
 	if err.Error() != expectedMsg {
 		t.Errorf("Expected error message '%s', got '%s'", expectedMsg, err.Error())
 	}
