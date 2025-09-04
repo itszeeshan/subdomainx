@@ -22,8 +22,6 @@
 
 ---
 
-## What is SubdomainX?
-
 **SubdomainX** is a powerful, all-in-one subdomain enumeration and reconnaissance tool designed for modern cybersecurity professionals, penetration testers, and security researchers.
 
 ### Why Choose SubdomainX?
@@ -282,3 +280,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
   <p><strong>Happy Hunting! 🎯</strong></p>
   <p>Made with ❤️ by Zeeshan</p>
 </div>
+
