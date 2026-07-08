@@ -3,8 +3,12 @@ package scanner
 import (
 	"context"
 	"fmt"
+	"io"
 	"net"
 	"net/http"
+	"regexp"
+	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -77,6 +81,7 @@ func RunHTTPx(cfg *config.Config, subdomains []types.SubdomainResult) ([]types.H
 
 	// Submit scanning jobs
 	for _, url := range urls {
+		url := url // capture loop variable for goroutine
 		wg.Add(1)
 		pool.Submit(func() {
 			defer wg.Done()
@@ -156,6 +161,7 @@ func RunSmap(cfg *config.Config, subdomains []types.SubdomainResult) ([]types.Po
 
 	// Submit scanning jobs
 	for _, host := range uniqueHosts {
+		host := host // capture loop variable for goroutine
 		wg.Add(1)
 		pool.Submit(func() {
 			defer wg.Done()
@@ -200,25 +206,32 @@ func RunSmap(cfg *config.Config, subdomains []types.SubdomainResult) ([]types.Po
 
 // shouldIncludeHTTPResult checks if an HTTP result should be included based on filters
 func shouldIncludeHTTPResult(result types.HTTPResult, cfg *config.Config) bool {
-	// Check status code filter
-	if statusCodes, exists := cfg.Filters["status_code"]; exists {
-		// Simple check - in a real implementation, you'd parse the comma-separated list
-		// For now, just include all results
-		_ = statusCodes
+	if statusCodes, exists := cfg.Filters["status_code"]; exists && statusCodes != "" {
+		resultCode := strconv.Itoa(result.StatusCode)
+		for _, code := range strings.Split(statusCodes, ",") {
+			if strings.TrimSpace(code) == resultCode {
+				return true
+			}
+		}
+		return false
 	}
-
 	return true
 }
 
 // shouldIncludePortResult checks if a port result should be included based on filters
 func shouldIncludePortResult(result types.PortResult, cfg *config.Config) bool {
-	// Check port filter
-	if ports, exists := cfg.Filters["ports"]; exists {
-		// Simple check - in a real implementation, you'd parse the comma-separated list
-		// For now, just include all results
-		_ = ports
+	if ports, exists := cfg.Filters["ports"]; exists && ports != "" {
+		portSet := make(map[string]bool)
+		for _, p := range strings.Split(ports, ",") {
+			portSet[strings.TrimSpace(p)] = true
+		}
+		for _, port := range result.Ports {
+			if portSet[strconv.Itoa(port.Number)] {
+				return true
+			}
+		}
+		return false
 	}
-
 	return true
 }
 
@@ -293,9 +306,16 @@ func scanPorts(ctx context.Context, host string, cfg *config.Config) (types.Port
 
 // extractTitle extracts the title from an HTTP response
 func extractTitle(resp *http.Response) string {
-	// For now, return a placeholder since we're using httpx for real scanning
-	// httpx will handle title extraction properly
-	return "Page Title"
+	body, err := io.ReadAll(io.LimitReader(resp.Body, 64*1024))
+	if err != nil {
+		return ""
+	}
+	re := regexp.MustCompile(`(?i)<title[^>]*>([^<]+)</title>`)
+	matches := re.FindSubmatch(body)
+	if len(matches) > 1 {
+		return strings.TrimSpace(string(matches[1]))
+	}
+	return ""
 }
 
 // extractTechnologies extracts technologies from an HTTP response
