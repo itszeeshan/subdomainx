@@ -27,7 +27,6 @@ tools:
   censys: false
   crtsh: false
   urlscan: false
-  threatcrowd: false
   hackertarget: false
   waybackurls: false
   linkheader: false
