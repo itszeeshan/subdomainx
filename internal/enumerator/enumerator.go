@@ -59,8 +59,13 @@ func Run(cfg *config.Config) ([]types.SubdomainResult, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(totalTimeout)*time.Second)
 	defer cancel()
 
+	type subdomainEntry struct {
+		subdomain string
+		source    string
+	}
+
 	// Create a worker pool for concurrent enumeration
-	subdomainChan := make(chan string, 1000)
+	subdomainChan := make(chan subdomainEntry, 1000)
 	var wg sync.WaitGroup
 
 	// Calculate total tasks for progress tracking
@@ -97,7 +102,7 @@ func Run(cfg *config.Config) ([]types.SubdomainResult, error) {
 
 				// Send subdomains to channel without DNS resolution
 				for _, subdomain := range subdomains {
-					subdomainChan <- subdomain
+					subdomainChan <- subdomainEntry{subdomain: subdomain, source: toolName}
 				}
 			}(enumerator, domain, name)
 		}
@@ -125,21 +130,31 @@ func Run(cfg *config.Config) ([]types.SubdomainResult, error) {
 		}
 	}()
 
-	// Collect and deduplicate subdomains first
-	uniqueSubdomains := make(map[string]bool)
-	for subdomain := range subdomainChan {
-		uniqueSubdomains[subdomain] = true
+	// Collect and deduplicate subdomains, tracking sources per subdomain
+	subdomainSources := make(map[string][]string)
+	for entry := range subdomainChan {
+		sources := subdomainSources[entry.subdomain]
+		alreadyHas := false
+		for _, s := range sources {
+			if s == entry.source {
+				alreadyHas = true
+				break
+			}
+		}
+		if !alreadyHas {
+			subdomainSources[entry.subdomain] = append(subdomainSources[entry.subdomain], entry.source)
+		}
 	}
 
-	fmt.Printf("📊 Total unique subdomains found: %d\n", len(uniqueSubdomains))
+	fmt.Printf("📊 Total unique subdomains found: %d\n", len(subdomainSources))
 
 	// Create results without DNS resolution for better performance
 	var finalResults []types.SubdomainResult
-	for subdomain := range uniqueSubdomains {
+	for subdomain, sources := range subdomainSources {
 		finalResults = append(finalResults, types.SubdomainResult{
 			Subdomain: subdomain,
-			Source:    "combined", // Since we deduplicated, we can't track individual sources
-			IPs:       []string{}, // Empty IPs for better performance
+			Source:    strings.Join(sources, ","),
+			IPs:       []string{},
 		})
 	}
 
