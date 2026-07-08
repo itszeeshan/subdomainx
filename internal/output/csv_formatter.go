@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/itszeeshan/subdomainx/internal/types"
 )
@@ -119,14 +120,7 @@ func WriteCSV(filename string, results *types.ScanResults) error {
 
 // joinStrings joins a slice of strings with commas
 func joinStrings(strs []string) string {
-	if len(strs) == 0 {
-		return ""
-	}
-	result := strs[0]
-	for i := 1; i < len(strs); i++ {
-		result += ", " + strs[i]
-	}
-	return result
+	return strings.Join(strs, ", ")
 }
 
 // parseURL parses URL into components (reuse from burp_formatter.go)
