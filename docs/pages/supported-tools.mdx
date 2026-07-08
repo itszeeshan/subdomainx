@@ -125,12 +125,9 @@ API tools leverage external services and databases to discover subdomains throug
 **Setup**: Set `URLSCAN_API_KEY` environment variable (optional, for higher rate limits)  
 **API**: [URLScan.io API](https://urlscan.io/docs/api/)
 
-### ThreatCrowd
+### ThreatCrowd (Deprecated)
 
-**Description**: Threat intelligence platform for subdomain enumeration. Provides subdomain discovery through their threat intelligence database, offering insights into malicious infrastructure and related domains.  
-**Website**: [ThreatCrowd](https://www.threatcrowd.org/)  
-**Setup**: No setup required (public API)  
-**API**: [ThreatCrowd API](https://www.threatcrowd.org/api/)
+> **Removed in v1.5**: ThreatCrowd has been shut down and its API no longer responds. The `--threatcrowd` flag has been removed from SubdomainX. If you were relying on ThreatCrowd, consider using crt.sh, URLScan.io, or HackerTarget as alternatives.
 
 ### HackerTarget
 
@@ -165,13 +162,15 @@ Verify which tools are available on your system:
 subdomainx --check-tools
 ```
 
-### Get Installation Help
+### Install All Tools
 
-Get detailed installation instructions for missing tools:
+Automatically install all missing tools with a single command:
 
 ```bash
 subdomainx --install-tools
 ```
+
+This checks prerequisites (Go, pip3, git, brew), installs all missing CLI tools, and shows setup instructions for API keys.
 
 ## Pro Tips
 

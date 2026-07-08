@@ -47,7 +47,7 @@
 ### Intelligent Enumeration
 
 - **12+ Tools Integrated**: subfinder, amass, findomain, assetfinder, sublist3r, knockpy, dnsrecon, fierce, massdns, altdns, waybackurls, linkheader
-- **7+ API Services**: SecurityTrails, VirusTotal, Censys, crt.sh, URLScan.io, ThreatCrowd, HackerTarget
+- **6+ API Services**: SecurityTrails, VirusTotal, Censys, crt.sh, URLScan.io, HackerTarget
 - **Custom Wordlists**: Support for custom brute-forcing dictionaries
 - **Smart Filtering**: Advanced filtering and deduplication
 
@@ -128,7 +128,7 @@ export URLSCAN_API_KEY="your_key"
 export HACKERTARGET_API_KEY="your_key"
 
 # Use APIs
-subdomainx --securitytrails --virustotal --censys --crtsh --urlscan --threatcrowd --hackertarget example.com
+subdomainx --securitytrails --virustotal --censys --crtsh --urlscan --hackertarget example.com
 ```
 
 **High-Performance Scan:**
@@ -179,7 +179,6 @@ subdomainx --resume my_scan
 | **Censys**         | Internet-wide scanning data | ✅               |
 | **crt.sh**         | Certificate Transparency    | ❌               |
 | **URLScan.io**     | Web scanning service        | ✅ (optional)    |
-| **ThreatCrowd**    | Threat intelligence         | ❌               |
 | **HackerTarget**   | Security research platform  | ✅ (optional)    |
 
 ### Scanning Tools

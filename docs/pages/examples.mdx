@@ -53,16 +53,16 @@ Use API-based enumeration tools for enhanced discovery:
 **Single domain:**
 
 ```bash
-subdomainx --securitytrails --virustotal --censys --crtsh --urlscan --threatcrowd --hackertarget example.com
+subdomainx --securitytrails --virustotal --censys --crtsh --urlscan --hackertarget example.com
 ```
 
 **Multiple domains:**
 
 ```bash
-subdomainx --wildcard domains.txt --securitytrails --virustotal --censys --crtsh --urlscan --threatcrowd --hackertarget
+subdomainx --wildcard domains.txt --securitytrails --virustotal --censys --crtsh --urlscan --hackertarget
 ```
 
-> **Note**: Requires API keys to be set as environment variables. Some APIs (crt.sh, ThreatCrowd) work without API keys.
+> **Note**: Requires API keys to be set as environment variables. Some APIs (crt.sh, HackerTarget) work without API keys.
 
 ### Mixed Approach
 
@@ -390,13 +390,13 @@ Leverage external APIs for comprehensive subdomain discovery:
 **Single domain:**
 
 ```bash
-subdomainx --securitytrails --virustotal --censys --crtsh --urlscan --threatcrowd --hackertarget --linkheader example.com
+subdomainx --securitytrails --virustotal --censys --crtsh --urlscan --hackertarget --linkheader example.com
 ```
 
 **Multiple domains:**
 
 ```bash
-subdomainx --wildcard domains.txt --securitytrails --virustotal --censys --crtsh --urlscan --threatcrowd --hackertarget --linkheader
+subdomainx --wildcard domains.txt --securitytrails --virustotal --censys --crtsh --urlscan --hackertarget --linkheader
 ```
 
 ### Maximum Coverage
@@ -406,13 +406,13 @@ Combine all available tools for maximum subdomain discovery:
 **Single domain:**
 
 ```bash
-subdomainx --subfinder --amass --securitytrails --virustotal --censys --crtsh --urlscan --threatcrowd --hackertarget --waybackurls --linkheader --httpx --smap example.com
+subdomainx --subfinder --amass --securitytrails --virustotal --censys --crtsh --urlscan --hackertarget --waybackurls --linkheader --httpx --smap example.com
 ```
 
 **Multiple domains:**
 
 ```bash
-subdomainx --wildcard domains.txt --subfinder --amass --securitytrails --virustotal --censys --crtsh --urlscan --threatcrowd --hackertarget --waybackurls --linkheader --httpx --smap
+subdomainx --wildcard domains.txt --subfinder --amass --securitytrails --virustotal --censys --crtsh --urlscan --hackertarget --waybackurls --linkheader --httpx --smap
 ```
 
 ### Asset Discovery

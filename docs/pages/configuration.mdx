@@ -129,7 +129,6 @@ Tool selection is primarily controlled via CLI flags. YAML configuration provide
 - `censys` → `--censys`
 - `crtsh` → `--crtsh`
 - `urlscan` → `--urlscan`
-- `threatcrowd` → `--threatcrowd`
 - `hackertarget` → `--hackertarget`
 
 #### Scanning Tools
@@ -219,7 +218,7 @@ export URLSCAN_API_KEY="your_key"
 export HACKERTARGET_API_KEY="your_key"
 
 # Use APIs
-subdomainx --securitytrails --virustotal --censys --crtsh --urlscan --threatcrowd --hackertarget example.com
+subdomainx --securitytrails --virustotal --censys --crtsh --urlscan --hackertarget example.com
 ```
 
 **Multiple domains:**
@@ -234,7 +233,7 @@ export URLSCAN_API_KEY="your_key"
 export HACKERTARGET_API_KEY="your_key"
 
 # Use APIs
-subdomainx --wildcard domains.txt --securitytrails --virustotal --censys --crtsh --urlscan --threatcrowd --hackertarget
+subdomainx --wildcard domains.txt --securitytrails --virustotal --censys --crtsh --urlscan --hackertarget
 ```
 
 ### Wordlist Configuration

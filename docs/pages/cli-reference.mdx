@@ -68,7 +68,6 @@ Use specific tools, otherwise all available enumeration tools will be used by de
 | `--censys`         | Use Censys API                          |
 | `--crtsh`          | Use crt.sh Certificate Transparency API |
 | `--urlscan`        | Use URLScan.io API                      |
-| `--threatcrowd`    | Use ThreatCrowd API                     |
 | `--hackertarget`   | Use HackerTarget API                    |
 
 > **Note**: If no specific tools are specified, SubdomainX will use all available enumeration tools by default. API tools and scanners must be explicitly enabled.
@@ -119,7 +118,7 @@ Filter results based on specific criteria:
 | `--help`          | Show help message                                |
 | `--version`       | Show version information                         |
 | `--check-tools`   | Check availability of enumeration tools          |
-| `--install-tools` | Show installation instructions for missing tools |
+| `--install-tools` | Automatically install all missing tools |
 | `--config FILE`   | Use custom configuration file                    |
 | `--verbose`       | Enable verbose output                            |
 
@@ -172,13 +171,13 @@ subdomainx --wildcard domains.txt --linkheader
 **Single domain:**
 
 ```bash
-subdomainx --securitytrails --virustotal --censys --crtsh --urlscan --threatcrowd --hackertarget example.com
+subdomainx --securitytrails --virustotal --censys --crtsh --urlscan --hackertarget example.com
 ```
 
 **Multiple domains:**
 
 ```bash
-subdomainx --wildcard domains.txt --securitytrails --virustotal --censys --crtsh --urlscan --threatcrowd --hackertarget
+subdomainx --wildcard domains.txt --securitytrails --virustotal --censys --crtsh --urlscan --hackertarget
 ```
 
 ### Custom Wordlist
@@ -309,9 +308,9 @@ Check which tools are available and get installation help:
 subdomainx --check-tools
 ```
 
-### Install Help
+### Install Tools
 
-Get detailed installation instructions for missing tools:
+Automatically install all missing tools:
 
 ```bash
 subdomainx --install-tools
