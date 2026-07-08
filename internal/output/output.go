@@ -102,7 +102,7 @@ func generateTXT(cfg *config.Config, results *types.ScanResults) error {
 func generateHTML(cfg *config.Config, results *types.ScanResults) error {
 	// Main HTML report
 	htmlFile := filepath.Join(cfg.OutputDir, fmt.Sprintf("%s_report.html", cfg.UniqueName))
-	if err := WriteHTML(htmlFile, results); err != nil {
+	if err := WriteHTML(htmlFile, cfg, results); err != nil {
 		return fmt.Errorf("failed to write HTML report: %v", err)
 	}
 

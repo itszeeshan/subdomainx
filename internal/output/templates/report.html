@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SubdomainX — {{.ScanID}}</title>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #fdf4f0 0%, #f5f0ff 50%, #ede9fe 100%);
+            min-height: 100vh;
+            color: #1e1b2e;
+        }
+
+        /* ── Layout ── */
+        .shell { display: flex; min-height: 100vh; }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            width: 240px;
+            flex-shrink: 0;
+            background: rgba(255,255,255,0.75);
+            backdrop-filter: blur(16px);
+            border-right: 1px solid rgba(200,185,255,0.3);
+            display: flex;
+            flex-direction: column;
+            padding: 24px 16px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 8px 24px;
+            border-bottom: 1px solid rgba(200,185,255,0.3);
+            margin-bottom: 20px;
+        }
+        .logo-icon {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, #a855f7, #6366f1);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            color: white;
+        }
+        .logo-text { font-size: 15px; font-weight: 700; color: #1e1b2e; line-height: 1.1; }
+        .logo-sub  { font-size: 11px; color: #7c6f9a; font-weight: 400; }
+
+        /* nav */
+        .nav-section { margin-bottom: 6px; }
+        .nav-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+            color: #a89bc4;
+            padding: 0 8px;
+            margin-bottom: 4px;
+        }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            color: #5b5075;
+            font-size: 13.5px;
+            font-weight: 500;
+            transition: background .15s, color .15s;
+            text-decoration: none;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+        .nav-item:hover { background: rgba(168,85,247,0.08); color: #7c3aed; }
+        .nav-item.active { background: rgba(168,85,247,0.12); color: #7c3aed; font-weight: 600; }
+        .nav-item i { width: 16px; height: 16px; }
+
+        /* collapsible filter section */
+        .filter-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 9px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            color: #5b5075;
+            font-size: 13px;
+            font-weight: 600;
+            background: none;
+            border: none;
+            width: 100%;
+            margin-top: 16px;
+        }
+        .filter-toggle:hover { background: rgba(168,85,247,0.06); }
+        .filter-toggle .label { display: flex; align-items: center; gap: 8px; }
+        .filter-body { padding: 4px 0 0; }
+        .filter-body.hidden { display: none; }
+
+        .filter-group { margin-bottom: 14px; padding: 0 4px; }
+        .filter-group-title { font-size: 11px; font-weight: 600; color: #a89bc4; margin-bottom: 6px; text-transform: uppercase; letter-spacing: .06em; }
+
+        .search-box {
+            width: 100%;
+            padding: 7px 10px;
+            border: 1px solid rgba(200,185,255,0.5);
+            border-radius: 8px;
+            background: rgba(255,255,255,0.7);
+            font-size: 12.5px;
+            color: #1e1b2e;
+            outline: none;
+            transition: border-color .15s;
+        }
+        .search-box:focus { border-color: #a855f7; }
+        .search-box::placeholder { color: #b8aed0; }
+
+        .checkbox-list { display: flex; flex-direction: column; gap: 5px; max-height: 160px; overflow-y: auto; }
+        .checkbox-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: #5b5075; cursor: pointer; }
+        .checkbox-item input[type=checkbox] { accent-color: #a855f7; width: 13px; height: 13px; cursor: pointer; }
+        .checkbox-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+
+        .btn-clear {
+            width: 100%;
+            padding: 7px;
+            border-radius: 8px;
+            border: 1px solid rgba(200,185,255,0.5);
+            background: none;
+            font-size: 12px;
+            color: #7c3aed;
+            cursor: pointer;
+            font-weight: 500;
+            margin-top: 8px;
+            transition: background .15s;
+        }
+        .btn-clear:hover { background: rgba(168,85,247,0.08); }
+
+        /* ── Main ── */
+        .main {
+            flex: 1;
+            padding: 32px 28px;
+            min-width: 0;
+        }
+
+        .greeting { margin-bottom: 28px; }
+        .greeting-hello { font-size: 15px; color: #7c6f9a; font-weight: 400; margin-bottom: 2px; }
+        .greeting-title { font-size: 28px; font-weight: 700; color: #1e1b2e; }
+        .greeting-sub { font-size: 13.5px; color: #a89bc4; margin-top: 4px; }
+
+        /* stat cards */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.72);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(200,185,255,0.35);
+            border-radius: 16px;
+            padding: 18px 20px;
+        }
+        .stat-icon {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 12px;
+        }
+        .stat-icon.purple { background: rgba(168,85,247,0.12); color: #a855f7; }
+        .stat-icon.blue   { background: rgba(99,102,241,0.12);  color: #6366f1; }
+        .stat-icon.green  { background: rgba(16,185,129,0.12);  color: #10b981; }
+        .stat-icon.orange { background: rgba(251,146,60,0.12);  color: #fb923c; }
+        .stat-icon.pink   { background: rgba(236,72,153,0.12);  color: #ec4899; }
+        .stat-number { font-size: 26px; font-weight: 700; color: #1e1b2e; line-height: 1; }
+        .stat-label  { font-size: 12px; color: #7c6f9a; margin-top: 4px; font-weight: 500; }
+
+        /* tabs */
+        .tabs { display: flex; gap: 4px; margin-bottom: 16px; }
+        .tab {
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            background: rgba(255,255,255,0.5);
+            color: #7c6f9a;
+            transition: background .15s, color .15s;
+        }
+        .tab:hover { background: rgba(255,255,255,0.8); color: #1e1b2e; }
+        .tab.active { background: rgba(168,85,247,0.15); color: #7c3aed; font-weight: 600; }
+
+        /* table panel */
+        .panel {
+            background: rgba(255,255,255,0.72);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(200,185,255,0.3);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .panel-header {
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(200,185,255,0.2);
+        }
+        .panel-title { font-size: 14px; font-weight: 600; color: #1e1b2e; }
+        .panel-count {
+            font-size: 12px;
+            color: #7c6f9a;
+            background: rgba(168,85,247,0.1);
+            border-radius: 20px;
+            padding: 2px 10px;
+            font-weight: 600;
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+        th {
+            background: rgba(245,240,255,0.6);
+            text-align: left;
+            padding: 10px 16px;
+            font-size: 11.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: #7c6f9a;
+            position: sticky; top: 0;
+        }
+        td {
+            padding: 10px 16px;
+            font-size: 13px;
+            border-bottom: 1px solid rgba(200,185,255,0.15);
+            color: #1e1b2e;
+            word-break: break-word;
+        }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: rgba(168,85,247,0.04); }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 9px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .badge-source { background: rgba(99,102,241,0.1); color: #4f46e5; }
+        .badge-ip     { background: rgba(16,185,129,0.1); color: #059669; font-family: monospace; }
+
+        .status-ok   { color: #10b981; font-weight: 600; }
+        .status-3xx  { color: #f59e0b; font-weight: 600; }
+        .status-4xx  { color: #f97316; font-weight: 600; }
+        .status-5xx  { color: #ef4444; font-weight: 600; }
+        .status-other{ color: #6b7280; font-weight: 600; }
+
+        .link { color: #7c3aed; text-decoration: none; font-size: 12.5px; }
+        .link:hover { text-decoration: underline; }
+
+        .empty-state {
+            padding: 48px;
+            text-align: center;
+            color: #a89bc4;
+            font-size: 14px;
+        }
+
+        /* pagination */
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-top: 1px solid rgba(200,185,255,0.2);
+        }
+        .pagination-info { font-size: 12px; color: #7c6f9a; }
+        .pag-buttons { display: flex; gap: 6px; }
+        .pag-btn {
+            padding: 5px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(200,185,255,0.4);
+            background: rgba(255,255,255,0.7);
+            font-size: 12px;
+            cursor: pointer;
+            color: #5b5075;
+            font-weight: 500;
+            transition: background .15s, color .15s;
+        }
+        .pag-btn:hover:not(:disabled) { background: rgba(168,85,247,0.12); color: #7c3aed; border-color: #a855f7; }
+        .pag-btn:disabled { opacity: .4; cursor: default; }
+        .pag-btn.active { background: rgba(168,85,247,0.15); color: #7c3aed; border-color: #a855f7; font-weight: 700; }
+
+        /* ── Right Panel ── */
+        .right-panel {
+            width: 260px;
+            flex-shrink: 0;
+            padding: 32px 16px 32px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .info-card {
+            background: rgba(255,255,255,0.72);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(200,185,255,0.3);
+            border-radius: 16px;
+            padding: 18px;
+            position: relative;
+            overflow: hidden;
+        }
+        .info-card .orb {
+            position: absolute;
+            width: 100px; height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(168,85,247,0.2), rgba(99,102,241,0.15));
+            top: -30px; right: -30px;
+            pointer-events: none;
+        }
+        .info-card-title { font-size: 12px; font-weight: 700; color: #a89bc4; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 14px; }
+        .info-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 9px; }
+        .info-key { font-size: 12px; color: #7c6f9a; }
+        .info-val { font-size: 12.5px; font-weight: 600; color: #1e1b2e; text-align: right; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        /* bar charts */
+        .bar-chart { display: flex; flex-direction: column; gap: 8px; }
+        .bar-row { display: flex; flex-direction: column; gap: 3px; }
+        .bar-label-row { display: flex; justify-content: space-between; font-size: 11.5px; }
+        .bar-name  { color: #5b5075; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 150px; }
+        .bar-count { color: #a89bc4; font-weight: 600; }
+        .bar-track { background: rgba(168,85,247,0.1); border-radius: 4px; height: 5px; overflow: hidden; }
+        .bar-fill  { height: 100%; background: linear-gradient(90deg, #a855f7, #6366f1); border-radius: 4px; transition: width .6s ease; }
+
+        .section-hidden { display: none; }
+    </style>
+</head>
+<body>
+<div class="shell">
+
+    <!-- ── Sidebar ── -->
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-icon"><i data-lucide="search" style="width:18px;height:18px"></i></div>
+            <div>
+                <div class="logo-text">SubdomainX</div>
+                <div class="logo-sub">Scan Dashboard</div>
+            </div>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-label">Views</div>
+            <button class="nav-item active" onclick="showTab('subdomains')" id="nav-subdomains">
+                <i data-lucide="globe-2"></i> Subdomains
+            </button>
+            <button class="nav-item" onclick="showTab('http')" id="nav-http">
+                <i data-lucide="activity"></i> HTTP Services
+            </button>
+            <button class="nav-item" onclick="showTab('ports')" id="nav-ports">
+                <i data-lucide="plug"></i> Port Results
+            </button>
+        </div>
+
+        <!-- Filters -->
+        <button class="filter-toggle" onclick="toggleFilters(this)">
+            <span class="label"><i data-lucide="sliders-horizontal" style="width:14px;height:14px"></i> Filters</span>
+            <i data-lucide="chevron-down" style="width:14px;height:14px" id="filter-chevron"></i>
+        </button>
+
+        <div class="filter-body" id="filter-body">
+            <div class="filter-group">
+                <div class="filter-group-title">Search</div>
+                <input class="search-box" id="search-input" type="text" placeholder="Filter subdomains..." oninput="applyFilters()">
+            </div>
+
+            <div class="filter-group" id="domain-filter-group">
+                <div class="filter-group-title">Parent Domain</div>
+                <div class="checkbox-list" id="domain-checkboxes"></div>
+            </div>
+
+            <div class="filter-group" id="source-filter-group">
+                <div class="filter-group-title">Source</div>
+                <div class="checkbox-list" id="source-checkboxes"></div>
+            </div>
+
+            <div class="filter-group" id="status-filter-group" style="display:none">
+                <div class="filter-group-title">Status Code</div>
+                <div class="checkbox-list" id="status-checkboxes"></div>
+            </div>
+
+            <button class="btn-clear" onclick="clearFilters()">Clear All Filters</button>
+        </div>
+    </aside>
+
+    <!-- ── Main Content ── -->
+    <main class="main">
+        <!-- Greeting -->
+        <div class="greeting">
+            <div class="greeting-hello">Hello 👋, welcome back</div>
+            <div class="greeting-title">Subdomain Dashboard</div>
+            <div class="greeting-sub">Scan ID: <strong>{{.ScanID}}</strong> &nbsp;·&nbsp; {{.GeneratedAt}}</div>
+        </div>
+
+        <!-- Stat Cards -->
+        <div class="stat-grid">
+            <div class="stat-card">
+                <div class="stat-icon purple"><i data-lucide="globe-2" style="width:18px;height:18px"></i></div>
+                <div class="stat-number">{{.SubdomainCount}}</div>
+                <div class="stat-label">Subdomains Found</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon blue"><i data-lucide="layers" style="width:18px;height:18px"></i></div>
+                <div class="stat-number">{{.UniqueDomains}}</div>
+                <div class="stat-label">Parent Domains</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green"><i data-lucide="zap" style="width:18px;height:18px"></i></div>
+                <div class="stat-number">{{.UniqueSources}}</div>
+                <div class="stat-label">Sources Used</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon orange"><i data-lucide="activity" style="width:18px;height:18px"></i></div>
+                <div class="stat-number">{{.HTTPCount}}</div>
+                <div class="stat-label">HTTP Services</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon pink"><i data-lucide="plug" style="width:18px;height:18px"></i></div>
+                <div class="stat-number">{{.PortCount}}</div>
+                <div class="stat-label">Hosts with Ports</div>
+            </div>
+        </div>
+
+        <!-- Table Section -->
+        <!-- Subdomains -->
+        <div id="tab-subdomains">
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">Subdomains</span>
+                    <span class="panel-count" id="subdomain-count-badge">{{.SubdomainCount}} total</span>
+                </div>
+                {{if gt .SubdomainCount 0}}
+                <div style="overflow-x:auto">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Subdomain</th>
+                                <th>Parent</th>
+                                <th>Source</th>
+                                <th>IP Addresses</th>
+                            </tr>
+                        </thead>
+                        <tbody id="subdomains-tbody"></tbody>
+                    </table>
+                </div>
+                <div class="pagination">
+                    <span class="pagination-info" id="subdomains-info"></span>
+                    <div class="pag-buttons">
+                        <button class="pag-btn" id="subdomain-prev" onclick="subdomainsPage(-1)">Previous</button>
+                        <button class="pag-btn" id="subdomain-next" onclick="subdomainsPage(1)">Next</button>
+                    </div>
+                </div>
+                {{else}}
+                <div class="empty-state">No subdomains found.</div>
+                {{end}}
+            </div>
+        </div>
+
+        <!-- HTTP Services -->
+        <div id="tab-http" class="section-hidden">
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">HTTP Services</span>
+                    <span class="panel-count">{{.HTTPCount}} total</span>
+                </div>
+                {{if gt .HTTPCount 0}}
+                <div style="overflow-x:auto">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>URL</th>
+                                <th>Status</th>
+                                <th>Title</th>
+                                <th>Length</th>
+                                <th>Technologies</th>
+                            </tr>
+                        </thead>
+                        <tbody id="http-tbody"></tbody>
+                    </table>
+                </div>
+                <div class="pagination">
+                    <span class="pagination-info" id="http-info"></span>
+                    <div class="pag-buttons">
+                        <button class="pag-btn" id="http-prev" onclick="httpPage(-1)">Previous</button>
+                        <button class="pag-btn" id="http-next" onclick="httpPage(1)">Next</button>
+                    </div>
+                </div>
+                {{else}}
+                <div class="empty-state">No HTTP results. Run with <code>--httpx</code> to probe live hosts.</div>
+                {{end}}
+            </div>
+        </div>
+
+        <!-- Port Results -->
+        <div id="tab-ports" class="section-hidden">
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">Port Scan Results</span>
+                    <span class="panel-count">{{.PortCount}} hosts</span>
+                </div>
+                {{if gt .PortCount 0}}
+                <div style="overflow-x:auto">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Host</th>
+                                <th>IP</th>
+                                <th>Port</th>
+                                <th>Protocol</th>
+                                <th>State</th>
+                                <th>Service</th>
+                                <th>Version</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ports-tbody"></tbody>
+                    </table>
+                </div>
+                <div class="pagination">
+                    <span class="pagination-info" id="ports-info"></span>
+                    <div class="pag-buttons">
+                        <button class="pag-btn" id="ports-prev" onclick="portsPage(-1)">Previous</button>
+                        <button class="pag-btn" id="ports-next" onclick="portsPage(1)">Next</button>
+                    </div>
+                </div>
+                {{else}}
+                <div class="empty-state">No port results. Run with <code>--smap</code> to scan ports.</div>
+                {{end}}
+            </div>
+        </div>
+    </main>
+
+    <!-- ── Right Panel ── -->
+    <aside class="right-panel">
+        <!-- Scan Info -->
+        <div class="info-card">
+            <div class="orb"></div>
+            <div class="info-card-title">Scan Configuration</div>
+            <div class="info-row">
+                <span class="info-key">Scan ID</span>
+                <span class="info-val">{{.ScanID}}</span>
+            </div>
+            {{if .WildcardFile}}
+            <div class="info-row">
+                <span class="info-key">Wildcard file</span>
+                <span class="info-val" title="{{.WildcardFile}}">{{.WildcardFile}}</span>
+            </div>
+            {{end}}
+            <div class="info-row">
+                <span class="info-key">Threads</span>
+                <span class="info-val">{{.Threads}}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-key">Timeout</span>
+                <span class="info-val">{{.Timeout}}s</span>
+            </div>
+            <div class="info-row">
+                <span class="info-key">Retries</span>
+                <span class="info-val">{{.Retries}}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-key">Rate limit</span>
+                <span class="info-val">{{.RateLimit}}/s</span>
+            </div>
+        </div>
+
+        <!-- Source Breakdown -->
+        <div class="info-card">
+            <div class="info-card-title">Source Breakdown</div>
+            <div class="bar-chart" id="source-bars"></div>
+        </div>
+
+        <!-- Domain Breakdown -->
+        <div class="info-card">
+            <div class="info-card-title">Domain Breakdown</div>
+            <div class="bar-chart" id="domain-bars"></div>
+        </div>
+    </aside>
+
+</div>
+
+<script>
+// ── Data ──────────────────────────────────────────────────────────────────
+const allSubdomains = {{.Subdomains}};
+const allHTTP       = {{.HTTPResults}};
+const allPorts      = {{.PortResults}};
+const domainStats   = {{.DomainStats}};
+const sourceStats   = {{.SourceStats}};
+const ITEMS_PER_PAGE = {{.ItemsPerPage}};
+
+// ── State ────────────────────────────────────────────────────────────────
+let filteredSubdomains = [...allSubdomains];
+let subPage = 1, httpPage_ = 1, portsPage_ = 1;
+let activeTab = 'subdomains';
+
+// ── Lucide init ──────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+    lucide.createIcons();
+    buildFilters();
+    buildBarCharts();
+    renderSubdomains();
+    renderHTTP();
+    renderPorts();
+});
+
+// ── Tab switching ────────────────────────────────────────────────────────
+function showTab(tab) {
+    ['subdomains','http','ports'].forEach(t => {
+        document.getElementById('tab-' + t).classList.toggle('section-hidden', t !== tab);
+        document.getElementById('nav-' + t).classList.toggle('active', t === tab);
+    });
+    activeTab = tab;
+
+    const si = document.getElementById('search-input');
+    const dg = document.getElementById('domain-filter-group');
+    const sg = document.getElementById('source-filter-group');
+    const stg = document.getElementById('status-filter-group');
+
+    if (tab === 'subdomains') {
+        si.placeholder = 'Filter subdomains...';
+        dg.style.display = ''; sg.style.display = ''; stg.style.display = 'none';
+    } else if (tab === 'http') {
+        si.placeholder = 'Filter by URL or title...';
+        dg.style.display = 'none'; sg.style.display = 'none'; stg.style.display = '';
+    } else {
+        si.placeholder = 'Filter by host or service...';
+        dg.style.display = 'none'; sg.style.display = 'none'; stg.style.display = 'none';
+    }
+    applyFilters();
+}
+
+// ── Filter panel toggle ──────────────────────────────────────────────────
+function toggleFilters(btn) {
+    const body = document.getElementById('filter-body');
+    const chevron = document.getElementById('filter-chevron');
+    body.classList.toggle('hidden');
+    chevron.style.transform = body.classList.contains('hidden') ? 'rotate(-90deg)' : '';
+}
+
+// ── Build sidebar filter checkboxes ─────────────────────────────────────
+function buildFilters() {
+    const domains = [...new Set(allSubdomains.map(s => s.parent))].sort();
+    const sources = [...new Set(allSubdomains.flatMap(s => s.source.split(',').map(x => x.trim())))].sort();
+    const statuses = [...new Set(allHTTP.map(h => h.status))].sort();
+
+    buildChecks('domain-checkboxes', domains, applyFilters);
+    buildChecks('source-checkboxes', sources, applyFilters);
+    buildChecks('status-checkboxes', statuses.map(String), applyFilters);
+}
+
+function buildChecks(containerId, values, onChange) {
+    const el = document.getElementById(containerId);
+    el.innerHTML = '';
+    values.forEach(v => {
+        const label = document.createElement('label');
+        label.className = 'checkbox-item';
+        label.innerHTML = '<input type="checkbox" value="' + esc(v) + '" onchange="applyFilters()"><span class="checkbox-label" title="' + esc(v) + '">' + esc(v) + '</span>';
+        el.appendChild(label);
+    });
+}
+
+function clearFilters() {
+    document.getElementById('search-input').value = '';
+    document.querySelectorAll('.checkbox-item input').forEach(cb => cb.checked = false);
+    applyFilters();
+}
+
+// ── Apply filters ────────────────────────────────────────────────────────
+function applyFilters() {
+    const q = document.getElementById('search-input').value.toLowerCase();
+
+    if (activeTab === 'subdomains') {
+        const checkedDomains = checkedValues('domain-checkboxes');
+        const checkedSources = checkedValues('source-checkboxes');
+
+        filteredSubdomains = allSubdomains.filter(s => {
+            const matchQ = !q || s.subdomain.toLowerCase().includes(q) || s.ips.toLowerCase().includes(q);
+            const matchD = !checkedDomains.length || checkedDomains.includes(s.parent);
+            const matchS = !checkedSources.length || s.source.split(',').map(x=>x.trim()).some(src => checkedSources.includes(src));
+            return matchQ && matchD && matchS;
+        });
+        subPage = 1;
+        renderSubdomains();
+        document.getElementById('subdomain-count-badge').textContent = filteredSubdomains.length + ' results';
+
+    } else if (activeTab === 'http') {
+        const checkedStatus = checkedValues('status-checkboxes');
+        const fHttp = allHTTP.filter(h => {
+            const matchQ = !q || h.url.toLowerCase().includes(q) || (h.title||'').toLowerCase().includes(q);
+            const matchS = !checkedStatus.length || checkedStatus.includes(String(h.status));
+            return matchQ && matchS;
+        });
+        httpPage_ = 1;
+        renderHTTPFiltered(fHttp);
+
+    } else {
+        const fPorts = allPorts.filter(p => {
+            return !q || p.host.toLowerCase().includes(q) || p.service.toLowerCase().includes(q);
+        });
+        portsPage_ = 1;
+        renderPortsFiltered(fPorts);
+    }
+}
+
+function checkedValues(containerId) {
+    return [...document.querySelectorAll('#' + containerId + ' input:checked')].map(cb => cb.value);
+}
+
+// ── Render helpers ────────────────────────────────────────────────────────
+function esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function statusBadge(code) {
+    let cls = 'status-other';
+    if (code >= 200 && code < 300) cls = 'status-ok';
+    else if (code >= 300 && code < 400) cls = 'status-3xx';
+    else if (code >= 400 && code < 500) cls = 'status-4xx';
+    else if (code >= 500) cls = 'status-5xx';
+    return '<span class="' + cls + '">' + code + '</span>';
+}
+
+function setPagination(page, total, infoId, prevId, nextId) {
+    const totalPages = Math.max(1, Math.ceil(total / ITEMS_PER_PAGE));
+    document.getElementById(infoId).textContent = 'Page ' + page + ' of ' + totalPages + ' (' + total + ' items)';
+    document.getElementById(prevId).disabled = page <= 1;
+    document.getElementById(nextId).disabled = page >= totalPages;
+}
+
+// ── Subdomains ────────────────────────────────────────────────────────────
+function renderSubdomains() {
+    const tbody = document.getElementById('subdomains-tbody');
+    if (!tbody) return;
+    const start = (subPage - 1) * ITEMS_PER_PAGE;
+    const page = filteredSubdomains.slice(start, start + ITEMS_PER_PAGE);
+    tbody.innerHTML = page.map(s =>
+        '<tr><td><strong>' + esc(s.subdomain) + '</strong></td>' +
+        '<td><span class="badge badge-source">' + esc(s.parent) + '</span></td>' +
+        '<td>' + s.source.split(',').map(src => '<span class="badge badge-source">' + esc(src.trim()) + '</span>').join(' ') + '</td>' +
+        '<td>' + (s.ips === 'N/A' ? '<span style="color:#b8aed0">N/A</span>' : s.ips.split(', ').map(ip => '<span class="badge badge-ip">' + esc(ip) + '</span>').join(' ')) + '</td></tr>'
+    ).join('');
+    setPagination(subPage, filteredSubdomains.length, 'subdomains-info', 'subdomain-prev', 'subdomain-next');
+}
+
+function subdomainsPage(dir) {
+    const total = filteredSubdomains.length;
+    const totalPages = Math.max(1, Math.ceil(total / ITEMS_PER_PAGE));
+    subPage = Math.min(Math.max(1, subPage + dir), totalPages);
+    renderSubdomains();
+}
+
+// ── HTTP ──────────────────────────────────────────────────────────────────
+let currentHTTP = [...allHTTP];
+
+function renderHTTP() { currentHTTP = [...allHTTP]; renderHTTPFiltered(currentHTTP); }
+
+function renderHTTPFiltered(data) {
+    currentHTTP = data;
+    const tbody = document.getElementById('http-tbody');
+    if (!tbody) return;
+    const start = (httpPage_ - 1) * ITEMS_PER_PAGE;
+    const page = data.slice(start, start + ITEMS_PER_PAGE);
+    tbody.innerHTML = page.map(h =>
+        '<tr><td><a class="link" href="' + esc(h.url) + '" target="_blank">' + esc(h.url) + '</a></td>' +
+        '<td>' + statusBadge(h.status) + '</td>' +
+        '<td>' + esc(h.title || '—') + '</td>' +
+        '<td>' + (h.contentLength || '—') + '</td>' +
+        '<td>' + esc(h.technologies || '—') + '</td></tr>'
+    ).join('');
+    setPagination(httpPage_, data.length, 'http-info', 'http-prev', 'http-next');
+}
+
+function httpPage(dir) {
+    const totalPages = Math.max(1, Math.ceil(currentHTTP.length / ITEMS_PER_PAGE));
+    httpPage_ = Math.min(Math.max(1, httpPage_ + dir), totalPages);
+    renderHTTPFiltered(currentHTTP);
+}
+
+// ── Ports ─────────────────────────────────────────────────────────────────
+let currentPorts = [...allPorts];
+
+function renderPorts() { currentPorts = [...allPorts]; renderPortsFiltered(currentPorts); }
+
+function renderPortsFiltered(data) {
+    currentPorts = data;
+    const tbody = document.getElementById('ports-tbody');
+    if (!tbody) return;
+    const start = (portsPage_ - 1) * ITEMS_PER_PAGE;
+    const page = data.slice(start, start + ITEMS_PER_PAGE);
+    tbody.innerHTML = page.map(p =>
+        '<tr><td><strong>' + esc(p.host) + '</strong></td>' +
+        '<td><span class="badge badge-ip">' + esc(p.ip) + '</span></td>' +
+        '<td>' + p.port + '</td>' +
+        '<td>' + esc(p.protocol) + '</td>' +
+        '<td>' + esc(p.state) + '</td>' +
+        '<td>' + esc(p.service) + '</td>' +
+        '<td>' + esc(p.version || '—') + '</td></tr>'
+    ).join('');
+    setPagination(portsPage_, data.length, 'ports-info', 'ports-prev', 'ports-next');
+}
+
+function portsPage(dir) {
+    const totalPages = Math.max(1, Math.ceil(currentPorts.length / ITEMS_PER_PAGE));
+    portsPage_ = Math.min(Math.max(1, portsPage_ + dir), totalPages);
+    renderPortsFiltered(currentPorts);
+}
+
+// ── Bar charts ────────────────────────────────────────────────────────────
+function buildBarCharts() {
+    renderBars('source-bars', sourceStats.slice(0, 8));
+    renderBars('domain-bars', domainStats.slice(0, 8));
+}
+
+function renderBars(containerId, data) {
+    const el = document.getElementById(containerId);
+    if (!el || !data.length) { el && (el.innerHTML = '<span style="color:#b8aed0;font-size:12px">No data</span>'); return; }
+    const max = data[0].count;
+    el.innerHTML = data.map(d =>
+        '<div class="bar-row">' +
+        '<div class="bar-label-row"><span class="bar-name" title="' + esc(d.name) + '">' + esc(d.name) + '</span><span class="bar-count">' + d.count + '</span></div>' +
+        '<div class="bar-track"><div class="bar-fill" style="width:' + Math.round(d.count / max * 100) + '%"></div></div>' +
+        '</div>'
+    ).join('');
+}
+</script>
+</body>
+</html>
