@@ -52,7 +52,7 @@ func (c *CensysEnumerator) Enumerate(ctx context.Context, domain string, cfg *co
 	}
 
 	// Add headers
-	req.Header.Set("Authorization", fmt.Sprintf("Basic %s:%s", c.apiID, c.secret))
+	req.SetBasicAuth(c.apiID, c.secret)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
 
