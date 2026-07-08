@@ -36,6 +36,11 @@ Thumbs.db
 *.tmp
 *.temp
 *.log
+resume.cfg
+
+# AI planning artifacts
+ai-plan.md
+plan.md
 
 # Go specific
 *.test
