@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"bufio"
 	"fmt"
 	"os"
 	"os/exec"
@@ -49,7 +48,7 @@ func GetRequiredTools() []Tool {
 			Description: "Fast and cross-platform subdomain discovery",
 			InstallCmd: map[string]string{
 				"linux":   "wget https://github.com/Findomain/Findomain/releases/latest/download/findomain-linux -O /tmp/findomain && chmod +x /tmp/findomain && sudo mv /tmp/findomain /usr/local/bin/",
-				"darwin":  "brew install findomain || (wget https://github.com/Findomain/Findomain/releases/latest/download/findomain-osx -O /tmp/findomain && chmod +x /tmp/findomain && sudo mv /tmp/findomain /usr/local/bin/)",
+				"darwin":  "brew install findomain",
 				"windows": "Download from: https://github.com/Findomain/Findomain/releases/latest",
 			},
 			Required: false,
@@ -70,8 +69,8 @@ func GetRequiredTools() []Tool {
 			Command:     "sublist3r",
 			Description: "Subdomain enumeration using OSINT",
 			InstallCmd: map[string]string{
-				"linux":   "pip3 install sublist3r || (git clone https://github.com/aboul3la/Sublist3r.git /tmp/Sublist3r && cd /tmp/Sublist3r && pip3 install -r requirements.txt && sudo cp sublist3r.py /usr/local/bin/sublist3r && sudo chmod +x /usr/local/bin/sublist3r)",
-				"darwin":  "pip3 install sublist3r || (git clone https://github.com/aboul3la/Sublist3r.git /tmp/Sublist3r && cd /tmp/Sublist3r && pip3 install -r requirements.txt && sudo cp sublist3r.py /usr/local/bin/sublist3r && sudo chmod +x /usr/local/bin/sublist3r)",
+				"linux":   "pipx install sublist3r 2>/dev/null || pip3 install --user sublist3r",
+				"darwin":  "pipx install sublist3r 2>/dev/null || pip3 install --user sublist3r",
 				"windows": "pip install sublist3r",
 			},
 			Required: false,
@@ -81,8 +80,8 @@ func GetRequiredTools() []Tool {
 			Command:     "knockpy",
 			Description: "Subdomain enumeration tool",
 			InstallCmd: map[string]string{
-				"linux":   "pip3 install knockpy",
-				"darwin":  "pip3 install knockpy",
+				"linux":   "pipx install knockpy 2>/dev/null || pip3 install --user knockpy",
+				"darwin":  "pipx install knockpy 2>/dev/null || pip3 install --user knockpy",
 				"windows": "pip install knockpy",
 			},
 			Required: false,
@@ -92,8 +91,8 @@ func GetRequiredTools() []Tool {
 			Command:     "dnsrecon",
 			Description: "DNS enumeration and reconnaissance",
 			InstallCmd: map[string]string{
-				"linux":   "pip3 install dnsrecon || sudo apt-get install dnsrecon",
-				"darwin":  "pip3 install dnsrecon",
+				"linux":   "pipx install dnsrecon 2>/dev/null || pip3 install --user dnsrecon",
+				"darwin":  "pipx install dnsrecon 2>/dev/null || pip3 install --user dnsrecon",
 				"windows": "pip install dnsrecon",
 			},
 			Required: false,
@@ -103,8 +102,8 @@ func GetRequiredTools() []Tool {
 			Command:     "fierce",
 			Description: "DNS reconnaissance tool",
 			InstallCmd: map[string]string{
-				"linux":   "pip3 install fierce",
-				"darwin":  "pip3 install fierce",
+				"linux":   "pipx install fierce 2>/dev/null || pip3 install --user fierce",
+				"darwin":  "pipx install fierce 2>/dev/null || pip3 install --user fierce",
 				"windows": "pip install fierce",
 			},
 			Required: false,
@@ -115,7 +114,7 @@ func GetRequiredTools() []Tool {
 			Description: "High-performance DNS stub resolver",
 			InstallCmd: map[string]string{
 				"linux":   "git clone https://github.com/blechschmidt/massdns.git /tmp/massdns && cd /tmp/massdns && make && sudo cp bin/massdns /usr/local/bin/",
-				"darwin":  "brew install massdns || (git clone https://github.com/blechschmidt/massdns.git /tmp/massdns && cd /tmp/massdns && make && sudo cp bin/massdns /usr/local/bin/)",
+				"darwin":  "brew install massdns",
 				"windows": "Download and compile from: https://github.com/blechschmidt/massdns",
 			},
 			Required: false,
@@ -125,8 +124,8 @@ func GetRequiredTools() []Tool {
 			Command:     "altdns",
 			Description: "Subdomain permutation and alteration",
 			InstallCmd: map[string]string{
-				"linux":   "pip3 install py-altdns",
-				"darwin":  "pip3 install py-altdns",
+				"linux":   "pipx install py-altdns 2>/dev/null || pip3 install --user py-altdns",
+				"darwin":  "pipx install py-altdns 2>/dev/null || pip3 install --user py-altdns",
 				"windows": "pip install py-altdns",
 			},
 			Required: false,
@@ -143,16 +142,39 @@ func GetRequiredTools() []Tool {
 			Required: false,
 		},
 		{
+			Name:        "smap",
+			Command:     "smap",
+			Description: "Shodan-based port scanner",
+			InstallCmd: map[string]string{
+				"linux":   "go install -v github.com/s0md3v/smap/cmd/smap@latest",
+				"darwin":  "go install -v github.com/s0md3v/smap/cmd/smap@latest",
+				"windows": "go install -v github.com/s0md3v/smap/cmd/smap@latest",
+			},
+			Required: false,
+		},
+		{
 			Name:        "nmap",
 			Command:     "nmap",
 			Description: "Network exploration and port scanning",
 			InstallCmd: map[string]string{
-				"linux":   "sudo apt-get install nmap || sudo yum install nmap",
+				"linux":   "sudo apt-get install -y nmap || sudo yum install -y nmap",
 				"darwin":  "brew install nmap",
 				"windows": "Download from: https://nmap.org/download.html",
 			},
 			Required: false,
 		},
+		{
+			Name:        "waybackurls",
+			Command:     "waybackurls",
+			Description: "Fetch URLs from Wayback Machine for subdomain discovery",
+			InstallCmd: map[string]string{
+				"linux":   "go install github.com/tomnomnom/waybackurls@latest",
+				"darwin":  "go install github.com/tomnomnom/waybackurls@latest",
+				"windows": "go install github.com/tomnomnom/waybackurls@latest",
+			},
+			Required: false,
+		},
+		// --- API-based tools (no binary, need env vars) ---
 		{
 			Name:        "securitytrails",
 			Command:     "securitytrails",
@@ -186,17 +208,7 @@ func GetRequiredTools() []Tool {
 			},
 			Required: false,
 		},
-		{
-			Name:        "waybackurls",
-			Command:     "waybackurls",
-			Description: "Fetch URLs from Wayback Machine for subdomain discovery",
-			InstallCmd: map[string]string{
-				"linux":   "go install github.com/tomnomnom/waybackurls@latest",
-				"darwin":  "go install github.com/tomnomnom/waybackurls@latest",
-				"windows": "go install github.com/tomnomnom/waybackurls@latest",
-			},
-			Required: false,
-		},
+		// --- Built-in / public API tools (always available) ---
 		{
 			Name:        "linkheader",
 			Command:     "linkheader",
@@ -231,17 +243,6 @@ func GetRequiredTools() []Tool {
 			Required: false,
 		},
 		{
-			Name:        "threatcrowd",
-			Command:     "threatcrowd",
-			Description: "ThreatCrowd API for subdomain enumeration",
-			InstallCmd: map[string]string{
-				"linux":   "Built-in (no installation required)",
-				"darwin":  "Built-in (no installation required)",
-				"windows": "Built-in (no installation required)",
-			},
-			Required: false,
-		},
-		{
 			Name:        "hackertarget",
 			Command:     "hackertarget",
 			Description: "HackerTarget API for subdomain enumeration",
@@ -257,40 +258,18 @@ func GetRequiredTools() []Tool {
 
 // CheckToolAvailability checks if a tool is available in PATH or as an API
 func CheckToolAvailability(toolName string) bool {
-	// Special handling for API-based tools
 	switch toolName {
 	case "securitytrails":
-		// Check if API key is configured
-		apiKey := strings.TrimSpace(os.Getenv("SECURITYTRAILS_API_KEY"))
-		return apiKey != ""
+		return strings.TrimSpace(os.Getenv("SECURITYTRAILS_API_KEY")) != ""
 	case "virustotal":
-		// Check if API key is configured
-		apiKey := strings.TrimSpace(os.Getenv("VIRUSTOTAL_API_KEY"))
-		return apiKey != ""
+		return strings.TrimSpace(os.Getenv("VIRUSTOTAL_API_KEY")) != ""
 	case "censys":
-		// Check if API credentials are configured
 		apiID := strings.TrimSpace(os.Getenv("CENSYS_API_ID"))
 		secret := strings.TrimSpace(os.Getenv("CENSYS_SECRET"))
 		return apiID != "" && secret != ""
-	case "linkheader":
-		// Link header enumerator is built-in, always available
+	case "linkheader", "crtsh", "urlscan", "hackertarget":
 		return true
-	case "crtsh":
-		// crt.sh is a public API, always available
-		return true
-	case "urlscan":
-		// URLScan.io can work without API key, but better with one
-		_ = strings.TrimSpace(os.Getenv("URLSCAN_API_KEY"))
-		return true // Always available, API key is optional
-	case "threatcrowd":
-		// ThreatCrowd is a public API, always available
-		return true
-	case "hackertarget":
-		// HackerTarget can work without API key, but better with one
-		_ = strings.TrimSpace(os.Getenv("HACKERTARGET_API_KEY"))
-		return true // Always available, API key is optional
 	default:
-		// For command-line tools, check if they're in PATH
 		_, err := exec.LookPath(toolName)
 		return err == nil
 	}
@@ -312,109 +291,256 @@ func CheckAllTools() ([]Tool, []Tool) {
 	return available, missing
 }
 
-// PromptToolInstallation prompts the user to install missing tools
-func PromptToolInstallation(missingTools []Tool) error {
-	if len(missingTools) == 0 {
-		fmt.Println("✅ All tools are available!")
-		return nil
-	}
-
-	fmt.Printf("\n⚠️  Found %d missing tools:\n\n", len(missingTools))
-
-	for i, tool := range missingTools {
-		fmt.Printf("%d. %s - %s\n", i+1, tool.Name, tool.Description)
-	}
-
-	fmt.Print("\nWould you like to see installation instructions? (y/n): ")
-	reader := bufio.NewReader(os.Stdin)
-	response, err := reader.ReadString('\n')
-	if err != nil {
-		return fmt.Errorf("failed to read input: %v", err)
-	}
-
-	response = strings.TrimSpace(strings.ToLower(response))
-	if response != "y" && response != "yes" {
-		fmt.Println("\n⚠️  Some tools are missing. SubdomainX will skip unavailable tools during enumeration.")
-		return nil
-	}
-
-	// Show installation instructions
-	fmt.Printf("\n📦 Installation instructions for %s:\n\n", runtime.GOOS)
-
-	for i, tool := range missingTools {
-		fmt.Printf("--- %d. %s ---\n", i+1, tool.Name)
-
-		if installCmd, exists := tool.InstallCmd[runtime.GOOS]; exists {
-			fmt.Printf("Command: %s\n", installCmd)
-		} else {
-			fmt.Printf("Please visit the tool's official repository for installation instructions.\n")
-		}
-		fmt.Println()
-	}
-
-	fmt.Print("Would you like to automatically install tools that support auto-installation? (y/n): ")
-	autoResponse, err := reader.ReadString('\n')
-	if err != nil {
-		return fmt.Errorf("failed to read input: %v", err)
-	}
-
-	autoResponse = strings.TrimSpace(strings.ToLower(autoResponse))
-	if autoResponse == "y" || autoResponse == "yes" {
-		return autoInstallTools(missingTools)
-	}
-
-	fmt.Println("\n💡 After installing the tools, run SubdomainX again.")
-	fmt.Println("💡 You can also disable specific tools in the config file if you don't want to install them.")
-
-	return nil
+// prerequisite describes a required program for installing tools.
+type prerequisite struct {
+	Name    string
+	Command string
+	Version string // populated after check
 }
 
-// autoInstallTools attempts to automatically install tools
-func autoInstallTools(tools []Tool) error {
-	fmt.Println("\n🔧 Starting automatic installation...")
+// checkPrerequisites detects which package managers / runtimes are available.
+func checkPrerequisites() []prerequisite {
+	prereqs := []prerequisite{
+		{Name: "go", Command: "go"},
+		{Name: "pip3", Command: "pip3"},
+		{Name: "git", Command: "git"},
+	}
+	if runtime.GOOS == "darwin" {
+		prereqs = append(prereqs, prerequisite{Name: "brew", Command: "brew"})
+	}
 
-	for _, tool := range tools {
-		installCmd, exists := tool.InstallCmd[runtime.GOOS]
-		if !exists {
-			fmt.Printf("⏭️  Skipping %s (manual installation required)\n", tool.Name)
+	for i := range prereqs {
+		path, err := exec.LookPath(prereqs[i].Command)
+		if err != nil {
 			continue
 		}
-
-		// Skip tools that require manual steps or sudo
-		if strings.Contains(installCmd, "sudo") || strings.Contains(installCmd, "Download") {
-			fmt.Printf("⏭️  Skipping %s (requires manual installation)\n", tool.Name)
-			continue
-		}
-
-		fmt.Printf("📦 Installing %s...\n", tool.Name)
-
-		// Execute installation command
-		var cmd *exec.Cmd
-		if runtime.GOOS == "windows" {
-			cmd = exec.Command("cmd", "/C", installCmd)
+		_ = path
+		out, err := exec.Command(prereqs[i].Command, "--version").CombinedOutput()
+		if err == nil {
+			line := strings.SplitN(strings.TrimSpace(string(out)), "\n", 2)[0]
+			prereqs[i].Version = line
 		} else {
-			cmd = exec.Command("sh", "-c", installCmd)
+			prereqs[i].Version = "installed"
 		}
+	}
+	return prereqs
+}
 
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
+// isBuiltinOrAPI returns true if the tool's install command is not a real
+// installable command (i.e. it's built-in or requires only an env var).
+func isBuiltinOrAPI(tool Tool) bool {
+	cmd, ok := tool.InstallCmd[runtime.GOOS]
+	if !ok {
+		return true
+	}
+	return strings.HasPrefix(cmd, "Built-in") || strings.HasPrefix(cmd, "Set ")
+}
 
-		if err := cmd.Run(); err != nil {
-			fmt.Printf("❌ Failed to install %s: %v\n", tool.Name, err)
+// isAPITool returns true if the tool only needs an API key, not a binary.
+func isAPITool(tool Tool) bool {
+	cmd, ok := tool.InstallCmd[runtime.GOOS]
+	if !ok {
+		return false
+	}
+	return strings.HasPrefix(cmd, "Set ")
+}
+
+// isDownloadOnly returns true if the install command is just a download link.
+func isDownloadOnly(tool Tool) bool {
+	cmd, ok := tool.InstallCmd[runtime.GOOS]
+	if !ok {
+		return true
+	}
+	return strings.HasPrefix(cmd, "Download")
+}
+
+// needsPrereq returns the prerequisite command needed to install a tool.
+func needsPrereq(tool Tool) string {
+	cmd, ok := tool.InstallCmd[runtime.GOOS]
+	if !ok {
+		return ""
+	}
+	if strings.HasPrefix(cmd, "go install") {
+		return "go"
+	}
+	if strings.HasPrefix(cmd, "pipx ") || strings.HasPrefix(cmd, "pip3 ") || strings.HasPrefix(cmd, "pip ") {
+		return "pip3"
+	}
+	if strings.HasPrefix(cmd, "brew ") {
+		return "brew"
+	}
+	if strings.Contains(cmd, "git clone") {
+		return "git"
+	}
+	return "" // wget/curl/sudo — no special prereq check
+}
+
+// InstallTools checks for missing tools and installs them automatically.
+// This is the main entry point for `--install-tools`.
+func InstallTools() error {
+	fmt.Println("\n🔧 SubdomainX Tool Installer")
+	fmt.Println("=============================")
+	fmt.Println()
+
+	// --- Prerequisites ---
+	fmt.Println("Checking prerequisites...")
+	prereqs := checkPrerequisites()
+	prereqAvail := make(map[string]bool)
+	for _, p := range prereqs {
+		if p.Version != "" {
+			prereqAvail[p.Name] = true
+			fmt.Printf("  ✅ %s (%s)\n", p.Name, truncate(p.Version, 50))
+		} else {
+			prereqAvail[p.Name] = false
+			fmt.Printf("  ❌ %s (not found)\n", p.Name)
+		}
+	}
+	fmt.Println()
+
+	// --- Categorize tools ---
+	available, missing := CheckAllTools()
+
+	var installable []Tool
+	var apiTools []Tool
+	var downloadOnly []Tool
+	var missingPrereq []Tool
+
+	for _, tool := range missing {
+		if isBuiltinOrAPI(tool) {
+			if isAPITool(tool) {
+				apiTools = append(apiTools, tool)
+			}
 			continue
 		}
+		if isDownloadOnly(tool) {
+			downloadOnly = append(downloadOnly, tool)
+			continue
+		}
+		req := needsPrereq(tool)
+		if req != "" && !prereqAvail[req] {
+			missingPrereq = append(missingPrereq, tool)
+			continue
+		}
+		installable = append(installable, tool)
+	}
 
-		// Verify installation
-		if CheckToolAvailability(tool.Command) {
-			fmt.Printf("✅ Successfully installed %s\n", tool.Name)
-		} else {
-			fmt.Printf("⚠️  %s installation completed but tool not found in PATH\n", tool.Name)
+	fmt.Println("Checking tool status...")
+	fmt.Printf("  ✅ %d tools already available\n", len(available))
+	if len(installable) > 0 {
+		fmt.Printf("  📦 %d tools to install\n", len(installable))
+	}
+	if len(apiTools) > 0 {
+		fmt.Printf("  🔑 %d API tools need configuration\n", len(apiTools))
+	}
+	if len(missingPrereq) > 0 {
+		fmt.Printf("  ⚠️  %d tools skipped (missing prerequisite)\n", len(missingPrereq))
+	}
+	if len(downloadOnly) > 0 {
+		fmt.Printf("  ⬇️  %d tools need manual download\n", len(downloadOnly))
+	}
+	fmt.Println()
+
+	if len(installable) == 0 && len(apiTools) == 0 && len(downloadOnly) == 0 && len(missingPrereq) == 0 {
+		fmt.Println("✅ All tools are already installed!")
+		return nil
+	}
+
+	// --- Install ---
+	installed := 0
+	failed := 0
+
+	if len(installable) > 0 {
+		fmt.Println("Installing tools...")
+		for i, tool := range installable {
+			installCmd := tool.InstallCmd[runtime.GOOS]
+			fmt.Printf("  [%d/%d] %s ", i+1, len(installable), tool.Name)
+
+			var cmd *exec.Cmd
+			if runtime.GOOS == "windows" {
+				cmd = exec.Command("cmd", "/C", installCmd)
+			} else {
+				cmd = exec.Command("sh", "-c", installCmd)
+			}
+
+			// For sudo commands, connect stdin so password prompt works
+			if strings.Contains(installCmd, "sudo") {
+				cmd.Stdin = os.Stdin
+			}
+
+			output, err := cmd.CombinedOutput()
+			if err != nil {
+				fmt.Printf("❌ failed\n")
+				// Show first line of error for debugging
+				errLine := strings.SplitN(strings.TrimSpace(string(output)), "\n", 2)[0]
+				if errLine != "" {
+					fmt.Printf("         %s\n", truncate(errLine, 80))
+				}
+				failed++
+				continue
+			}
+
+			// Verify it's actually available now
+			if CheckToolAvailability(tool.Command) {
+				fmt.Printf("✅ installed\n")
+				installed++
+			} else {
+				fmt.Printf("⚠️  completed but not found in PATH\n")
+				failed++
+			}
 		}
 		fmt.Println()
 	}
 
-	fmt.Println("🎉 Automatic installation completed!")
-	fmt.Println("💡 Some tools may require manual installation or PATH configuration.")
+	// --- Skipped tools (missing prereq) ---
+	if len(missingPrereq) > 0 {
+		fmt.Println("Skipped (install the prerequisite first):")
+		for _, tool := range missingPrereq {
+			req := needsPrereq(tool)
+			fmt.Printf("  • %s — needs %s\n", tool.Name, req)
+		}
+		fmt.Println()
+	}
+
+	// --- Download-only tools ---
+	if len(downloadOnly) > 0 {
+		fmt.Println("Manual download required:")
+		for _, tool := range downloadOnly {
+			cmd := tool.InstallCmd[runtime.GOOS]
+			fmt.Printf("  • %s — %s\n", tool.Name, cmd)
+		}
+		fmt.Println()
+	}
+
+	// --- API keys ---
+	if len(apiTools) > 0 {
+		fmt.Println("API Keys (set these environment variables):")
+		apiInfo := map[string]string{
+			"securitytrails": "SECURITYTRAILS_API_KEY    — https://securitytrails.com/",
+			"virustotal":     "VIRUSTOTAL_API_KEY        — https://virustotal.com/",
+			"censys":         "CENSYS_API_ID + CENSYS_SECRET — https://search.censys.io/",
+		}
+		for _, tool := range apiTools {
+			if info, ok := apiInfo[tool.Name]; ok {
+				fmt.Printf("  • %s\n", info)
+			}
+		}
+		fmt.Println()
+	}
+
+	// --- Summary ---
+	finalAvail, finalMissing := CheckAllTools()
+	fmt.Printf("Summary: %d/%d tools ready", len(finalAvail), len(finalAvail)+len(finalMissing))
+	if len(apiTools) > 0 {
+		fmt.Printf(", %d need API keys", len(apiTools))
+	}
+	if failed > 0 {
+		fmt.Printf(", %d failed", failed)
+	}
+	fmt.Printf("\n")
+
+	if installed > 0 {
+		fmt.Printf("\n💡 Run 'subdomainx --check-tools' to verify.\n")
+	}
 
 	return nil
 }
@@ -438,8 +564,16 @@ func DisplayToolStatus() {
 		for _, tool := range missing {
 			fmt.Printf("  • %s - %s\n", tool.Name, tool.Description)
 		}
-		fmt.Println("\n💡 Run with --install-tools to see installation instructions")
+		fmt.Println("\n💡 Run with --install-tools to install them automatically")
 	}
 
-	fmt.Printf("\nTotal: %d available, %d missing", len(available), len(missing))
+	fmt.Printf("\nTotal: %d available, %d missing\n", len(available), len(missing))
+}
+
+// truncate shortens s to max characters, appending "..." if truncated.
+func truncate(s string, max int) string {
+	if len(s) <= max {
+		return s
+	}
+	return s[:max-3] + "..."
 }
