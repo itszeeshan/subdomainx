@@ -54,7 +54,7 @@ func (u *URLScanEnumerator) Enumerate(ctx context.Context, domain string, cfg *c
 	if err != nil {
 		return nil, fmt.Errorf("urlscan API request failed: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	// Check response status
 	if resp.StatusCode != http.StatusOK {

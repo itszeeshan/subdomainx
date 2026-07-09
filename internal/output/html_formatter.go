@@ -141,7 +141,7 @@ func WriteHTML(filename string, cfg *config.Config, results *types.ScanResults, 
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 
 	return tmpl.Execute(file, data)
 }

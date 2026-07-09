@@ -56,7 +56,7 @@ func (v *VirusTotalEnumerator) Enumerate(ctx context.Context, domain string, cfg
 	if err != nil {
 		return nil, fmt.Errorf("virustotal API request failed: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	// Check response status
 	if resp.StatusCode != http.StatusOK {

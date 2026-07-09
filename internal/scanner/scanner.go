@@ -261,7 +261,7 @@ func scanHTTP(ctx context.Context, url string, cfg *config.Config) (types.HTTPRe
 	if err != nil {
 		return types.HTTPResult{}, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	// Read body once for title extraction and fingerprinting
 	body, _ := io.ReadAll(io.LimitReader(resp.Body, 64*1024))

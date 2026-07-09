@@ -61,7 +61,7 @@ func (c *CensysEnumerator) Enumerate(ctx context.Context, domain string, cfg *co
 	if err != nil {
 		return nil, fmt.Errorf("censys API request failed: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	// Check response status
 	if resp.StatusCode != http.StatusOK {

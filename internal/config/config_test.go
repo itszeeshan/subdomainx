@@ -50,7 +50,7 @@ func TestLoadConfigFromFile(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp directory: %v", err)
 	}
-	defer os.RemoveAll(tmpDir)
+	defer func() { _ = os.RemoveAll(tmpDir) }()
 
 	configPath := filepath.Join(tmpDir, "test_config.yaml")
 	configContent := `output_dir: custom_output
@@ -143,7 +143,7 @@ func TestLoadConfigFromFileInvalidYAML(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp directory: %v", err)
 	}
-	defer os.RemoveAll(tmpDir)
+	defer func() { _ = os.RemoveAll(tmpDir) }()
 
 	configPath := filepath.Join(tmpDir, "invalid_config.yaml")
 	invalidYAML := `output_dir: "unclosed_quote
@@ -172,7 +172,7 @@ func TestLoadConfigFromFileReadError(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp directory: %v", err)
 	}
-	defer os.RemoveAll(tmpDir)
+	defer func() { _ = os.RemoveAll(tmpDir) }()
 
 	// Try to load a directory as a config file
 	_, err = LoadConfigFromFile(tmpDir)
@@ -192,7 +192,7 @@ func TestConfigSave(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp directory: %v", err)
 	}
-	defer os.RemoveAll(tmpDir)
+	defer func() { _ = os.RemoveAll(tmpDir) }()
 
 	// Create configs subdirectory
 	configsDir := filepath.Join(tmpDir, "configs")
@@ -298,7 +298,7 @@ func TestConfigSaveMarshalError(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp directory: %v", err)
 	}
-	defer os.RemoveAll(tmpDir)
+	defer func() { _ = os.RemoveAll(tmpDir) }()
 
 	// Create configs subdirectory with read-only permissions
 	configsDir := filepath.Join(tmpDir, "configs")

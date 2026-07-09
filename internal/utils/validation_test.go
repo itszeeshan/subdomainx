@@ -14,7 +14,7 @@ func TestValidateInput(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp directory: %v", err)
 	}
-	defer os.RemoveAll(tmpDir)
+	defer func() { _ = os.RemoveAll(tmpDir) }()
 
 	// Create a test wildcard file
 	wildcardFile := filepath.Join(tmpDir, "domains.txt")
@@ -77,7 +77,7 @@ func TestValidateInputInvalidOutputFormat(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp directory: %v", err)
 	}
-	defer os.RemoveAll(tmpDir)
+	defer func() { _ = os.RemoveAll(tmpDir) }()
 
 	wildcardFile := filepath.Join(tmpDir, "domains.txt")
 	if err := os.WriteFile(wildcardFile, []byte("example.com\n"), 0644); err != nil {
@@ -113,7 +113,7 @@ func TestValidateInputInvalidThreads(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp directory: %v", err)
 	}
-	defer os.RemoveAll(tmpDir)
+	defer func() { _ = os.RemoveAll(tmpDir) }()
 
 	wildcardFile := filepath.Join(tmpDir, "domains.txt")
 	if err := os.WriteFile(wildcardFile, []byte("example.com\n"), 0644); err != nil {
@@ -149,7 +149,7 @@ func TestValidateInputInvalidRetries(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp directory: %v", err)
 	}
-	defer os.RemoveAll(tmpDir)
+	defer func() { _ = os.RemoveAll(tmpDir) }()
 
 	wildcardFile := filepath.Join(tmpDir, "domains.txt")
 	if err := os.WriteFile(wildcardFile, []byte("example.com\n"), 0644); err != nil {
@@ -185,7 +185,7 @@ func TestValidateInputInvalidTimeout(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp directory: %v", err)
 	}
-	defer os.RemoveAll(tmpDir)
+	defer func() { _ = os.RemoveAll(tmpDir) }()
 
 	wildcardFile := filepath.Join(tmpDir, "domains.txt")
 	if err := os.WriteFile(wildcardFile, []byte("example.com\n"), 0644); err != nil {
@@ -221,7 +221,7 @@ func TestValidateInputInvalidRateLimit(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp directory: %v", err)
 	}
-	defer os.RemoveAll(tmpDir)
+	defer func() { _ = os.RemoveAll(tmpDir) }()
 
 	wildcardFile := filepath.Join(tmpDir, "domains.txt")
 	if err := os.WriteFile(wildcardFile, []byte("example.com\n"), 0644); err != nil {
@@ -257,7 +257,7 @@ func TestValidateInputMissingWordlist(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp directory: %v", err)
 	}
-	defer os.RemoveAll(tmpDir)
+	defer func() { _ = os.RemoveAll(tmpDir) }()
 
 	wildcardFile := filepath.Join(tmpDir, "domains.txt")
 	if err := os.WriteFile(wildcardFile, []byte("example.com\n"), 0644); err != nil {

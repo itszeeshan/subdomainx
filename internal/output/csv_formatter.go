@@ -16,7 +16,7 @@ func WriteCSV(filename string, results *types.ScanResults) error {
 	if err != nil {
 		return fmt.Errorf("failed to create CSV file: %v", err)
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 
 	writer := csv.NewWriter(file)
 	defer writer.Flush()

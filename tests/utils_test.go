@@ -21,7 +21,7 @@ func TestFileUtils(t *testing.T) {
 	}
 
 	// Clean up
-	defer os.RemoveAll(testDir)
+	defer func() { _ = os.RemoveAll(testDir) }()
 
 	// Test writing and reading lines
 	testLines := []string{"line1", "line2", "line3"}
@@ -32,7 +32,7 @@ func TestFileUtils(t *testing.T) {
 		t.Errorf("Failed to write lines: %v", err)
 	}
 
-	defer os.Remove(testFile)
+	defer func() { _ = os.Remove(testFile) }()
 
 	readLines, err := utils.ReadLines(testFile)
 	if err != nil {

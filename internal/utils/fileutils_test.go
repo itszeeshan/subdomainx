@@ -80,7 +80,7 @@ func TestWriteLines(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp directory: %v", err)
 	}
-	defer os.RemoveAll(tmpDir)
+	defer func() { _ = os.RemoveAll(tmpDir) }()
 
 	testLines := []string{"line1", "line2", "line3"}
 	outputFile := filepath.Join(tmpDir, "subdir", "test_output.txt")
@@ -114,7 +114,7 @@ func TestWriteLinesEmptySlice(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp directory: %v", err)
 	}
-	defer os.RemoveAll(tmpDir)
+	defer func() { _ = os.RemoveAll(tmpDir) }()
 
 	outputFile := filepath.Join(tmpDir, "empty_output.txt")
 
@@ -155,7 +155,7 @@ func TestEnsureDirectory(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp directory: %v", err)
 	}
-	defer os.RemoveAll(tmpDir)
+	defer func() { _ = os.RemoveAll(tmpDir) }()
 
 	// Test creating a new subdirectory
 	newDir := filepath.Join(tmpDir, "subdir1", "subdir2")

@@ -14,7 +14,7 @@ func WriteTXT(filename string, subdomains []types.SubdomainResult) error {
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 
 	for _, subdomain := range subdomains {
 		if _, err := fmt.Fprintln(file, subdomain.Subdomain); err != nil {
@@ -31,7 +31,7 @@ func WriteHTTPTXT(filename string, httpResults []types.HTTPResult) error {
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 
 	// Write header
 	if _, err := fmt.Fprintln(file, "URL\tStatus Code\tTitle\tContent Length\tTechnologies"); err != nil {
@@ -55,7 +55,7 @@ func WritePortsTXT(filename string, portResults []types.PortResult) error {
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 
 	// Write header
 	if _, err := fmt.Fprintln(file, "Host\tIP\tPort\tProtocol\tState\tService\tVersion"); err != nil {
@@ -80,7 +80,7 @@ func WriteTakeoverTXT(filename string, results []types.TakeoverResult) error {
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 
 	if _, err := fmt.Fprintln(file, "Subdomain\tCNAME\tService\tRisk\tEvidence"); err != nil {
 		return err
@@ -102,7 +102,7 @@ func WriteSubdomainsOnly(filename string, subdomains []types.SubdomainResult) er
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 
 	for _, subdomain := range subdomains {
 		if _, err := fmt.Fprintln(file, subdomain.Subdomain); err != nil {

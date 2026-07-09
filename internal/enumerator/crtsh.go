@@ -42,7 +42,7 @@ func (c *CrtShEnumerator) Enumerate(ctx context.Context, domain string, cfg *con
 	if err != nil {
 		return nil, fmt.Errorf("crtsh API request failed (check network/proxy): %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	// Check response status
 	if resp.StatusCode != http.StatusOK {

@@ -101,7 +101,7 @@ func WriteZAP(filename string, results *types.ScanResults) error {
 	if err != nil {
 		return fmt.Errorf("failed to create ZAP file: %v", err)
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 
 	encoder := xml.NewEncoder(file)
 	encoder.Indent("", "  ")

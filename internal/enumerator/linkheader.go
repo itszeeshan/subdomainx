@@ -89,7 +89,7 @@ func (l *LinkHeaderEnumerator) fetchLinkHeaders(ctx context.Context, urlStr, bas
 	if err != nil {
 		return subdomains
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	// Parse Link headers
 	linkHeader := resp.Header.Get("Link")

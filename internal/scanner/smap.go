@@ -41,7 +41,7 @@ func (s *SmapScanner) Scan(ctx context.Context, targets []string, cfg *config.Co
 	// smap requires a real file for -oJ, it can't write JSON to stdout.
 	tmpDir := os.TempDir()
 	outFile := filepath.Join(tmpDir, fmt.Sprintf("subdomainx-smap-%d.json", os.Getpid()))
-	defer os.Remove(outFile)
+	defer func() { _ = os.Remove(outFile) }()
 
 	args := []string{"-iL", "-", "-oJ", outFile}
 	cmd := exec.CommandContext(ctx, "smap", args...)

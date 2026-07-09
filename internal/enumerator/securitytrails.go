@@ -53,7 +53,7 @@ func (s *SecurityTrailsEnumerator) Enumerate(ctx context.Context, domain string,
 	if err != nil {
 		return nil, fmt.Errorf("securitytrails API request failed: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	// Check response status
 	if resp.StatusCode != http.StatusOK {
