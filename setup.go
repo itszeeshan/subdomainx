@@ -203,6 +203,18 @@ func mergeConfig(cfg1, cfg2 *config.Config) *config.Config {
 		result.MaxHTTPTargets = cfg2.MaxHTTPTargets
 	}
 
+	if cfg2.Screenshot {
+		result.Screenshot = true
+	}
+	if cfg2.ScreenshotDir != "" {
+		result.ScreenshotDir = cfg2.ScreenshotDir
+	}
+	if cfg2.ScreenshotTimeout > 0 {
+		result.ScreenshotTimeout = cfg2.ScreenshotTimeout
+	}
+	if cfg2.ScreenshotResolution != "" {
+		result.ScreenshotResolution = cfg2.ScreenshotResolution
+	}
 	if cfg2.DiffEnabled {
 		result.DiffEnabled = true
 	}

@@ -73,6 +73,12 @@ OPTIONS:
     --httpx                Use httpx for HTTP scanning
     --smap                 Use smap for port scanning
 
+    # Screenshot Options
+    --screenshot               Capture screenshots of HTTP-alive subdomains (requires Chrome/Chromium)
+    --screenshot-dir DIR       Directory for screenshots (default: {output}/screenshots)
+    --screenshot-timeout N     Timeout per page in seconds (default: 10)
+    --screenshot-resolution WxH  Viewport resolution (default: 1280x720)
+
     # Diff/Monitoring Options
     --diff                 Compare results against the most recent previous scan
     --baseline FILE        Compare results against a specific baseline file
@@ -125,6 +131,9 @@ EXAMPLES:
 
     # Get installation help
     subdomainx --install-tools
+
+    # Screenshot all HTTP-alive subdomains
+    subdomainx --screenshot example.com
 
     # Compare against previous scan
     subdomainx --diff example.com

@@ -34,6 +34,10 @@ func main() {
 		statusCodes     = flag.String("status-codes", "", "Filter by HTTP status codes (e.g., '200,301,302')")
 		ports           = flag.String("ports", "", "Filter by ports (e.g., '80,443,8080')")
 		maxHTTPTargets  = flag.Int("max-http-targets", 1000, "Maximum number of subdomains to scan with httpx")
+		screenshotFlag  = flag.Bool("screenshot", false, "Capture screenshots of HTTP-alive subdomains")
+		screenshotDir   = flag.String("screenshot-dir", "", "Directory for screenshots (default: {output}/screenshots)")
+		screenshotTimeout = flag.Int("screenshot-timeout", 10, "Screenshot timeout per page in seconds")
+		screenshotRes   = flag.String("screenshot-resolution", "1280x720", "Screenshot viewport resolution (WxH)")
 		diffMode        = flag.Bool("diff", false, "Compare results against previous scan")
 		baselineFile    = flag.String("baseline", "", "Baseline results file for diff comparison")
 		notifyFlag      = flag.String("notify", "", "Notification channels (comma-separated: slack,discord,telegram,email)")
@@ -147,6 +151,12 @@ func main() {
 	if *ports != "" {
 		cfg.Filters["ports"] = *ports
 	}
+	cfg.Screenshot = *screenshotFlag
+	if *screenshotDir != "" {
+		cfg.ScreenshotDir = *screenshotDir
+	}
+	cfg.ScreenshotTimeout = *screenshotTimeout
+	cfg.ScreenshotResolution = *screenshotRes
 	cfg.DiffEnabled = *diffMode
 	if *baselineFile != "" {
 		cfg.BaselineFile = *baselineFile
@@ -172,6 +182,11 @@ func main() {
 
 	// ---- Tool selection (after config merge so CLI always wins) ----
 	applyToolSelection(cfg, flags, *verbose)
+
+	// --screenshot implies --httpx (needs HTTP results for URLs)
+	if cfg.Screenshot {
+		cfg.Tools["httpx"] = true
+	}
 
 	// ---- Validate and create output directory ----
 	if err := validateCLIInput(cfg); err != nil {
