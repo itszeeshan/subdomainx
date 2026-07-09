@@ -37,7 +37,7 @@ func TestGenerate(t *testing.T) {
 		OutputFormat: "json",
 	}
 
-	err = Generate(cfg, subdomainResults, httpResults, portResults, nil, nil)
+	err = Generate(cfg, subdomainResults, httpResults, portResults, nil, nil, nil)
 	if err != nil {
 		t.Fatalf("Generate JSON failed: %v", err)
 	}
@@ -50,7 +50,7 @@ func TestGenerate(t *testing.T) {
 
 	// Test TXT format
 	cfg.OutputFormat = "txt"
-	err = Generate(cfg, subdomainResults, httpResults, portResults, nil, nil)
+	err = Generate(cfg, subdomainResults, httpResults, portResults, nil, nil, nil)
 	if err != nil {
 		t.Fatalf("Generate TXT failed: %v", err)
 	}
@@ -63,7 +63,7 @@ func TestGenerate(t *testing.T) {
 
 	// Test HTML format
 	cfg.OutputFormat = "html"
-	err = Generate(cfg, subdomainResults, httpResults, portResults, nil, nil)
+	err = Generate(cfg, subdomainResults, httpResults, portResults, nil, nil, nil)
 	if err != nil {
 		t.Fatalf("Generate HTML failed: %v", err)
 	}
@@ -90,7 +90,7 @@ func TestGenerateInvalidFormat(t *testing.T) {
 	}
 
 	// Test invalid format
-	err = Generate(cfg, []types.SubdomainResult{}, []types.HTTPResult{}, []types.PortResult{}, nil, nil)
+	err = Generate(cfg, []types.SubdomainResult{}, []types.HTTPResult{}, []types.PortResult{}, nil, nil, nil)
 	if err == nil {
 		t.Error("Expected error for invalid format")
 	}
@@ -116,7 +116,7 @@ func TestGenerateEmptyResults(t *testing.T) {
 	}
 
 	// Test with empty results
-	err = Generate(cfg, []types.SubdomainResult{}, []types.HTTPResult{}, []types.PortResult{}, nil, nil)
+	err = Generate(cfg, []types.SubdomainResult{}, []types.HTTPResult{}, []types.PortResult{}, nil, nil, nil)
 	if err != nil {
 		t.Fatalf("Generate JSON with empty results failed: %v", err)
 	}

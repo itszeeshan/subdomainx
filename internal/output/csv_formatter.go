@@ -115,6 +115,29 @@ func WriteCSV(filename string, results *types.ScanResults) error {
 		}
 	}
 
+	// Write takeover results
+	for _, t := range results.Takeover {
+		row := []string{
+			"Takeover",
+			t.Subdomain,
+			"",       // URL
+			"",       // IP
+			"",       // Port
+			"",       // Protocol
+			"",       // Status Code
+			"",       // Title
+			t.CNAME,  // Technologies (reuse column for CNAME)
+			"",       // Content Length
+			t.Risk,   // Source (reuse column for Risk)
+			t.Service,
+			t.Evidence, // State (reuse column for Evidence)
+			"",         // Version
+		}
+		if err := writer.Write(row); err != nil {
+			return fmt.Errorf("failed to write takeover row: %v", err)
+		}
+	}
+
 	return nil
 }
 

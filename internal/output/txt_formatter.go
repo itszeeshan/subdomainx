@@ -74,6 +74,28 @@ func WritePortsTXT(filename string, portResults []types.PortResult) error {
 	return nil
 }
 
+// WriteTakeoverTXT writes takeover detection results to a text file.
+func WriteTakeoverTXT(filename string, results []types.TakeoverResult) error {
+	file, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	if _, err := fmt.Fprintln(file, "Subdomain\tCNAME\tService\tRisk\tEvidence"); err != nil {
+		return err
+	}
+
+	for _, r := range results {
+		if _, err := fmt.Fprintf(file, "%s\t%s\t%s\t%s\t%s\n",
+			r.Subdomain, r.CNAME, r.Service, r.Risk, r.Evidence); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 // WriteSubdomainsOnly writes just the subdomain names to a text file
 func WriteSubdomainsOnly(filename string, subdomains []types.SubdomainResult) error {
 	file, err := os.Create(filename)

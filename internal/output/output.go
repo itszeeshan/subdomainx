@@ -11,13 +11,14 @@ import (
 
 // Generate creates output files based on the configuration and results.
 // diffResult may be nil when diff is not enabled.
-func Generate(cfg *config.Config, subdomainResults []types.SubdomainResult, httpResults []types.HTTPResult, portResults []types.PortResult, waybackResults []types.WaybackEntry, diffResult *diff.DiffResult) error {
+func Generate(cfg *config.Config, subdomainResults []types.SubdomainResult, httpResults []types.HTTPResult, portResults []types.PortResult, waybackResults []types.WaybackEntry, takeoverResults []types.TakeoverResult, diffResult *diff.DiffResult) error {
 	// Create scan results structure
 	results := &types.ScanResults{
 		Subdomains: subdomainResults,
 		HTTP:       httpResults,
 		Ports:      portResults,
 		Wayback:    waybackResults,
+		Takeover:   takeoverResults,
 	}
 
 	// Store diff result for HTML report generation
@@ -74,6 +75,14 @@ func generateJSON(cfg *config.Config, results *types.ScanResults) error {
 		}
 	}
 
+	// Takeover results file
+	if len(results.Takeover) > 0 {
+		takeoverFile := filepath.Join(cfg.OutputDir, fmt.Sprintf("%s_takeover.json", cfg.UniqueName))
+		if err := WriteJSON(takeoverFile, results.Takeover); err != nil {
+			return fmt.Errorf("failed to write takeover JSON file: %v", err)
+		}
+	}
+
 	return nil
 }
 
@@ -98,6 +107,14 @@ func generateTXT(cfg *config.Config, results *types.ScanResults) error {
 		portsFile := filepath.Join(cfg.OutputDir, fmt.Sprintf("%s_ports.txt", cfg.UniqueName))
 		if err := WritePortsTXT(portsFile, results.Ports); err != nil {
 			return fmt.Errorf("failed to write ports TXT file: %v", err)
+		}
+	}
+
+	// Takeover results file
+	if len(results.Takeover) > 0 {
+		takeoverFile := filepath.Join(cfg.OutputDir, fmt.Sprintf("%s_takeover.txt", cfg.UniqueName))
+		if err := WriteTakeoverTXT(takeoverFile, results.Takeover); err != nil {
+			return fmt.Errorf("failed to write takeover TXT file: %v", err)
 		}
 	}
 
