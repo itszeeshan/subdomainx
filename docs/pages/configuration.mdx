@@ -103,6 +103,23 @@ scanners:
 
 > **Note**: Filter options work with HTTP scanning (`--httpx`) and port scanning (`--smap`) results.
 
+### Diff/Monitoring Configuration
+
+| Parameter       | Type    | Default | CLI Flag     | Description                                          |
+| --------------- | ------- | ------- | ------------ | ---------------------------------------------------- |
+| `diff_enabled`  | boolean | `false` | `--diff`     | Compare results against the most recent previous scan |
+| `baseline_file` | string  | `""`    | `--baseline` | Path to a specific baseline file for diff comparison  |
+
+> **Note**: Scan history is automatically stored in `{output_dir}/.scan_history.json`. The `--baseline` flag implies `--diff`.
+
+### Notification Configuration
+
+| Parameter         | Type     | Default | CLI Flag   | Description                                                        |
+| ----------------- | -------- | ------- | ---------- | ------------------------------------------------------------------ |
+| `notify_channels` | string[] | `[]`    | `--notify` | Notification channels (comma-separated: slack,discord,telegram,email) |
+
+> **Important**: All notification credentials must be set via environment variables — they are never stored in config files or passed via CLI flags. See [CLI Reference](/cli-reference#notification-options) for the full list of environment variables.
+
 ### Tool Configuration
 
 Tool selection is primarily controlled via CLI flags. YAML configuration provides default states. By default, enumeration tools are enabled while API tools and scanners are disabled:

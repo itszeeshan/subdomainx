@@ -111,6 +111,39 @@ Filter results based on specific criteria:
 | `--resume SCAN_ID`     | `""`    | Resume scan from checkpoint (scan ID)  |
 | `--list-checkpoints`   | `false` | List available checkpoints             |
 
+### Diff/Monitoring Options
+
+Compare scan results against previous runs to detect changes.
+
+| Option            | Default | Description                                          |
+| ----------------- | ------- | ---------------------------------------------------- |
+| `--diff`          | `false` | Compare results against the most recent previous scan |
+| `--baseline FILE` | `""`    | Compare results against a specific baseline file      |
+
+> **Note**: `--baseline` implies `--diff`. Scan history is automatically recorded to `{output}/.scan_history.json` for future comparisons.
+
+### Notification Options
+
+Send scan results and diff alerts to external channels. All credentials are read from environment variables only — never passed via CLI flags.
+
+| Option              | Default | Description                                                        |
+| ------------------- | ------- | ------------------------------------------------------------------ |
+| `--notify CHANNELS` | `""`    | Notification channels (comma-separated: slack,discord,telegram,email) |
+
+**Environment variables:**
+
+| Variable                       | Channel  | Description          |
+| ------------------------------ | -------- | -------------------- |
+| `SUBDOMAINX_SLACK_WEBHOOK`     | Slack    | Slack webhook URL    |
+| `SUBDOMAINX_DISCORD_WEBHOOK`   | Discord  | Discord webhook URL  |
+| `SUBDOMAINX_TELEGRAM_TOKEN`    | Telegram | Telegram bot token   |
+| `SUBDOMAINX_TELEGRAM_CHAT_ID`  | Telegram | Telegram chat ID     |
+| `SUBDOMAINX_SMTP_HOST`         | Email    | SMTP server hostname |
+| `SUBDOMAINX_SMTP_PORT`         | Email    | SMTP port (default: 587) |
+| `SUBDOMAINX_SMTP_USER`         | Email    | SMTP username        |
+| `SUBDOMAINX_SMTP_PASS`         | Email    | SMTP password        |
+| `SUBDOMAINX_NOTIFY_EMAIL`      | Email    | Recipient email(s), comma-separated |
+
 ### Utility Options
 
 | Option            | Description                                      |
@@ -296,6 +329,46 @@ subdomainx --threads 20 --timeout 60 example.com
 
 ```bash
 subdomainx --wildcard domains.txt --threads 20 --timeout 60
+```
+
+### Diff/Monitoring
+
+**Compare against previous scan:**
+
+```bash
+subdomainx --diff example.com
+```
+
+**Compare against a specific baseline file:**
+
+```bash
+subdomainx --diff --baseline results/previous_results.json example.com
+```
+
+**Diff with multiple domains:**
+
+```bash
+subdomainx --wildcard domains.txt --diff
+```
+
+### Notifications
+
+**Send Slack notification on completion:**
+
+```bash
+subdomainx --notify slack example.com
+```
+
+**Send to multiple channels:**
+
+```bash
+subdomainx --notify slack,email example.com
+```
+
+**Diff + notify (alert on new/removed subdomains):**
+
+```bash
+subdomainx --diff --notify slack,telegram example.com
 ```
 
 ## Tool Management

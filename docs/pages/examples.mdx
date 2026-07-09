@@ -349,6 +349,94 @@ output_dir: scans/
 - **Use Filters**: Leverage status code and port filters to focus on relevant results
 - **Combine Tools**: Use both enumeration and scanning tools for comprehensive results
 
+## Diff/Monitoring
+
+### Compare Against Previous Scan
+
+Detect new and removed subdomains since the last scan:
+
+**Single domain:**
+
+```bash
+subdomainx --diff example.com
+```
+
+**Multiple domains:**
+
+```bash
+subdomainx --wildcard domains.txt --diff
+```
+
+> **Note**: Scan history is automatically recorded. The first scan with `--diff` will show all subdomains as "new" since there is no baseline yet.
+
+### Compare Against a Baseline File
+
+Compare against a specific previous results file:
+
+```bash
+subdomainx --diff --baseline output/previous_results.json example.com
+```
+
+> **Note**: The baseline file can be a JSON results file from a previous scan or a scan history entry.
+
+### Diff with HTML Report
+
+Generate a diff alongside a full HTML report:
+
+```bash
+subdomainx --diff --format html --name weekly_scan example.com
+```
+
+This produces both the HTML report and a `weekly_scan_diff.json` with added/removed/changed subdomains.
+
+## Notifications
+
+### Send to a Single Channel
+
+```bash
+# Slack
+subdomainx --notify slack example.com
+
+# Discord
+subdomainx --notify discord example.com
+
+# Telegram
+subdomainx --notify telegram example.com
+
+# Email
+subdomainx --notify email example.com
+```
+
+> **Note**: All credentials are read from environment variables. See [CLI Reference](/cli-reference#notification-options) for the full list.
+
+### Send to Multiple Channels
+
+```bash
+subdomainx --notify slack,email example.com
+```
+
+### Diff + Notifications
+
+Alert on new/removed subdomains — ideal for continuous monitoring:
+
+```bash
+subdomainx --diff --notify slack example.com
+```
+
+When combined with `--diff`, notifications include a summary of changes (new subdomains, removed subdomains, IP changes).
+
+### Continuous Monitoring Setup
+
+Combine diff, notifications, and a cron schedule for automated monitoring. See the [Deployment](/deployment) guide for full setup instructions.
+
+```bash
+# Set credentials once
+export SUBDOMAINX_SLACK_WEBHOOK="https://hooks.slack.com/services/..."
+
+# Run every 15 minutes via cron
+*/15 * * * * subdomainx --diff --notify slack --output /opt/scans/ target.com
+```
+
 ## Common Use Cases
 
 ### Bug Bounty

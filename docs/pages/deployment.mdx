@@ -31,27 +31,20 @@ jobs:
           go install github.com/itszeeshan/subdomainx@latest
           subdomainx --install-tools
 
-      - name: Run scan
+      - name: Run scan with diff and notifications
         env:
           SECURITYTRAILS_API_KEY: ${{ secrets.SECURITYTRAILS_API_KEY }}
           VIRUSTOTAL_API_KEY: ${{ secrets.VIRUSTOTAL_API_KEY }}
           CENSYS_API_ID: ${{ secrets.CENSYS_API_ID }}
           CENSYS_SECRET: ${{ secrets.CENSYS_SECRET }}
+          SUBDOMAINX_SLACK_WEBHOOK: ${{ secrets.SUBDOMAINX_SLACK_WEBHOOK }}
+          SUBDOMAINX_SMTP_HOST: smtp.gmail.com
+          SUBDOMAINX_SMTP_PORT: "587"
+          SUBDOMAINX_SMTP_USER: ${{ secrets.EMAIL_USERNAME }}
+          SUBDOMAINX_SMTP_PASS: ${{ secrets.EMAIL_PASSWORD }}
+          SUBDOMAINX_NOTIFY_EMAIL: you@example.com
         run: |
-          subdomainx --subfinder --crtsh --format json --output results/ target.com
-
-      - name: Send results via email
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          username: ${{ secrets.EMAIL_USERNAME }}
-          password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "SubdomainX Scan Results - $(date +'%Y-%m-%d %H:%M')"
-          to: you@example.com
-          from: SubdomainX Bot
-          body: "Scan completed. Results attached."
-          attachments: results/*
+          subdomainx --diff --notify slack,email --subfinder --crtsh --format json --output results/ target.com
 ```
 
 ### Configuration
@@ -93,24 +86,21 @@ subdomainx --install-tools
 #!/bin/bash
 # /opt/subdomainx/scan.sh
 
-TIMESTAMP=$(date +'%Y-%m-%d_%H-%M')
 OUTPUT_DIR="/opt/subdomainx/results"
 TARGET="target.com"
-EMAIL="you@example.com"
 
-# Run the scan
-subdomainx --subfinder --crtsh --format json \
-  --name "scan_${TIMESTAMP}" \
+# Credentials via environment variables
+export SUBDOMAINX_SMTP_HOST="smtp.gmail.com"
+export SUBDOMAINX_SMTP_PORT="587"
+export SUBDOMAINX_SMTP_USER="you@gmail.com"
+export SUBDOMAINX_SMTP_PASS="your_app_password"
+export SUBDOMAINX_NOTIFY_EMAIL="you@example.com"
+
+# Run scan with diff and email notification
+subdomainx --diff --notify email \
+  --subfinder --crtsh --format json \
   --output "${OUTPUT_DIR}" \
   "${TARGET}"
-
-# Email results
-RESULT_FILE=$(ls -t "${OUTPUT_DIR}"/scan_${TIMESTAMP}* 2>/dev/null | head -1)
-if [ -n "${RESULT_FILE}" ]; then
-  mail -s "SubdomainX Results - ${TIMESTAMP}" \
-    -A "${RESULT_FILE}" \
-    "${EMAIL}" < /dev/null
-fi
 ```
 
 #### 4. Set up the cron job
