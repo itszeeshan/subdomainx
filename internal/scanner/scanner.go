@@ -63,7 +63,15 @@ func RunHTTPx(cfg *config.Config, subdomains []types.SubdomainResult) ([]types.H
 
 	// Use httpx scanner if available
 	if httpxScanner, exists := scanners["httpx"]; exists {
-		return httpxScanner.Scan(context.Background(), urls, cfg)
+		results, err := httpxScanner.Scan(context.Background(), urls, cfg)
+		if err != nil {
+			return nil, err
+		}
+		// When tech detection is enabled, enrich results with fingerprinting
+		if cfg.TechDetect {
+			enrichWithFingerprinting(cfg, results)
+		}
+		return results, nil
 	}
 
 	// Create context with timeout
@@ -255,19 +263,26 @@ func scanHTTP(ctx context.Context, url string, cfg *config.Config) (types.HTTPRe
 	}
 	defer resp.Body.Close()
 
-	// Extract title from response
-	title := extractTitle(resp)
+	// Read body once for title extraction and fingerprinting
+	body, _ := io.ReadAll(io.LimitReader(resp.Body, 64*1024))
 
-	// Extract technologies (basic implementation)
+	title := extractTitleFromBody(body)
 	technologies := extractTechnologies(resp)
 
-	return types.HTTPResult{
+	result := types.HTTPResult{
 		URL:           url,
 		StatusCode:    resp.StatusCode,
 		Title:         title,
 		ContentLength: int(resp.ContentLength),
 		Technologies:  technologies,
-	}, nil
+	}
+
+	// Technology fingerprinting (when enabled via config)
+	if cfg.TechDetect {
+		result.DetectedTech = FingerprintTechnologies(resp, body)
+	}
+
+	return result, nil
 }
 
 // scanPorts performs port scanning on a single host
@@ -304,10 +319,9 @@ func scanPorts(ctx context.Context, host string, cfg *config.Config) (types.Port
 	}, nil
 }
 
-// extractTitle extracts the title from an HTTP response
-func extractTitle(resp *http.Response) string {
-	body, err := io.ReadAll(io.LimitReader(resp.Body, 64*1024))
-	if err != nil {
+// extractTitleFromBody extracts the title from an already-read HTTP response body.
+func extractTitleFromBody(body []byte) string {
+	if len(body) == 0 {
 		return ""
 	}
 	re := regexp.MustCompile(`(?i)<title[^>]*>([^<]+)</title>`)
@@ -343,6 +357,76 @@ func isPortOpen(host string, port int) bool {
 	}
 	defer conn.Close()
 	return true
+}
+
+// enrichWithFingerprinting runs our fingerprint engine on HTTP results from
+// the external httpx scanner. It makes a follow-up HTTP request per unique host
+// to detect technologies from headers, cookies, and HTML body patterns.
+func enrichWithFingerprinting(cfg *config.Config, results []types.HTTPResult) {
+	if len(results) == 0 {
+		return
+	}
+
+	client := &http.Client{
+		Timeout: time.Duration(cfg.Timeout) * time.Second,
+	}
+
+	pool := utils.NewWorkerPool(cfg.Threads, cfg.RateLimit)
+	defer pool.Stop()
+
+	var mu sync.Mutex
+	var wg sync.WaitGroup
+
+	// Deduplicate by host to avoid redundant requests
+	seen := make(map[string]bool)
+	hostTechs := make(map[string][]types.Technology)
+
+	for i := range results {
+		host := ExtractHostFromURL(results[i].URL)
+		if seen[host] {
+			continue
+		}
+		seen[host] = true
+		url := results[i].URL
+
+		wg.Add(1)
+		pool.Submit(func() {
+			defer wg.Done()
+
+			ctx, cancel := context.WithTimeout(context.Background(), time.Duration(cfg.Timeout)*time.Second)
+			defer cancel()
+
+			req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+			if err != nil {
+				return
+			}
+			req.Header.Set("User-Agent", "SubdomainX/1.0")
+
+			resp, err := client.Do(req)
+			if err != nil {
+				return
+			}
+			body, _ := io.ReadAll(io.LimitReader(resp.Body, 64*1024))
+			resp.Body.Close()
+
+			techs := FingerprintTechnologies(resp, body)
+			if len(techs) > 0 {
+				mu.Lock()
+				hostTechs[host] = techs
+				mu.Unlock()
+			}
+		})
+	}
+
+	wg.Wait()
+
+	// Apply detected technologies back to results
+	for i := range results {
+		host := ExtractHostFromURL(results[i].URL)
+		if techs, ok := hostTechs[host]; ok {
+			results[i].DetectedTech = techs
+		}
+	}
 }
 
 // getServiceName returns the service name for a port

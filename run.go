@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/itszeeshan/subdomainx/internal/config"
@@ -19,11 +20,12 @@ import (
 // scanState holds in-progress and completed scan results alongside the
 // checkpoint that tracks persistence across interruptions.
 type scanState struct {
-	checkpoint     *utils.Checkpoint
-	results        []types.SubdomainResult
-	httpResults    []types.HTTPResult
-	portResults    []types.PortResult
-	waybackResults []types.WaybackEntry
+	checkpoint      *utils.Checkpoint
+	results         []types.SubdomainResult
+	httpResults     []types.HTTPResult
+	portResults     []types.PortResult
+	waybackResults  []types.WaybackEntry
+	takeoverResults []types.TakeoverResult
 }
 
 // initScanState either loads a previous checkpoint (resume mode) or creates a
@@ -141,6 +143,12 @@ func executeScanPipeline(cfg *config.Config, state *scanState, resume string) er
 		}
 	}
 
+	// --- Technology filter (post-HTTP-scan) ---
+	if cfg.TechFilter != "" && len(state.httpResults) > 0 {
+		state.httpResults = filterByTechnology(state.httpResults, cfg.TechFilter)
+		log.Printf("🔧 Filtered HTTP results by technology: %d remaining", len(state.httpResults))
+	}
+
 	// --- Port scanning ---
 	if cfg.Tools["smap"] && (resume == "" || len(state.portResults) == 0) {
 		log.Println("🔍 Running port scanning with smap...")
@@ -152,6 +160,21 @@ func executeScanPipeline(cfg *config.Config, state *scanState, resume string) er
 			state.portResults = portResults
 			cp.AddPortResults(portResults)
 			saveCheckpoint(cp, cfg.OutputDir)
+		}
+	}
+
+	// --- Subdomain takeover detection ---
+	if cfg.Takeover {
+		log.Println("🔍 Checking for subdomain takeover vulnerabilities...")
+		takeoverResults, err := scanner.RunTakeoverCheck(cfg, state.results, state.httpResults)
+		if err != nil {
+			log.Printf("Takeover detection failed: %v", err)
+		} else {
+			log.Printf("✅ Takeover check completed: %d potential vulnerabilities", len(takeoverResults))
+			state.takeoverResults = takeoverResults
+			if len(takeoverResults) > 0 {
+				scanner.PrintTakeoverSummary(takeoverResults)
+			}
 		}
 	}
 
@@ -180,7 +203,7 @@ func executeScanPipeline(cfg *config.Config, state *scanState, resume string) er
 	}
 
 	// --- Output ---
-	if err := output.Generate(cfg, state.results, state.httpResults, state.portResults, state.waybackResults, diffResult); err != nil {
+	if err := output.Generate(cfg, state.results, state.httpResults, state.portResults, state.waybackResults, state.takeoverResults, diffResult); err != nil {
 		return fmt.Errorf("failed to generate output: %v", err)
 	}
 
@@ -212,4 +235,39 @@ func saveCheckpoint(cp *utils.Checkpoint, outputDir string) {
 	if err := utils.SaveCheckpoint(cp, outputDir); err != nil {
 		log.Printf("Warning: Failed to save checkpoint: %v", err)
 	}
+}
+
+// filterByTechnology filters HTTP results to only include those matching
+// any of the comma-separated technology names.
+func filterByTechnology(httpResults []types.HTTPResult, techFilter string) []types.HTTPResult {
+	filters := make(map[string]bool)
+	for _, t := range strings.Split(techFilter, ",") {
+		t = strings.TrimSpace(t)
+		if t != "" {
+			filters[strings.ToLower(t)] = true
+		}
+	}
+	if len(filters) == 0 {
+		return httpResults
+	}
+
+	var filtered []types.HTTPResult
+	for _, r := range httpResults {
+		// Check basic Technologies field
+		for _, tech := range r.Technologies {
+			if filters[strings.ToLower(strings.TrimSpace(tech))] {
+				filtered = append(filtered, r)
+				goto next
+			}
+		}
+		// Check DetectedTech field
+		for _, dt := range r.DetectedTech {
+			if filters[strings.ToLower(dt.Name)] {
+				filtered = append(filtered, r)
+				goto next
+			}
+		}
+	next:
+	}
+	return filtered
 }
