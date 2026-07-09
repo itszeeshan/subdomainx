@@ -28,6 +28,10 @@ type Config struct {
 	DiffEnabled          bool   `yaml:"diff_enabled" json:"diff_enabled"`
 	BaselineFile   string            `yaml:"baseline_file" json:"baseline_file"`
 	NotifyChannels []string          `yaml:"notify_channels" json:"notify_channels"`
+	TechDetect     bool              `yaml:"tech_detect" json:"tech_detect"`
+	TechFilter     string            `yaml:"tech_filter" json:"tech_filter"`
+	Takeover       bool              `yaml:"takeover" json:"takeover"`
+	TakeoverOnly   bool              `yaml:"takeover_only" json:"takeover_only"`
 }
 
 func LoadConfig() (*Config, error) {

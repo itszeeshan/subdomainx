@@ -224,6 +224,18 @@ func mergeConfig(cfg1, cfg2 *config.Config) *config.Config {
 	if len(cfg2.NotifyChannels) > 0 {
 		result.NotifyChannels = cfg2.NotifyChannels
 	}
+	if cfg2.TechDetect {
+		result.TechDetect = true
+	}
+	if cfg2.TechFilter != "" {
+		result.TechFilter = cfg2.TechFilter
+	}
+	if cfg2.Takeover {
+		result.Takeover = true
+	}
+	if cfg2.TakeoverOnly {
+		result.TakeoverOnly = true
+	}
 
 	for k, v := range cfg2.Tools {
 		result.Tools[k] = v

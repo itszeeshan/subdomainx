@@ -41,6 +41,10 @@ func main() {
 		diffMode        = flag.Bool("diff", false, "Compare results against previous scan")
 		baselineFile    = flag.String("baseline", "", "Baseline results file for diff comparison")
 		notifyFlag      = flag.String("notify", "", "Notification channels (comma-separated: slack,discord,telegram,email)")
+		techFlag        = flag.Bool("tech", false, "Enable technology fingerprinting during HTTP scanning")
+		techFilter      = flag.String("tech-filter", "", "Filter results by technology (comma-separated, e.g., 'WordPress,nginx')")
+		takeoverFlag    = flag.Bool("takeover", false, "Check for subdomain takeover vulnerabilities")
+		takeoverOnly    = flag.Bool("takeover-only", false, "Only show subdomains vulnerable to takeover")
 
 		flags = toolFlags{}
 	)
@@ -165,6 +169,16 @@ func main() {
 	if *notifyFlag != "" {
 		cfg.NotifyChannels = strings.Split(*notifyFlag, ",")
 	}
+	cfg.TechDetect = *techFlag
+	if *techFilter != "" {
+		cfg.TechFilter = *techFilter
+		cfg.TechDetect = true // --tech-filter implies --tech
+	}
+	cfg.Takeover = *takeoverFlag
+	cfg.TakeoverOnly = *takeoverOnly
+	if cfg.TakeoverOnly {
+		cfg.Takeover = true // --takeover-only implies --takeover
+	}
 
 	if cfg.WildcardFile == "" && len(args) == 0 && *resume == "" {
 		log.Fatalf("Error: Either --wildcard file, a domain argument, or --resume is required. Use --help for usage information.")
@@ -185,6 +199,10 @@ func main() {
 
 	// --screenshot implies --httpx (needs HTTP results for URLs)
 	if cfg.Screenshot {
+		cfg.Tools["httpx"] = true
+	}
+	// --tech implies --httpx (needs HTTP scanning for fingerprinting)
+	if cfg.TechDetect {
 		cfg.Tools["httpx"] = true
 	}
 
