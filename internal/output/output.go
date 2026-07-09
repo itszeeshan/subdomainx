@@ -5,17 +5,23 @@ import (
 	"path/filepath"
 
 	"github.com/itszeeshan/subdomainx/internal/config"
+	"github.com/itszeeshan/subdomainx/internal/diff"
 	"github.com/itszeeshan/subdomainx/internal/types"
 )
 
-// Generate creates output files based on the configuration and results
-func Generate(cfg *config.Config, subdomainResults []types.SubdomainResult, httpResults []types.HTTPResult, portResults []types.PortResult) error {
+// Generate creates output files based on the configuration and results.
+// diffResult may be nil when diff is not enabled.
+func Generate(cfg *config.Config, subdomainResults []types.SubdomainResult, httpResults []types.HTTPResult, portResults []types.PortResult, waybackResults []types.WaybackEntry, diffResult *diff.DiffResult) error {
 	// Create scan results structure
 	results := &types.ScanResults{
 		Subdomains: subdomainResults,
 		HTTP:       httpResults,
 		Ports:      portResults,
+		Wayback:    waybackResults,
 	}
+
+	// Store diff result for HTML report generation
+	currentDiffResult = diffResult
 
 	// Generate output based on format
 	switch cfg.OutputFormat {
@@ -98,11 +104,14 @@ func generateTXT(cfg *config.Config, results *types.ScanResults) error {
 	return nil
 }
 
+// diffResult is stored at package level so generateHTML can access it.
+var currentDiffResult *diff.DiffResult
+
 // generateHTML creates HTML output files
 func generateHTML(cfg *config.Config, results *types.ScanResults) error {
 	// Main HTML report
 	htmlFile := filepath.Join(cfg.OutputDir, fmt.Sprintf("%s_report.html", cfg.UniqueName))
-	if err := WriteHTML(htmlFile, cfg, results); err != nil {
+	if err := WriteHTML(htmlFile, cfg, results, currentDiffResult); err != nil {
 		return fmt.Errorf("failed to write HTML report: %v", err)
 	}
 
