@@ -14,13 +14,12 @@ function Logo() {
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-      <img src="/logo.png" alt="SubdomainX" style={{ height: '32px', width: 'auto' }} />
-      <span>SubdomainX</span>
+      <img src="/logo.png" alt="SubdomainX" style={{ height: '40px', width: 'auto' }} />
       {version && (
         <span style={{
           fontSize: '12px',
           padding: '2px 6px',
-          backgroundColor: '#16a34a',
+          backgroundColor: '#9489FD',
           color: 'white',
           borderRadius: '12px',
           fontWeight: '500'
@@ -96,7 +95,7 @@ export default {
             textDecoration: 'none',
             transition: 'color 0.2s ease'
           }}
-          onMouseEnter={(e) => e.target.style.color = '#16a34a'}
+          onMouseEnter={(e) => e.target.style.color = '#9489FD'}
           onMouseLeave={(e) => e.target.style.color = 'var(--tw-prose-body)'}
         >
           <svg style={{ width: '12px', height: '12px' }} fill="currentColor" viewBox="0 0 24 24">
@@ -130,13 +129,10 @@ export default {
       <link rel="apple-touch-icon" href="/logo.png" />
     </>
   ),
-  primaryHue: {
-    dark: 160,
-    light: 160
-  },
-  primarySaturation: {
-    dark: 100,
-    light: 100
+  color: {
+    hue: 245,
+    saturation: 96,
+    lightness: 77
   },
   nextThemes: {
     defaultTheme: 'system'
@@ -161,7 +157,7 @@ export default {
         </span>
       ),
       tipIcon: (
-        <span className="nx-inline-flex nx-rounded-lg nx-bg-green-500/10 nx-px-2 nx-py-1 nx-text-xs nx-font-medium nx-text-green-600 nx-ring-1 nx-ring-inset nx-ring-green-500/20 dark:nx-bg-green-400/10 dark:nx-text-green-400 dark:nx-ring-green-400/20">
+        <span className="nx-inline-flex nx-rounded-lg nx-bg-purple-500/10 nx-px-2 nx-py-1 nx-text-xs nx-font-medium nx-text-purple-600 nx-ring-1 nx-ring-inset nx-ring-purple-500/20 dark:nx-bg-purple-400/10 dark:nx-text-purple-400 dark:nx-ring-purple-400/20">
           Tip
         </span>
       ),
