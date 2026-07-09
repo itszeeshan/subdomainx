@@ -63,17 +63,17 @@ func setupWildcardFile(cfg *config.Config, args []string) (cleanup func(), err e
 	}
 
 	if _, err := tmpFile.WriteString(domain + "\n"); err != nil {
-		os.Remove(tmpFile.Name())
+		_ = os.Remove(tmpFile.Name())
 		return cleanup, fmt.Errorf("failed to write domain to temporary file: %v", err)
 	}
-	tmpFile.Close()
+	_ = tmpFile.Close()
 
 	cfg.WildcardFile = tmpFile.Name()
 	if cfg.UniqueName == "scan" {
 		cfg.UniqueName = domain
 	}
 
-	return func() { os.Remove(tmpFile.Name()) }, nil
+	return func() { _ = os.Remove(tmpFile.Name()) }, nil
 }
 
 // loadAndMergeConfig loads a config file (or the default) and merges it with

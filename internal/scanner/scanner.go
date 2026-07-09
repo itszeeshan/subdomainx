@@ -407,7 +407,7 @@ func enrichWithFingerprinting(cfg *config.Config, results []types.HTTPResult) {
 				return
 			}
 			body, _ := io.ReadAll(io.LimitReader(resp.Body, 64*1024))
-			resp.Body.Close()
+			_ = resp.Body.Close()
 
 			techs := FingerprintTechnologies(resp, body)
 			if len(techs) > 0 {

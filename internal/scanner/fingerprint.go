@@ -72,14 +72,6 @@ var headerValueFingerprints = []headerValueFingerprint{
 	{Header: "X-Shopify-Stage", Contains: "", Name: "Shopify", Category: "E-commerce"},
 }
 
-// bodyPattern matches patterns in the HTML body.
-type bodyPattern struct {
-	Pattern  string
-	Name     string
-	Version  string // regex group for version extraction (empty if N/A)
-	Category string
-}
-
 var bodyPatterns = []struct {
 	regex    *regexp.Regexp
 	name     string

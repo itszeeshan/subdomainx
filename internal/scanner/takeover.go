@@ -248,7 +248,7 @@ func fetchBodiesForTakeover(cfg *config.Config, httpResults []types.HTTPResult) 
 		}
 
 		body, err := io.ReadAll(io.LimitReader(resp.Body, 32*1024))
-		resp.Body.Close()
+		_ = resp.Body.Close()
 		cancel()
 		if err != nil {
 			continue
