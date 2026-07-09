@@ -12,13 +12,28 @@ type LinkHeader struct {
 	Subdomains []string `json:"subdomains,omitempty"`
 }
 
+type Technology struct {
+	Name     string `json:"name"`
+	Version  string `json:"version,omitempty"`
+	Category string `json:"category"`
+}
+
 type HTTPResult struct {
 	URL           string       `json:"url"`
 	StatusCode    int          `json:"status_code"`
 	Title         string       `json:"title,omitempty"`
 	Technologies  []string     `json:"technologies,omitempty"`
+	DetectedTech  []Technology `json:"detected_tech,omitempty"`
 	ContentLength int          `json:"content_length,omitempty"`
 	LinkHeaders   []LinkHeader `json:"link_headers,omitempty"`
+}
+
+type TakeoverResult struct {
+	Subdomain string `json:"subdomain"`
+	CNAME     string `json:"cname,omitempty"`
+	Risk      string `json:"risk"`
+	Service   string `json:"service"`
+	Evidence  string `json:"evidence"`
 }
 
 type PortResult struct {
@@ -47,4 +62,5 @@ type ScanResults struct {
 	HTTP       []HTTPResult      `json:"http,omitempty"`
 	Ports      []PortResult      `json:"ports,omitempty"`
 	Wayback    []WaybackEntry    `json:"wayback,omitempty"`
+	Takeover   []TakeoverResult  `json:"takeover,omitempty"`
 }
