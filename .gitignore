@@ -41,6 +41,7 @@ resume.cfg
 # AI planning artifacts
 ai-plan.md
 plan.md
+roadmap.md
 
 # Go specific
 *.test
