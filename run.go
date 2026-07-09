@@ -10,6 +10,7 @@ import (
 	"github.com/itszeeshan/subdomainx/internal/enumerator"
 	"github.com/itszeeshan/subdomainx/internal/notify"
 	"github.com/itszeeshan/subdomainx/internal/output"
+	"github.com/itszeeshan/subdomainx/internal/screenshot"
 	"github.com/itszeeshan/subdomainx/internal/scanner"
 	"github.com/itszeeshan/subdomainx/internal/types"
 	"github.com/itszeeshan/subdomainx/internal/utils"
@@ -18,10 +19,11 @@ import (
 // scanState holds in-progress and completed scan results alongside the
 // checkpoint that tracks persistence across interruptions.
 type scanState struct {
-	checkpoint  *utils.Checkpoint
-	results     []types.SubdomainResult
-	httpResults []types.HTTPResult
-	portResults []types.PortResult
+	checkpoint     *utils.Checkpoint
+	results        []types.SubdomainResult
+	httpResults    []types.HTTPResult
+	portResults    []types.PortResult
+	waybackResults []types.WaybackEntry
 }
 
 // initScanState either loads a previous checkpoint (resume mode) or creates a
@@ -112,6 +114,33 @@ func executeScanPipeline(cfg *config.Config, state *scanState, resume string) er
 		}
 	}
 
+	// --- Screenshots ---
+	if cfg.Screenshot && len(state.httpResults) > 0 {
+		log.Println("📸 Capturing screenshots...")
+		count, err := screenshot.CaptureAll(cfg, state.httpResults)
+		if err != nil {
+			log.Printf("Warning: Screenshot capture failed: %v", err)
+		} else {
+			log.Printf("✅ Screenshots captured: %d", count)
+		}
+	}
+
+	// --- Wayback URLs for HTTP-alive subdomains ---
+	if cfg.Tools["waybackurls"] && len(state.httpResults) > 0 && len(state.waybackResults) == 0 {
+		log.Println("🕰️  Collecting Wayback URLs for HTTP-alive subdomains...")
+		waybackResults := scanner.RunWaybackURLs(cfg, state.httpResults)
+		if len(waybackResults) > 0 {
+			totalURLs := 0
+			for _, w := range waybackResults {
+				totalURLs += len(w.URLs)
+			}
+			log.Printf("✅ Wayback URLs collected: %d URLs across %d subdomains", totalURLs, len(waybackResults))
+			state.waybackResults = waybackResults
+		} else {
+			log.Println("ℹ️  No Wayback URLs found")
+		}
+	}
+
 	// --- Port scanning ---
 	if cfg.Tools["smap"] && (resume == "" || len(state.portResults) == 0) {
 		log.Println("🔍 Running port scanning with smap...")
@@ -126,11 +155,6 @@ func executeScanPipeline(cfg *config.Config, state *scanState, resume string) er
 		}
 	}
 
-	// --- Output ---
-	if err := output.Generate(cfg, state.results, state.httpResults, state.portResults); err != nil {
-		return fmt.Errorf("failed to generate output: %v", err)
-	}
-
 	// --- Record scan history (always, for future diffs) ---
 	domain := cp.Domain
 	if domain == "" {
@@ -140,7 +164,7 @@ func executeScanPipeline(cfg *config.Config, state *scanState, resume string) er
 		log.Printf("Warning: Failed to record scan history: %v", err)
 	}
 
-	// --- Diff comparison ---
+	// --- Diff comparison (before output so HTML report can include diff) ---
 	var diffResult *diff.DiffResult
 	if cfg.DiffEnabled {
 		dr, err := diff.Compare(cfg, cp.ScanID, state.results)
@@ -153,6 +177,11 @@ func executeScanPipeline(cfg *config.Config, state *scanState, resume string) er
 			}
 			diff.PrintSummary(dr)
 		}
+	}
+
+	// --- Output ---
+	if err := output.Generate(cfg, state.results, state.httpResults, state.portResults, state.waybackResults, diffResult); err != nil {
+		return fmt.Errorf("failed to generate output: %v", err)
 	}
 
 	// --- Notifications ---

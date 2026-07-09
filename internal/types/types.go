@@ -35,8 +35,16 @@ type Port struct {
 	Version  string `json:"version,omitempty"`
 }
 
+// WaybackEntry holds historical URLs discovered for a subdomain.
+type WaybackEntry struct {
+	Subdomain string   `json:"subdomain"`
+	Domain    string   `json:"domain"`
+	URLs      []string `json:"urls"`
+}
+
 type ScanResults struct {
 	Subdomains []SubdomainResult `json:"subdomains"`
 	HTTP       []HTTPResult      `json:"http,omitempty"`
 	Ports      []PortResult      `json:"ports,omitempty"`
+	Wayback    []WaybackEntry    `json:"wayback,omitempty"`
 }
