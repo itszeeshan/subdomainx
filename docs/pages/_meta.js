@@ -1,0 +1,8 @@
+export default {
+  index: 'Overview',
+  installation: 'Installation',
+  'cli-reference': 'CLI Reference',
+  examples: 'Examples',
+  configuration: 'Configuration',
+  'supported-tools': 'Supported Tools'
+}
