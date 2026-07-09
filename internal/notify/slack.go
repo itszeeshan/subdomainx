@@ -34,7 +34,7 @@ func (s *slackNotifier) Send(summary ScanSummary) error {
 	if err != nil {
 		return fmt.Errorf("failed to send slack notification: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("slack webhook returned status %d", resp.StatusCode)

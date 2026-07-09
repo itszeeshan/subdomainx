@@ -20,13 +20,13 @@ domain4.com`
 	if err != nil {
 		t.Fatalf("Failed to create temp file: %v", err)
 	}
-	defer os.Remove(tmpFile.Name())
+	defer func() { _ = os.Remove(tmpFile.Name()) }()
 
 	// Write test content
 	if _, err := tmpFile.WriteString(testContent); err != nil {
 		t.Fatalf("Failed to write test content: %v", err)
 	}
-	tmpFile.Close()
+	_ = tmpFile.Close()
 
 	// Test reading lines
 	lines, err := ReadLines(tmpFile.Name())
@@ -52,8 +52,8 @@ func TestReadLinesEmptyFile(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp file: %v", err)
 	}
-	defer os.Remove(tmpFile.Name())
-	tmpFile.Close()
+	defer func() { _ = os.Remove(tmpFile.Name()) }()
+	_ = tmpFile.Close()
 
 	// Test reading empty file
 	lines, err := ReadLines(tmpFile.Name())
@@ -136,8 +136,8 @@ func TestFileExists(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create temp file: %v", err)
 	}
-	defer os.Remove(tmpFile.Name())
-	tmpFile.Close()
+	defer func() { _ = os.Remove(tmpFile.Name()) }()
+	_ = tmpFile.Close()
 
 	if !FileExists(tmpFile.Name()) {
 		t.Error("FileExists should return true for existing file")

@@ -355,7 +355,7 @@ func isPortOpen(host string, port int) bool {
 	if err != nil {
 		return false
 	}
-	defer conn.Close()
+	defer func() { _ = conn.Close() }()
 	return true
 }
 
