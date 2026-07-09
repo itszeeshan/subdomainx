@@ -72,6 +72,11 @@
 - **Rich Metadata**: Detailed scan information and statistics
 - **Export Ready**: Compatible with other security tools and platforms
 
+<div align="center">
+  <img src="docs/public/dashboard.png" alt="SubdomainX HTML Dashboard" width="800"/>
+  <p><em>Interactive HTML Dashboard with screenshots, wayback URLs, port results, and more</em></p>
+</div>
+
 ## Quick Start
 
 ### Installation
