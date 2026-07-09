@@ -124,6 +124,62 @@ Capture screenshots of discovered web services using headless Chrome/Chromium.
 
 > **Note**: `--screenshot` automatically enables `--httpx` since it needs HTTP results. Requires Chrome or Chromium installed on the system.
 
+### Technology Fingerprinting Options
+
+Detect technology stacks on discovered web services during HTTP scanning.
+
+| Option           | Default | Description                                                    |
+| ---------------- | ------- | -------------------------------------------------------------- |
+| `--tech`         | `false` | Enable technology fingerprinting during HTTP scanning          |
+| `--tech-filter`  | `""`    | Filter results by technology (comma-separated, e.g., `WordPress,nginx`) |
+
+> **Note**: `--tech` automatically enables `--httpx` since it requires HTTP scanning. `--tech-filter` implies `--tech`.
+
+**What it detects:**
+
+- **Web servers**: nginx, Apache, IIS, Caddy
+- **Frameworks**: React, Angular, Vue, Next.js, Django, Rails, Laravel, Express.js
+- **CMS platforms**: WordPress, Drupal, Joomla, Wix, Squarespace
+- **CDN/WAF providers**: Cloudflare, Akamai, AWS CloudFront, Azure CDN
+- **JavaScript libraries**: jQuery, Bootstrap, Tailwind CSS
+- **Languages**: PHP, Java, ASP.NET, Ruby
+- **PaaS/Hosting**: Heroku, Vercel, Netlify, Fly.io, Shopify
+
+**Detection methods:**
+
+- HTTP response headers (`Server`, `X-Powered-By`, `CF-RAY`, etc.)
+- Cookie patterns (`PHPSESSID` → PHP, `csrftoken` → Django, etc.)
+- HTML meta tags and script sources (`<meta name="generator">`, CDN links)
+- URL patterns and file extensions
+
+### Subdomain Takeover Options
+
+Check for subdomain takeover vulnerabilities due to dangling DNS records.
+
+| Option            | Default | Description                                               |
+| ----------------- | ------- | --------------------------------------------------------- |
+| `--takeover`      | `false` | Check all discovered subdomains for takeover vulnerabilities |
+| `--takeover-only` | `false` | Only show subdomains vulnerable to takeover               |
+
+> **Note**: `--takeover-only` implies `--takeover`. When used with `--httpx`, takeover detection is enhanced with HTTP body fingerprint matching in addition to DNS-based checks.
+
+**Supported services:**
+
+| Service       | Detection Method                            |
+| ------------- | ------------------------------------------- |
+| AWS S3        | CNAME + "NoSuchBucket" in response          |
+| GitHub Pages  | CNAME + "There isn't a GitHub Pages site here" |
+| Heroku        | CNAME + "No such app"                       |
+| Azure         | CNAME + NXDOMAIN on `*.azurewebsites.net`   |
+| Shopify       | CNAME + "Sorry, this shop is currently unavailable" |
+| Fastly        | CNAME + "Fastly error: unknown domain"      |
+| Pantheon      | CNAME + "404 error unknown site"            |
+| Tumblr        | CNAME + "There's nothing here"              |
+| WordPress.com | CNAME + "Do you want to register"           |
+| Fly.io        | CNAME + NXDOMAIN on `*.fly.dev`             |
+| Surge.sh      | CNAME + "project not found"                 |
+| Netlify       | CNAME + "Not Found - Request ID"            |
+
 ### Diff/Monitoring Options
 
 Compare scan results against previous runs to detect changes.
@@ -382,6 +438,52 @@ subdomainx --diff --baseline results/previous_results.json example.com
 
 ```bash
 subdomainx --wildcard domains.txt --diff
+```
+
+### Technology Fingerprinting
+
+**Detect technologies on HTTP-alive subdomains:**
+
+```bash
+subdomainx --httpx --tech example.com
+```
+
+**Filter results by specific technologies:**
+
+```bash
+subdomainx --httpx --tech --tech-filter "WordPress,nginx" example.com
+```
+
+**Technology fingerprinting with HTML report:**
+
+```bash
+subdomainx --httpx --tech --format html --name tech_audit example.com
+```
+
+### Subdomain Takeover Detection
+
+**Check all subdomains for takeover risks:**
+
+```bash
+subdomainx --takeover example.com
+```
+
+**Enhanced detection with HTTP scanning:**
+
+```bash
+subdomainx --httpx --takeover example.com
+```
+
+**Only show vulnerable subdomains:**
+
+```bash
+subdomainx --takeover --takeover-only example.com
+```
+
+**Multiple domains:**
+
+```bash
+subdomainx --wildcard domains.txt --takeover --httpx --format html
 ```
 
 ### Notifications

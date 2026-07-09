@@ -351,6 +351,116 @@ output_dir: scans/
 - **Use Filters**: Leverage status code and port filters to focus on relevant results
 - **Combine Tools**: Use both enumeration and scanning tools for comprehensive results
 
+## Technology Fingerprinting
+
+### Basic Tech Detection
+
+Detect technology stacks on all HTTP-alive subdomains:
+
+```bash
+subdomainx --httpx --tech example.com
+```
+
+> **Note**: `--tech` automatically enables `--httpx`. Detects web servers, frameworks, CMS platforms, CDNs, and more from headers, cookies, and HTML content.
+
+### Filter by Technology
+
+Only show results running specific technologies:
+
+**Single domain:**
+
+```bash
+subdomainx --httpx --tech --tech-filter "WordPress,nginx" example.com
+```
+
+**Multiple domains:**
+
+```bash
+subdomainx --wildcard domains.txt --httpx --tech --tech-filter "WordPress"
+```
+
+> **Tip**: Use `--tech-filter` to quickly find all subdomains running a specific CMS or framework for targeted testing.
+
+### Tech Fingerprinting with HTML Report
+
+Generate a comprehensive report with technology breakdown:
+
+```bash
+subdomainx --httpx --tech --format html --name tech_audit example.com
+```
+
+> **Note**: The HTML report includes a technology distribution chart and filterable tech column in the HTTP results table.
+
+### Full Recon with Tech Detection
+
+Combine technology fingerprinting with other scanning features:
+
+```bash
+subdomainx --subfinder --crtsh --httpx --tech --smap --format html --name full_recon example.com
+```
+
+---
+
+## Subdomain Takeover Detection
+
+### Basic Takeover Check
+
+Check all discovered subdomains for takeover vulnerabilities:
+
+```bash
+subdomainx --takeover example.com
+```
+
+> **Note**: Uses DNS CNAME lookups to identify dangling records pointing to unclaimed services (GitHub Pages, Heroku, S3, etc.).
+
+### Enhanced Detection with HTTP Scanning
+
+Combine with HTTP scanning for more accurate detection using body-based fingerprints:
+
+**Single domain:**
+
+```bash
+subdomainx --httpx --takeover example.com
+```
+
+**Multiple domains:**
+
+```bash
+subdomainx --wildcard domains.txt --httpx --takeover
+```
+
+> **Tip**: HTTP-based detection catches cases where DNS alone is insufficient, such as services that respond with specific error pages.
+
+### Show Only Vulnerable Subdomains
+
+Filter output to only show subdomains at risk of takeover:
+
+```bash
+subdomainx --takeover --takeover-only example.com
+```
+
+### Takeover Check with HTML Report
+
+Generate a visual report with a dedicated Takeover tab showing risk levels:
+
+```bash
+subdomainx --httpx --takeover --format html --name takeover_audit example.com
+```
+
+> **Note**: The HTML report shows risk badges (HIGH, MEDIUM, LOW), CNAME targets, affected services, and evidence for each finding.
+
+### Bug Bounty Takeover Sweep
+
+Comprehensive takeover check across multiple targets:
+
+```bash
+subdomainx --wildcard targets.txt --httpx --takeover --diff --notify slack --format html --name bb_takeover
+```
+
+> **Tip**: Combine `--takeover` with `--diff` and `--notify` for continuous monitoring of takeover risks.
+
+---
+
 ## Screenshots
 
 ### Basic Screenshot Capture

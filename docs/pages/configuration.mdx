@@ -114,6 +114,24 @@ scanners:
 
 > **Note**: `--screenshot` automatically enables `--httpx`. Requires Chrome or Chromium installed on the system.
 
+### Technology Fingerprinting Configuration
+
+| Parameter      | Type    | Default | CLI Flag        | Description                                                    |
+| -------------- | ------- | ------- | --------------- | -------------------------------------------------------------- |
+| `tech_detect`  | boolean | `false` | `--tech`        | Enable technology fingerprinting during HTTP scanning          |
+| `tech_filter`  | string  | `""`    | `--tech-filter` | Filter results by technology (comma-separated)                 |
+
+> **Note**: `--tech` automatically enables `--httpx`. `--tech-filter` implies `--tech`.
+
+### Subdomain Takeover Configuration
+
+| Parameter       | Type    | Default | CLI Flag         | Description                                               |
+| --------------- | ------- | ------- | ---------------- | --------------------------------------------------------- |
+| `takeover`      | boolean | `false` | `--takeover`     | Check subdomains for takeover vulnerabilities              |
+| `takeover_only` | boolean | `false` | `--takeover-only` | Only show subdomains vulnerable to takeover              |
+
+> **Note**: `--takeover-only` implies `--takeover`. Use with `--httpx` for enhanced body-based detection.
+
 ### Diff/Monitoring Configuration
 
 | Parameter       | Type    | Default | CLI Flag     | Description                                          |
