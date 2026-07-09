@@ -111,6 +111,19 @@ Filter results based on specific criteria:
 | `--resume SCAN_ID`     | `""`    | Resume scan from checkpoint (scan ID)  |
 | `--list-checkpoints`   | `false` | List available checkpoints             |
 
+### Screenshot Options
+
+Capture screenshots of discovered web services using headless Chrome/Chromium.
+
+| Option                      | Default      | Description                                          |
+| --------------------------- | ------------ | ---------------------------------------------------- |
+| `--screenshot`              | `false`      | Capture screenshots of HTTP-alive subdomains          |
+| `--screenshot-dir DIR`      | `{output}/screenshots` | Directory for screenshot files            |
+| `--screenshot-timeout N`    | `10`         | Timeout per page in seconds                          |
+| `--screenshot-resolution WxH` | `1280x720` | Viewport resolution (width x height)                 |
+
+> **Note**: `--screenshot` automatically enables `--httpx` since it needs HTTP results. Requires Chrome or Chromium installed on the system.
+
 ### Diff/Monitoring Options
 
 Compare scan results against previous runs to detect changes.
@@ -329,6 +342,26 @@ subdomainx --threads 20 --timeout 60 example.com
 
 ```bash
 subdomainx --wildcard domains.txt --threads 20 --timeout 60
+```
+
+### Screenshots
+
+**Screenshot all HTTP-alive subdomains:**
+
+```bash
+subdomainx --screenshot example.com
+```
+
+**Custom resolution and timeout:**
+
+```bash
+subdomainx --screenshot --screenshot-resolution 1920x1080 --screenshot-timeout 15 example.com
+```
+
+**Save to a custom directory:**
+
+```bash
+subdomainx --screenshot --screenshot-dir ./my-screenshots example.com
 ```
 
 ### Diff/Monitoring

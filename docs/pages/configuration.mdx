@@ -103,6 +103,17 @@ scanners:
 
 > **Note**: Filter options work with HTTP scanning (`--httpx`) and port scanning (`--smap`) results.
 
+### Screenshot Configuration
+
+| Parameter               | Type    | Default              | CLI Flag                 | Description                                 |
+| ----------------------- | ------- | -------------------- | ------------------------ | ------------------------------------------- |
+| `screenshot`            | boolean | `false`              | `--screenshot`           | Capture screenshots of HTTP-alive subdomains |
+| `screenshot_dir`        | string  | `{output}/screenshots` | `--screenshot-dir`     | Directory for screenshot files               |
+| `screenshot_timeout`    | integer | `10`                 | `--screenshot-timeout`   | Timeout per page in seconds                  |
+| `screenshot_resolution` | string  | `"1280x720"`         | `--screenshot-resolution` | Viewport resolution (WxH)                  |
+
+> **Note**: `--screenshot` automatically enables `--httpx`. Requires Chrome or Chromium installed on the system.
+
 ### Diff/Monitoring Configuration
 
 | Parameter       | Type    | Default | CLI Flag     | Description                                          |

@@ -198,6 +198,8 @@ subdomainx --wildcard domains.txt --format html --name my_scan --output reports/
 
 > **Note**: Creates an HTML report in the reports/ directory with custom filename
 
+![SubdomainX HTML Dashboard](/dashboard.png)
+
 ### High Performance
 
 Optimize for speed with increased threads and timeout:
@@ -348,6 +350,59 @@ output_dir: scans/
 - **Verify Results**: Always verify discovered subdomains and validate findings
 - **Use Filters**: Leverage status code and port filters to focus on relevant results
 - **Combine Tools**: Use both enumeration and scanning tools for comprehensive results
+
+## Screenshots
+
+### Basic Screenshot Capture
+
+Capture screenshots of all HTTP-alive subdomains:
+
+```bash
+subdomainx --screenshot example.com
+```
+
+> **Note**: `--screenshot` automatically enables HTTP scanning (`--httpx`). Requires Chrome or Chromium installed.
+
+### Custom Resolution
+
+Capture at full HD resolution for detailed reports:
+
+```bash
+subdomainx --screenshot --screenshot-resolution 1920x1080 example.com
+```
+
+### Screenshots with HTML Report
+
+Combine screenshots with an HTML report for comprehensive recon:
+
+```bash
+subdomainx --screenshot --format html --name recon_report example.com
+```
+
+**Output structure:**
+
+```
+output/
+├── recon_report_results.json
+├── recon_report_report.html
+└── screenshots/
+    ├── www.example.com.png
+    ├── api.example.com.png
+    ├── staging.example.com.png
+    └── admin.example.com.png
+```
+
+### Screenshots with Specific Tools
+
+Use specific enumeration tools and capture screenshots:
+
+```bash
+subdomainx --subfinder --crtsh --screenshot --max-http-targets 100 example.com
+```
+
+> **Tip**: Use `--max-http-targets` to limit the number of screenshots when scanning large domains.
+
+---
 
 ## Diff/Monitoring
 
