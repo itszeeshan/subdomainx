@@ -116,7 +116,7 @@ export default {
   },
   useNextSeoProps() {
     return {
-      titleTemplate: '%s – SubdomainX'
+      titleTemplate: 'SubdomainX Docs | %s'
     }
   },
   head: (
