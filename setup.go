@@ -203,6 +203,16 @@ func mergeConfig(cfg1, cfg2 *config.Config) *config.Config {
 		result.MaxHTTPTargets = cfg2.MaxHTTPTargets
 	}
 
+	if cfg2.DiffEnabled {
+		result.DiffEnabled = true
+	}
+	if cfg2.BaselineFile != "" {
+		result.BaselineFile = cfg2.BaselineFile
+	}
+	if len(cfg2.NotifyChannels) > 0 {
+		result.NotifyChannels = cfg2.NotifyChannels
+	}
+
 	for k, v := range cfg2.Tools {
 		result.Tools[k] = v
 	}
@@ -248,6 +258,15 @@ func validateCLIInput(cfg *config.Config) error {
 	}
 	if cfg.Wordlist != "" && !utils.FileExists(cfg.Wordlist) {
 		return fmt.Errorf("wordlist file not found: %s", cfg.Wordlist)
+	}
+	if cfg.BaselineFile != "" && !utils.FileExists(cfg.BaselineFile) {
+		return fmt.Errorf("baseline file not found: %s", cfg.BaselineFile)
+	}
+	validChannels := map[string]bool{"slack": true, "discord": true, "telegram": true, "email": true}
+	for _, ch := range cfg.NotifyChannels {
+		if !validChannels[ch] {
+			return fmt.Errorf("invalid notification channel: %s. Supported: slack, discord, telegram, email", ch)
+		}
 	}
 
 	return nil

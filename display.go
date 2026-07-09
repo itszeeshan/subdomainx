@@ -73,6 +73,18 @@ OPTIONS:
     --httpx                Use httpx for HTTP scanning
     --smap                 Use smap for port scanning
 
+    # Diff/Monitoring Options
+    --diff                 Compare results against the most recent previous scan
+    --baseline FILE        Compare results against a specific baseline file
+
+    # Notification Options
+    --notify CHANNELS      Send notifications (comma-separated: slack,discord,telegram,email)
+                           Credentials via environment variables:
+                             SUBDOMAINX_SLACK_WEBHOOK
+                             SUBDOMAINX_DISCORD_WEBHOOK
+                             SUBDOMAINX_TELEGRAM_TOKEN + SUBDOMAINX_TELEGRAM_CHAT_ID
+                             SUBDOMAINX_SMTP_HOST, _PORT, _USER, _PASS, SUBDOMAINX_NOTIFY_EMAIL
+
     # Configuration
     --config FILE          Use custom configuration file (optional)
     --verbose              Enable verbose output
@@ -113,6 +125,18 @@ EXAMPLES:
 
     # Get installation help
     subdomainx --install-tools
+
+    # Compare against previous scan
+    subdomainx --diff example.com
+
+    # Compare against a specific baseline
+    subdomainx --diff --baseline results/previous.json example.com
+
+    # Send Slack notification on scan completion
+    subdomainx --notify slack example.com
+
+    # Diff + notify (alert on new/removed subdomains)
+    subdomainx --diff --notify slack,email example.com
 
 CONFIGURATION:
     The YAML config file is optional. All settings can be specified via CLI flags.

@@ -3,9 +3,12 @@ package main
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/itszeeshan/subdomainx/internal/config"
+	"github.com/itszeeshan/subdomainx/internal/diff"
 	"github.com/itszeeshan/subdomainx/internal/enumerator"
+	"github.com/itszeeshan/subdomainx/internal/notify"
 	"github.com/itszeeshan/subdomainx/internal/output"
 	"github.com/itszeeshan/subdomainx/internal/scanner"
 	"github.com/itszeeshan/subdomainx/internal/types"
@@ -126,6 +129,46 @@ func executeScanPipeline(cfg *config.Config, state *scanState, resume string) er
 	// --- Output ---
 	if err := output.Generate(cfg, state.results, state.httpResults, state.portResults); err != nil {
 		return fmt.Errorf("failed to generate output: %v", err)
+	}
+
+	// --- Record scan history (always, for future diffs) ---
+	domain := cp.Domain
+	if domain == "" {
+		domain = cp.ScanID
+	}
+	if err := diff.RecordScan(cfg.OutputDir, cp.ScanID, domain, state.results); err != nil {
+		log.Printf("Warning: Failed to record scan history: %v", err)
+	}
+
+	// --- Diff comparison ---
+	var diffResult *diff.DiffResult
+	if cfg.DiffEnabled {
+		dr, err := diff.Compare(cfg, cp.ScanID, state.results)
+		if err != nil {
+			log.Printf("Warning: Diff comparison failed: %v", err)
+		} else {
+			diffResult = dr
+			if err := diff.WriteDiffReport(cfg, dr); err != nil {
+				log.Printf("Warning: Failed to write diff report: %v", err)
+			}
+			diff.PrintSummary(dr)
+		}
+	}
+
+	// --- Notifications ---
+	if len(cfg.NotifyChannels) > 0 {
+		summary := notify.ScanSummary{
+			ScanID:          cp.ScanID,
+			Domain:          domain,
+			TotalSubdomains: len(state.results),
+			TotalHTTP:       len(state.httpResults),
+			TotalPorts:      len(state.portResults),
+			Duration:        time.Since(cp.Progress.StartTime),
+			Diff:            diffResult,
+		}
+		if err := notify.Send(cfg.NotifyChannels, summary); err != nil {
+			log.Printf("Warning: %v", err)
+		}
 	}
 
 	cp.MarkCompleted()

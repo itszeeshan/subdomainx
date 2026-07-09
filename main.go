@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/itszeeshan/subdomainx/internal/config"
 	"github.com/itszeeshan/subdomainx/internal/utils"
@@ -33,6 +34,9 @@ func main() {
 		statusCodes     = flag.String("status-codes", "", "Filter by HTTP status codes (e.g., '200,301,302')")
 		ports           = flag.String("ports", "", "Filter by ports (e.g., '80,443,8080')")
 		maxHTTPTargets  = flag.Int("max-http-targets", 1000, "Maximum number of subdomains to scan with httpx")
+		diffMode        = flag.Bool("diff", false, "Compare results against previous scan")
+		baselineFile    = flag.String("baseline", "", "Baseline results file for diff comparison")
+		notifyFlag      = flag.String("notify", "", "Notification channels (comma-separated: slack,discord,telegram,email)")
 
 		flags = toolFlags{}
 	)
@@ -62,7 +66,7 @@ func main() {
 
 	// ---- Early-exit commands ----
 	if *showVersion {
-		fmt.Println("SubdomainX v1.4.1")
+		fmt.Println("SubdomainX v1.5.0")
 		return
 	}
 	if *showHelp {
@@ -142,6 +146,14 @@ func main() {
 	}
 	if *ports != "" {
 		cfg.Filters["ports"] = *ports
+	}
+	cfg.DiffEnabled = *diffMode
+	if *baselineFile != "" {
+		cfg.BaselineFile = *baselineFile
+		cfg.DiffEnabled = true // --baseline implies --diff
+	}
+	if *notifyFlag != "" {
+		cfg.NotifyChannels = strings.Split(*notifyFlag, ",")
 	}
 
 	if cfg.WildcardFile == "" && len(args) == 0 && *resume == "" {

@@ -21,6 +21,9 @@ type Config struct {
 	RateLimit      int               `yaml:"rate_limit" json:"rate_limit"`
 	Filters        map[string]string `yaml:"filters" json:"filters"`
 	MaxHTTPTargets int               `yaml:"max_http_targets" json:"max_http_targets"`
+	DiffEnabled    bool              `yaml:"diff_enabled" json:"diff_enabled"`
+	BaselineFile   string            `yaml:"baseline_file" json:"baseline_file"`
+	NotifyChannels []string          `yaml:"notify_channels" json:"notify_channels"`
 }
 
 func LoadConfig() (*Config, error) {
