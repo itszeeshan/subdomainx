@@ -288,6 +288,15 @@
         .badge-source { background: rgba(99,102,241,0.1); color: #4f46e5; }
         .badge-ip     { background: rgba(16,185,129,0.1); color: #059669; font-family: monospace; }
         .badge-tech   { background: rgba(168,85,247,0.1); color: #7c3aed; margin: 1px 2px; }
+        .badge-tech-webserver  { background: rgba(59,130,246,0.1); color: #2563eb; margin: 1px 2px; }
+        .badge-tech-framework  { background: rgba(16,185,129,0.1); color: #059669; margin: 1px 2px; }
+        .badge-tech-cms        { background: rgba(245,158,11,0.1); color: #d97706; margin: 1px 2px; }
+        .badge-tech-cdn        { background: rgba(99,102,241,0.1); color: #4f46e5; margin: 1px 2px; }
+        .badge-tech-language   { background: rgba(236,72,153,0.1); color: #db2777; margin: 1px 2px; }
+        .badge-tech-analytics  { background: rgba(107,114,128,0.1); color: #4b5563; margin: 1px 2px; }
+        .badge-tech-js         { background: rgba(234,179,8,0.1); color: #a16207; margin: 1px 2px; }
+        .badge-tech-paas       { background: rgba(139,92,246,0.1); color: #7c3aed; margin: 1px 2px; }
+        .tech-version          { font-size: 9px; opacity: 0.7; margin-left: 2px; }
         .badge-added  { background: rgba(16,185,129,0.15); color: #059669; }
         .badge-removed{ background: rgba(239,68,68,0.15); color: #dc2626; }
         .badge-changed{ background: rgba(251,146,60,0.15); color: #ea580c; }
@@ -510,6 +519,12 @@
             <button class="nav-item" onclick="showTab('wayback')" id="nav-wayback">
                 <i data-lucide="history"></i> Wayback URLs
                 <span class="nav-badge">{{.WaybackCount}}</span>
+            </button>
+            {{end}}
+            {{if .HasTakeover}}
+            <button class="nav-item" onclick="showTab('takeover')" id="nav-takeover">
+                <i data-lucide="alert-triangle"></i> Takeover
+                <span class="nav-badge" style="background:rgba(239,68,68,0.15);color:#dc2626">{{.TakeoverCount}}</span>
             </button>
             {{end}}
             {{if .HasDiff}}
@@ -786,6 +801,36 @@
         </div>
         {{end}}
 
+        <!-- ── Takeover Tab ── -->
+        {{if .HasTakeover}}
+        <div id="tab-takeover" class="section-hidden">
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">Subdomain Takeover Risks</span>
+                    <span class="panel-count" style="background:rgba(239,68,68,0.12);color:#dc2626">{{.TakeoverCount}} vulnerabilities</span>
+                    <div class="panel-actions">
+                        <button class="btn-sm" onclick="exportData('takeover','csv')"><i data-lucide="download" style="width:12px;height:12px"></i> CSV</button>
+                        <button class="btn-sm" onclick="exportData('takeover','json')"><i data-lucide="file-json" style="width:12px;height:12px"></i> JSON</button>
+                    </div>
+                </div>
+                <div style="overflow-x:auto">
+                    <table id="takeover-table">
+                        <thead>
+                            <tr>
+                                <th onclick="sortTable('takeover','risk')">Risk <span class="sort-arrow" id="sort-takeover-risk"></span></th>
+                                <th onclick="sortTable('takeover','subdomain')">Subdomain <span class="sort-arrow" id="sort-takeover-subdomain"></span></th>
+                                <th onclick="sortTable('takeover','cname')">CNAME <span class="sort-arrow" id="sort-takeover-cname"></span></th>
+                                <th onclick="sortTable('takeover','service')">Service <span class="sort-arrow" id="sort-takeover-service"></span></th>
+                                <th>Evidence</th>
+                            </tr>
+                        </thead>
+                        <tbody id="takeover-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {{end}}
+
         <!-- ── Changes Tab ── -->
         {{if .HasDiff}}
         <div id="tab-changes" class="section-hidden">
@@ -877,6 +922,7 @@ const techStats     = {{.TechStats}};
 const screenshots   = {{.Screenshots}};
 const diffData      = {{.DiffData}};
 const waybackRaw    = {{.WaybackData}};
+const takeoverData  = {{.TakeoverData}};
 const ITEMS_PER_PAGE = {{.ItemsPerPage}};
 
 // ── State ────────────────────────────────────────────────────────────────
@@ -895,12 +941,13 @@ document.addEventListener('DOMContentLoaded', () => {
     renderPorts();
     if (screenshots && screenshots.length) renderScreenshots();
     if (waybackRaw && waybackRaw.length) initWayback();
+    if (takeoverData && takeoverData.length) renderTakeover();
     if (diffData) renderDiff();
 });
 
 // ── Tab switching ────────────────────────────────────────────────────────
 function showTab(tab) {
-    const allTabs = ['subdomains','http','ports','screenshots','wayback','changes'];
+    const allTabs = ['subdomains','http','ports','screenshots','wayback','takeover','changes'];
     allTabs.forEach(t => {
         const el = document.getElementById('tab-' + t);
         const nav = document.getElementById('nav-' + t);
@@ -951,7 +998,12 @@ function buildFilters() {
     const domains = [...new Set(allSubdomains.map(s => s.parent))].sort();
     const sources = [...new Set(allSubdomains.flatMap(s => s.source.split(',').map(x => x.trim())))].sort();
     const statuses = [...new Set(allHTTP.map(h => h.status))].sort((a,b) => a-b);
-    const techs = [...new Set(allHTTP.flatMap(h => (h.technologies||'').split(',').map(x => x.trim())).filter(Boolean))].sort();
+    const techSet = new Set(allHTTP.flatMap(h => {
+        const basic = (h.technologies||'').split(',').map(x => x.trim()).filter(Boolean);
+        const detected = (h.detectedTech||[]).map(t => t.name);
+        return [...basic, ...detected];
+    }));
+    const techs = [...techSet].sort();
 
     buildChecks('domain-checkboxes', domains, applyFilters);
     buildChecks('source-checkboxes', sources, applyFilters);
@@ -1001,7 +1053,8 @@ function applyFilters() {
         const fHttp = allHTTP.filter(h => {
             const matchQ = !q || h.url.toLowerCase().includes(q) || (h.title||'').toLowerCase().includes(q);
             const matchS = !checkedStatus.length || checkedStatus.includes(String(h.status));
-            const matchT = !checkedTech.length || (h.technologies||'').split(',').map(x=>x.trim()).some(t => checkedTech.includes(t));
+            const allTechNames = [...(h.technologies||'').split(',').map(x=>x.trim()).filter(Boolean), ...(h.detectedTech||[]).map(t=>t.name)];
+            const matchT = !checkedTech.length || allTechNames.some(t => checkedTech.includes(t));
             return matchQ && matchS && matchT;
         });
         httpPage_ = 1;
@@ -1050,6 +1103,7 @@ function sortTable(tableId, key) {
     else if (tableId === 'http') { currentHTTP.sort(compare); httpPage_ = 1; renderHTTPFiltered(currentHTTP); }
     else if (tableId === 'ports') { currentPorts.sort(compare); portsPage_ = 1; renderPortsFiltered(currentPorts); }
     else if (tableId === 'wayback') { currentWayback.sort(compare); waybackPage_ = 1; renderWayback(); }
+    else if (tableId === 'takeover') { currentTakeover.sort(compare); renderTakeover(); }
 }
 
 // ── Render helpers ────────────────────────────────────────────────────────
@@ -1066,7 +1120,29 @@ function statusBadge(code) {
     return '<span class="' + cls + '">' + code + '</span>';
 }
 
-function techBadges(techStr) {
+function techBadgeClass(category) {
+    const cat = (category || '').toLowerCase();
+    if (cat.includes('web server') || cat.includes('cache')) return 'badge-tech-webserver';
+    if (cat.includes('framework')) return 'badge-tech-framework';
+    if (cat.includes('cms') || cat.includes('e-commerce') || cat.includes('static site')) return 'badge-tech-cms';
+    if (cat.includes('cdn') || cat.includes('waf') || cat.includes('load balancer')) return 'badge-tech-cdn';
+    if (cat.includes('language')) return 'badge-tech-language';
+    if (cat.includes('analytics')) return 'badge-tech-analytics';
+    if (cat.includes('javascript') || cat.includes('css')) return 'badge-tech-js';
+    if (cat.includes('paas') || cat.includes('platform')) return 'badge-tech-paas';
+    return 'badge-tech';
+}
+
+function techBadges(techStr, detectedTech) {
+    // Use structured detected tech if available
+    if (detectedTech && detectedTech.length) {
+        return detectedTech.map(t => {
+            const cls = techBadgeClass(t.category);
+            const ver = t.version ? '<span class="tech-version">v' + esc(t.version) + '</span>' : '';
+            return '<span class="badge ' + cls + '" title="' + esc(t.category) + '">' + esc(t.name) + ver + '</span>';
+        }).join(' ');
+    }
+    // Fallback to basic technologies string
     if (!techStr || techStr === 'N/A') return '<span style="color:#b8aed0">N/A</span>';
     return techStr.split(',').map(t => t.trim()).filter(Boolean).map(t => '<span class="badge badge-tech">' + esc(t) + '</span>').join(' ');
 }
@@ -1116,7 +1192,7 @@ function renderHTTPFiltered(data) {
         '<td>' + statusBadge(h.status) + '</td>' +
         '<td>' + esc(h.title || '—') + '</td>' +
         '<td>' + (h.contentLength || '—') + '</td>' +
-        '<td>' + techBadges(h.technologies) + '</td></tr>'
+        '<td>' + techBadges(h.technologies, h.detectedTech) + '</td></tr>'
     ).join('');
     setPagination(httpPage_, data.length, 'http-info', 'http-prev', 'http-next');
     const badge = document.getElementById('http-count-badge');
@@ -1297,6 +1373,27 @@ function waybackPage(dir) {
     renderWayback();
 }
 
+// ── Takeover ──────────────────────────────────────────────────────────────
+let currentTakeover = [];
+function renderTakeover() {
+    const tbody = document.getElementById('takeover-tbody');
+    if (!tbody || !takeoverData) return;
+    currentTakeover = [...takeoverData];
+    const riskOrder = { high: 0, medium: 1, low: 2 };
+    currentTakeover.sort((a, b) => (riskOrder[a.risk] || 3) - (riskOrder[b.risk] || 3));
+    tbody.innerHTML = currentTakeover.map(r => {
+        const riskColors = { high: '#dc2626', medium: '#ea580c', low: '#ca8a04' };
+        const riskBg = { high: 'rgba(239,68,68,0.1)', medium: 'rgba(234,88,12,0.1)', low: 'rgba(202,138,4,0.1)' };
+        return '<tr>' +
+            '<td><span style="display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;color:' + (riskColors[r.risk]||'#666') + ';background:' + (riskBg[r.risk]||'#eee') + '">' + esc(r.risk.toUpperCase()) + '</span></td>' +
+            '<td><strong>' + esc(r.subdomain) + '</strong></td>' +
+            '<td>' + esc(r.cname || 'N/A') + '</td>' +
+            '<td><span class="badge badge-source">' + esc(r.service) + '</span></td>' +
+            '<td style="font-size:12px;color:#7c6f9a">' + esc(r.evidence) + '</td>' +
+            '</tr>';
+    }).join('');
+}
+
 // ── Bar charts ────────────────────────────────────────────────────────────
 function buildBarCharts() {
     renderBars('source-bars', sourceStats.slice(0, 8));
@@ -1359,6 +1456,9 @@ function exportData(type, format) {
     } else if (type === 'wayback') {
         data = currentWayback;
         filename = 'wayback_urls';
+    } else if (type === 'takeover') {
+        data = currentTakeover;
+        filename = 'takeover_risks';
     } else if (type === 'changes') {
         data = diffData;
         filename = 'diff_changes';

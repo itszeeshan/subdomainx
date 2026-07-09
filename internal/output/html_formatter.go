@@ -65,6 +65,10 @@ type reportData struct {
 	WaybackData  template.JS // [{subdomain, domain, urls}]
 	WaybackCount int
 	HasWayback   bool
+	// Takeover data
+	TakeoverData  template.JS // [{subdomain, cname, risk, service, evidence}]
+	TakeoverCount int
+	HasTakeover   bool
 	// Logo
 	LogoDataURI template.URL // base64 data URI or empty
 }
@@ -127,6 +131,9 @@ func WriteHTML(filename string, cfg *config.Config, results *types.ScanResults, 
 		WaybackData:     marshalJS(results.Wayback),
 		WaybackCount:    waybackCount,
 		HasWayback:      len(results.Wayback) > 0,
+		TakeoverData:    marshalJS(results.Takeover),
+		TakeoverCount:   len(results.Takeover),
+		HasTakeover:     len(results.Takeover) > 0,
 		LogoDataURI:     logoDataURI,
 	}
 
@@ -204,16 +211,24 @@ func buildSubdomainRows(subdomains []types.SubdomainResult) template.JS {
 	return marshalJS(rows)
 }
 
+// techEntry is a JSON-friendly version of types.Technology for the HTML template.
+type techEntry struct {
+	Name     string `json:"name"`
+	Version  string `json:"version,omitempty"`
+	Category string `json:"category"`
+}
+
 // buildHTTPRows marshals HTTP results to a JSON array safe for embedding
 // inside a <script> block.
 func buildHTTPRows(httpResults []types.HTTPResult) template.JS {
 	type row struct {
-		URL           string `json:"url"`
-		Status        int    `json:"status"`
-		StatusClass   string `json:"statusClass"`
-		Title         string `json:"title"`
-		ContentLength int    `json:"contentLength"`
-		Technologies  string `json:"technologies"`
+		URL           string      `json:"url"`
+		Status        int         `json:"status"`
+		StatusClass   string      `json:"statusClass"`
+		Title         string      `json:"title"`
+		ContentLength int         `json:"contentLength"`
+		Technologies  string      `json:"technologies"`
+		DetectedTech  []techEntry `json:"detectedTech,omitempty"`
 	}
 	rows := make([]row, 0, len(httpResults))
 	for _, r := range httpResults {
@@ -221,6 +236,16 @@ func buildHTTPRows(httpResults []types.HTTPResult) template.JS {
 		if tech == "" {
 			tech = "N/A"
 		}
+
+		var dt []techEntry
+		for _, t := range r.DetectedTech {
+			dt = append(dt, techEntry{
+				Name:     t.Name,
+				Version:  t.Version,
+				Category: t.Category,
+			})
+		}
+
 		rows = append(rows, row{
 			URL:           r.URL,
 			Status:        r.StatusCode,
@@ -228,6 +253,7 @@ func buildHTTPRows(httpResults []types.HTTPResult) template.JS {
 			Title:         r.Title,
 			ContentLength: r.ContentLength,
 			Technologies:  tech,
+			DetectedTech:  dt,
 		})
 	}
 	return marshalJS(rows)
@@ -345,14 +371,23 @@ func buildStatusStats(httpResults []types.HTTPResult) []statEntry {
 	return toSortedEntries(counts)
 }
 
-// buildTechStats counts technology occurrences across HTTP results.
+// buildTechStats counts technology occurrences across HTTP results,
+// merging both the basic Technologies strings and structured DetectedTech.
 func buildTechStats(httpResults []types.HTTPResult) []statEntry {
 	counts := make(map[string]int)
 	for _, h := range httpResults {
+		seen := make(map[string]bool)
 		for _, t := range h.Technologies {
 			t = strings.TrimSpace(t)
-			if t != "" {
+			if t != "" && !seen[strings.ToLower(t)] {
+				seen[strings.ToLower(t)] = true
 				counts[t]++
+			}
+		}
+		for _, dt := range h.DetectedTech {
+			if !seen[strings.ToLower(dt.Name)] {
+				seen[strings.ToLower(dt.Name)] = true
+				counts[dt.Name]++
 			}
 		}
 	}
