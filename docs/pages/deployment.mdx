@@ -1,0 +1,344 @@
+---
+title: "Deployment"
+---
+
+# Deployment
+
+Run SubdomainX on a schedule for continuous subdomain monitoring. Choose a deployment strategy that fits your infrastructure.
+
+## Strategy 1: GitHub Actions (Free)
+
+The simplest approach — no servers, no cost. Uses GitHub's scheduled workflows to run scans and email results.
+
+### Setup
+
+Create `.github/workflows/subdomainx-scan.yml` in your repository:
+
+```yaml
+name: SubdomainX Scheduled Scan
+
+on:
+  schedule:
+    - cron: '*/15 * * * *' # Every 15 minutes
+  workflow_dispatch: # Allow manual triggers
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install SubdomainX
+        run: |
+          go install github.com/itszeeshan/subdomainx@latest
+          subdomainx --install-tools
+
+      - name: Run scan
+        env:
+          SECURITYTRAILS_API_KEY: ${{ secrets.SECURITYTRAILS_API_KEY }}
+          VIRUSTOTAL_API_KEY: ${{ secrets.VIRUSTOTAL_API_KEY }}
+          CENSYS_API_ID: ${{ secrets.CENSYS_API_ID }}
+          CENSYS_SECRET: ${{ secrets.CENSYS_SECRET }}
+        run: |
+          subdomainx --subfinder --crtsh --format json --output results/ target.com
+
+      - name: Send results via email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "SubdomainX Scan Results - $(date +'%Y-%m-%d %H:%M')"
+          to: you@example.com
+          from: SubdomainX Bot
+          body: "Scan completed. Results attached."
+          attachments: results/*
+```
+
+### Configuration
+
+1. Go to your repo → **Settings** → **Secrets and variables** → **Actions**
+2. Add your API keys and email credentials as repository secrets
+3. For Gmail, use an [App Password](https://support.google.com/accounts/answer/185833) instead of your account password
+
+> **Note**: GitHub Actions cron schedules may have up to 5–15 minutes of delay. Free tier includes 2,000 minutes/month for private repos, unlimited for public repos.
+
+---
+
+## Strategy 2: VPS + Cron Job
+
+A dedicated server with a cron job gives you exact scheduling and full control over installed tools.
+
+### Setup
+
+#### 1. Provision a VPS
+
+Any cheap VPS works — DigitalOcean ($4/mo), Hetzner ($3.50/mo), AWS Lightsail ($3.50/mo), or Linode ($5/mo).
+
+#### 2. Install SubdomainX
+
+```bash
+# Install Go (if not already installed)
+wget https://go.dev/dl/go1.21.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.21.linux-amd64.tar.gz
+export PATH=$PATH:/usr/local/go/bin:~/go/bin
+
+# Install SubdomainX and tools
+go install github.com/itszeeshan/subdomainx@latest
+subdomainx --install-tools
+```
+
+#### 3. Create a scan script
+
+```bash
+#!/bin/bash
+# /opt/subdomainx/scan.sh
+
+TIMESTAMP=$(date +'%Y-%m-%d_%H-%M')
+OUTPUT_DIR="/opt/subdomainx/results"
+TARGET="target.com"
+EMAIL="you@example.com"
+
+# Run the scan
+subdomainx --subfinder --crtsh --format json \
+  --name "scan_${TIMESTAMP}" \
+  --output "${OUTPUT_DIR}" \
+  "${TARGET}"
+
+# Email results
+RESULT_FILE=$(ls -t "${OUTPUT_DIR}"/scan_${TIMESTAMP}* 2>/dev/null | head -1)
+if [ -n "${RESULT_FILE}" ]; then
+  mail -s "SubdomainX Results - ${TIMESTAMP}" \
+    -A "${RESULT_FILE}" \
+    "${EMAIL}" < /dev/null
+fi
+```
+
+#### 4. Set up the cron job
+
+```bash
+chmod +x /opt/subdomainx/scan.sh
+
+# Add to crontab
+crontab -e
+```
+
+Add this line:
+
+```
+*/15 * * * * /opt/subdomainx/scan.sh >> /var/log/subdomainx.log 2>&1
+```
+
+#### 5. Set up email sending
+
+Install `msmtp` for SMTP-based email delivery:
+
+```bash
+sudo apt install msmtp msmtp-mta mailutils
+
+# Configure /etc/msmtprc
+cat <<EOF | sudo tee /etc/msmtprc
+account default
+host smtp.gmail.com
+port 587
+auth on
+user you@gmail.com
+password your_app_password
+from you@gmail.com
+tls on
+tls_starttls on
+EOF
+
+sudo chmod 600 /etc/msmtprc
+```
+
+> **Tip**: For production use, consider [SendGrid](https://sendgrid.com) or [Mailgun](https://mailgun.com) for reliable email delivery instead of Gmail SMTP.
+
+---
+
+## Strategy 3: Docker
+
+Containerize SubdomainX for reproducible deployments across any platform.
+
+### Dockerfile
+
+```dockerfile
+FROM golang:1.21-alpine AS builder
+
+RUN go install github.com/itszeeshan/subdomainx@latest
+
+FROM alpine:latest
+
+RUN apk add --no-cache bash curl ca-certificates
+
+COPY --from=builder /root/go/bin/subdomainx /usr/local/bin/subdomainx
+
+# Install enumeration tools
+RUN subdomainx --install-tools
+
+COPY scan.sh /opt/scan.sh
+RUN chmod +x /opt/scan.sh
+
+ENTRYPOINT ["/opt/scan.sh"]
+```
+
+### Docker Compose with cron
+
+```yaml
+# docker-compose.yml
+version: '3.8'
+services:
+  subdomainx:
+    build: .
+    environment:
+      - TARGET=target.com
+      - EMAIL=you@example.com
+      - SECURITYTRAILS_API_KEY=${SECURITYTRAILS_API_KEY}
+      - VIRUSTOTAL_API_KEY=${VIRUSTOTAL_API_KEY}
+    volumes:
+      - ./results:/opt/subdomainx/results
+    restart: unless-stopped
+```
+
+Use the Docker image with any cloud platform's scheduled job feature:
+
+- **AWS ECS Scheduled Tasks** — EventBridge rule triggers a Fargate task
+- **GCP Cloud Run Jobs** — Cloud Scheduler triggers the job
+- **Azure Container Instances** — Logic Apps triggers the container
+
+---
+
+## Strategy 4: Kubernetes CronJob
+
+If you already have a Kubernetes cluster, deploy SubdomainX as a CronJob.
+
+```yaml
+# subdomainx-cronjob.yaml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: subdomainx-scan
+spec:
+  schedule: "*/15 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: subdomainx
+              image: your-registry/subdomainx:latest
+              env:
+                - name: TARGET
+                  value: "target.com"
+                - name: EMAIL
+                  value: "you@example.com"
+                - name: SECURITYTRAILS_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: subdomainx-secrets
+                      key: securitytrails-api-key
+              volumeMounts:
+                - name: results
+                  mountPath: /opt/subdomainx/results
+          volumes:
+            - name: results
+              persistentVolumeClaim:
+                claimName: subdomainx-results
+          restartPolicy: OnFailure
+```
+
+```bash
+# Create secrets
+kubectl create secret generic subdomainx-secrets \
+  --from-literal=securitytrails-api-key=your_key
+
+# Deploy
+kubectl apply -f subdomainx-cronjob.yaml
+```
+
+---
+
+## Strategy 5: AWS Lambda (Serverless)
+
+Run scans with zero idle cost using AWS Lambda and EventBridge.
+
+### Setup
+
+```bash
+# Build for Lambda
+GOOS=linux GOARCH=amd64 go build -o bootstrap
+zip function.zip bootstrap
+
+# Create Lambda function
+aws lambda create-function \
+  --function-name subdomainx-scan \
+  --runtime provided.al2 \
+  --handler bootstrap \
+  --zip-file fileb://function.zip \
+  --timeout 900 \
+  --memory-size 1024
+
+# Create EventBridge rule (every 15 minutes)
+aws events put-rule \
+  --name subdomainx-schedule \
+  --schedule-expression "rate(15 minutes)"
+
+# Add Lambda as target
+aws events put-targets \
+  --rule subdomainx-schedule \
+  --targets "Id"="1","Arn"="arn:aws:lambda:REGION:ACCOUNT:function:subdomainx-scan"
+```
+
+> **Note**: Lambda has a 15-minute maximum timeout. For large scans, use lighter tool combinations (e.g., `--crtsh` only) or consider a VPS/container approach instead.
+
+---
+
+## Email Notification Alternatives
+
+Instead of traditional SMTP, you can use webhooks for instant notifications:
+
+### Slack Webhook
+
+```bash
+# In your scan script
+curl -X POST -H 'Content-type: application/json' \
+  --data "{\"text\": \"SubdomainX scan complete. Found $(wc -l < results.json) subdomains.\"}" \
+  https://hooks.slack.com/services/YOUR/WEBHOOK/URL
+```
+
+### Discord Webhook
+
+```bash
+curl -X POST -H 'Content-type: application/json' \
+  --data "{\"content\": \"SubdomainX scan complete. Found $(wc -l < results.json) subdomains.\"}" \
+  https://discord.com/api/webhooks/YOUR/WEBHOOK/URL
+```
+
+### Telegram Bot
+
+```bash
+curl -s "https://api.telegram.org/bot${BOT_TOKEN}/sendDocument" \
+  -F chat_id="${CHAT_ID}" \
+  -F document=@results.json \
+  -F caption="SubdomainX scan results"
+```
+
+---
+
+## Comparison
+
+| Strategy | Cost | Setup | Scheduling | Best For |
+|---|---|---|---|---|
+| GitHub Actions | Free | Easy | ~5-15 min delay | Quick start, no infra |
+| VPS + Cron | $3-6/mo | Medium | Exact | Reliable, full control |
+| Docker + Cloud | Pay-per-use | Medium | Exact | Scalable, reproducible |
+| Kubernetes | Varies | Complex | Exact | Existing k8s clusters |
+| AWS Lambda | Pay-per-use | Medium | Exact | Serverless, low volume |
+
+## Tips
+
+- **Start with GitHub Actions** if you want zero-cost, zero-maintenance monitoring
+- **Use a VPS** if you need exact 15-minute intervals and want to install all enumeration tools
+- **Use Docker** if you want reproducible builds that work across cloud providers
+- **Rotate scan outputs** to avoid filling up disk — delete results older than 7-30 days
+- **Use `--format html`** for email-friendly reports that render well in email clients
+- **Set reasonable rate limits** (`--rate-limit`) to avoid getting blocked by target services
