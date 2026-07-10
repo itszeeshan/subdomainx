@@ -552,6 +552,109 @@ subdomainx --tui --subfinder --crtsh --httpx --takeover example.com
 subdomainx --tui --wildcard domains.txt --httpx --smap
 ```
 
+## REST API Server Mode
+
+Run SubdomainX as a persistent HTTP server for programmatic scan management via REST API.
+
+### Usage
+
+```bash
+subdomainx serve [OPTIONS]
+```
+
+### Server Options
+
+| Option          | Default  | Description                           |
+| --------------- | -------- | ------------------------------------- |
+| `--port N`      | `8080`   | Port to listen on                     |
+| `--api-key KEY` | `""`     | API key for Bearer token auth         |
+| `--output DIR`  | `output` | Output directory for scan results     |
+
+### API Endpoints
+
+| Method   | Endpoint            | Auth     | Description                  |
+| -------- | ------------------- | -------- | ---------------------------- |
+| `GET`    | `/api/health`       | No       | Health check (version, uptime) |
+| `POST`   | `/api/scan`         | Yes      | Create a new scan job        |
+| `GET`    | `/api/scan/:id`     | Yes      | Get scan status and results  |
+| `GET`    | `/api/scans`        | Yes      | List all scan jobs           |
+| `DELETE` | `/api/scan/:id`     | Yes      | Cancel a running scan        |
+
+### Authentication
+
+When `--api-key` is set, all authenticated endpoints require the header:
+
+```
+Authorization: Bearer <your-api-key>
+```
+
+### Scan Request Body (POST /api/scan)
+
+```json
+{
+  "domain": "example.com",
+  "tools": ["subfinder", "crtsh"],
+  "threads": 10,
+  "retries": 3,
+  "timeout": 30,
+  "rate_limit": 100,
+  "format": "json",
+  "options": {
+    "httpx": true,
+    "smap": false,
+    "screenshot": false,
+    "tech_detect": false,
+    "takeover": false
+  }
+}
+```
+
+### API Examples
+
+**Start the server:**
+
+```bash
+subdomainx serve --port 8080 --api-key my-secret-key
+```
+
+**Health check:**
+
+```bash
+curl http://localhost:8080/api/health
+```
+
+**Create a scan:**
+
+```bash
+curl -X POST http://localhost:8080/api/scan \
+  -H "Authorization: Bearer my-secret-key" \
+  -H "Content-Type: application/json" \
+  -d '{"domain":"example.com","tools":["subfinder","crtsh"],"options":{"httpx":true}}'
+```
+
+**Check scan progress:**
+
+```bash
+curl http://localhost:8080/api/scan/SCAN_ID \
+  -H "Authorization: Bearer my-secret-key"
+```
+
+**List all scans:**
+
+```bash
+curl http://localhost:8080/api/scans \
+  -H "Authorization: Bearer my-secret-key"
+```
+
+**Cancel a scan:**
+
+```bash
+curl -X DELETE http://localhost:8080/api/scan/SCAN_ID \
+  -H "Authorization: Bearer my-secret-key"
+```
+
+---
+
 ## Tool Management
 
 ### Check Tools

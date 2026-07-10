@@ -157,6 +157,15 @@ scanners:
 
 > **Important**: All notification credentials must be set via environment variables — they are never stored in config files or passed via CLI flags. See [CLI Reference](/cli-reference#notification-options) for the full list of environment variables.
 
+### REST API Server Configuration
+
+| Parameter | Type    | Default  | CLI Flag     | Description                           |
+| --------- | ------- | -------- | ------------ | ------------------------------------- |
+| `port`    | integer | `8080`   | `--port`     | Port for the API server to listen on  |
+| `api_key` | string  | `""`     | `--api-key`  | Bearer token for API authentication   |
+
+> **Note**: Server mode is started with `subdomainx serve`. Server-specific flags are separate from scan flags.
+
 ### Tool Configuration
 
 Tool selection is primarily controlled via CLI flags. YAML configuration provides default states. By default, enumeration tools are enabled while API tools and scanners are disabled:

@@ -746,6 +746,35 @@ subdomainx --httpx --status-codes 200,301,302,403 --format html --name webapp_sc
 subdomainx --wildcard webapps.txt --httpx --status-codes 200,301,302,403 --format html --name webapp_scan
 ```
 
+### REST API Server Mode
+
+Start SubdomainX as a REST API server and trigger scans programmatically:
+
+**Start the server:**
+
+```bash
+subdomainx serve --port 8080 --api-key my-secret-key --output /opt/scans
+```
+
+**Trigger a scan via curl:**
+
+```bash
+curl -X POST http://localhost:8080/api/scan \
+  -H "Authorization: Bearer my-secret-key" \
+  -H "Content-Type: application/json" \
+  -d '{"domain":"example.com","tools":["subfinder","crtsh"],"options":{"httpx":true,"takeover":true}}'
+```
+
+**Poll for results:**
+
+```bash
+# Replace SCAN_ID with the ID returned from the POST response
+curl http://localhost:8080/api/scan/SCAN_ID \
+  -H "Authorization: Bearer my-secret-key"
+```
+
+> **Tip**: Use the REST API to integrate SubdomainX into CI/CD pipelines, custom dashboards, or automated security workflows.
+
 ### Port Scanning
 
 Comprehensive port discovery for network assessment:
