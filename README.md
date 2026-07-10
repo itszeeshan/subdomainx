@@ -25,7 +25,7 @@ SubdomainX combines 12+ enumeration tools and 6+ API services into a single CLI.
 ## Install
 
 ```bash
-go install github.com/itszeeshan/subdomainx@latest
+go install github.com/itszeeshan/subdomainx/v2@latest
 ```
 
 Or [download a pre-built binary](https://github.com/itszeeshan/subdomainx/releases) from the releases page.
