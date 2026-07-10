@@ -213,6 +213,32 @@ Send scan results and diff alerts to external channels. All credentials are read
 | `SUBDOMAINX_SMTP_PASS`         | Email    | SMTP password        |
 | `SUBDOMAINX_NOTIFY_EMAIL`      | Email    | Recipient email(s), comma-separated |
 
+### Interactive TUI Dashboard
+
+Launch an interactive terminal dashboard for real-time scan monitoring.
+
+| Option  | Default | Description                          |
+| ------- | ------- | ------------------------------------ |
+| `--tui` | `false` | Enable interactive TUI dashboard     |
+
+> **Note**: The TUI dashboard replaces the standard CLI output with a full-screen interactive interface. It provides three tabs: **Dashboard** (tool progress and stats), **Results** (sortable/filterable subdomain table), and **Logs** (timestamped log viewer).
+
+**Keyboard shortcuts:**
+
+| Key            | Action                        |
+| -------------- | ----------------------------- |
+| `Tab`          | Switch to next tab            |
+| `Shift+Tab`    | Switch to previous tab        |
+| `1` / `2` / `3` | Jump to Dashboard / Results / Logs |
+| `j` / `k` / `Up` / `Down` | Scroll                |
+| `s`            | Sort results (Results tab)    |
+| `/`            | Filter results (Results tab)  |
+| `Esc`          | Clear filter                  |
+| `e`            | Export info                   |
+| `q` / `Ctrl+C` | Quit                         |
+
+![SubdomainX CLI Dashboard](/cli-dashboard.png)
+
 ### Utility Options
 
 | Option            | Description                                      |
@@ -504,6 +530,26 @@ subdomainx --notify slack,email example.com
 
 ```bash
 subdomainx --diff --notify slack,telegram example.com
+```
+
+### TUI Dashboard
+
+**Interactive dashboard with full scan pipeline:**
+
+```bash
+subdomainx --tui --subfinder --httpx example.com
+```
+
+**TUI with multiple tools and takeover detection:**
+
+```bash
+subdomainx --tui --subfinder --crtsh --httpx --takeover example.com
+```
+
+**TUI with multiple domains:**
+
+```bash
+subdomainx --tui --wildcard domains.txt --httpx --smap
 ```
 
 ## Tool Management

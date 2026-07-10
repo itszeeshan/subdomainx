@@ -602,6 +602,52 @@ export SUBDOMAINX_SLACK_WEBHOOK="https://hooks.slack.com/services/..."
 */15 * * * * subdomainx --diff --notify slack --output /opt/scans/ target.com
 ```
 
+## Interactive TUI Dashboard
+
+### Basic TUI Mode
+
+Launch the interactive terminal dashboard for real-time scan monitoring:
+
+```bash
+subdomainx --tui --subfinder --httpx example.com
+```
+
+> **Note**: The TUI provides a full-screen dashboard with live tool progress, stats, results table, and log viewer. Use `Tab` to switch between views.
+
+![SubdomainX CLI Dashboard](/cli-dashboard.png)
+
+### TUI with Full Recon Pipeline
+
+Run a comprehensive scan with all features visible in the dashboard:
+
+```bash
+subdomainx --tui --subfinder --crtsh --httpx --tech --takeover --format html example.com
+```
+
+> **Tip**: The Dashboard tab shows real-time progress for each tool, memory usage, and goroutine count. Switch to the Results tab to browse and filter discovered subdomains as they come in.
+
+### TUI with Multiple Domains
+
+Monitor multi-domain scans interactively:
+
+```bash
+subdomainx --tui --wildcard targets.txt --httpx --smap --takeover
+```
+
+### TUI Keyboard Shortcuts
+
+| Key            | Action                        |
+| -------------- | ----------------------------- |
+| `Tab`          | Switch to next tab            |
+| `1` / `2` / `3` | Jump to Dashboard / Results / Logs |
+| `s`            | Cycle sort column (Results tab) |
+| `/`            | Start filtering (Results tab) |
+| `j` / `k`     | Scroll up/down                |
+| `e`            | Export info                   |
+| `q`            | Quit                          |
+
+---
+
 ## Common Use Cases
 
 ### Bug Bounty

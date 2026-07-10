@@ -132,6 +132,14 @@ scanners:
 
 > **Note**: `--takeover-only` implies `--takeover`. Use with `--httpx` for enhanced body-based detection.
 
+### TUI Dashboard Configuration
+
+| Parameter | Type    | Default | CLI Flag | Description                      |
+| --------- | ------- | ------- | -------- | -------------------------------- |
+| `tui`     | boolean | `false` | `--tui`  | Enable interactive TUI dashboard |
+
+> **Note**: When TUI mode is enabled, the standard CLI banner and log output are replaced by a full-screen interactive dashboard. All scan results are displayed in real time across three tabs: Dashboard, Results, and Logs.
+
 ### Diff/Monitoring Configuration
 
 | Parameter       | Type    | Default | CLI Flag     | Description                                          |
