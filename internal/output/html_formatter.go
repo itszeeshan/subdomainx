@@ -12,9 +12,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/itszeeshan/subdomainx/internal/config"
-	"github.com/itszeeshan/subdomainx/internal/diff"
-	"github.com/itszeeshan/subdomainx/internal/types"
+	"github.com/itszeeshan/subdomainx/v2/internal/config"
+	"github.com/itszeeshan/subdomainx/v2/internal/diff"
+	"github.com/itszeeshan/subdomainx/v2/internal/types"
 )
 
 //go:embed templates/report.html

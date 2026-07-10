@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/itszeeshan/subdomainx/internal/utils"
+	"github.com/itszeeshan/subdomainx/v2/internal/utils"
 )
 
 func TestFileUtils(t *testing.T) {

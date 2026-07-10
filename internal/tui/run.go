@@ -6,8 +6,8 @@ import (
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/itszeeshan/subdomainx/internal/config"
-	"github.com/itszeeshan/subdomainx/internal/utils"
+	"github.com/itszeeshan/subdomainx/v2/internal/config"
+	"github.com/itszeeshan/subdomainx/v2/internal/utils"
 )
 
 // RunDashboard launches the Bubble Tea TUI and runs the scan pipeline

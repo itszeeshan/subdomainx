@@ -8,9 +8,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/itszeeshan/subdomainx/internal/config"
-	"github.com/itszeeshan/subdomainx/internal/tui"
-	"github.com/itszeeshan/subdomainx/internal/utils"
+	"github.com/itszeeshan/subdomainx/v2/internal/config"
+	"github.com/itszeeshan/subdomainx/v2/internal/tui"
+	"github.com/itszeeshan/subdomainx/v2/internal/utils"
 )
 
 const version = "2.0.0"

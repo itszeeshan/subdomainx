@@ -8,8 +8,8 @@ import (
 	"sort"
 	"time"
 
-	"github.com/itszeeshan/subdomainx/internal/config"
-	"github.com/itszeeshan/subdomainx/internal/types"
+	"github.com/itszeeshan/subdomainx/v2/internal/config"
+	"github.com/itszeeshan/subdomainx/v2/internal/types"
 )
 
 // Compare computes the diff between the current scan results and a baseline.

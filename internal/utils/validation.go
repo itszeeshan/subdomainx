@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/itszeeshan/subdomainx/internal/config"
+	"github.com/itszeeshan/subdomainx/v2/internal/config"
 )
 
 // ValidateInput validates the configuration and input parameters

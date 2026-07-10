@@ -6,7 +6,7 @@ import (
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/itszeeshan/subdomainx/internal/types"
+	"github.com/itszeeshan/subdomainx/v2/internal/types"
 )
 
 // EventSink is the interface the pipeline uses to report progress.

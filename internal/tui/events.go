@@ -3,7 +3,7 @@ package tui
 import (
 	"time"
 
-	"github.com/itszeeshan/subdomainx/internal/types"
+	"github.com/itszeeshan/subdomainx/v2/internal/types"
 )
 
 // StageMsg signals a pipeline stage transition.

@@ -3,7 +3,7 @@ package tests
 import (
 	"testing"
 
-	"github.com/itszeeshan/subdomainx/internal/scanner"
+	"github.com/itszeeshan/subdomainx/v2/internal/scanner"
 )
 
 func TestMatchesCnamePattern(t *testing.T) {

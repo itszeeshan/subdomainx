@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/itszeeshan/subdomainx/internal/config"
-	"github.com/itszeeshan/subdomainx/internal/types"
+	"github.com/itszeeshan/subdomainx/v2/internal/config"
+	"github.com/itszeeshan/subdomainx/v2/internal/types"
 )
 
 type SmapScanner struct{}

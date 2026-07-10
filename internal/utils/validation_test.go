@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/itszeeshan/subdomainx/internal/config"
+	"github.com/itszeeshan/subdomainx/v2/internal/config"
 )
 
 func TestValidateInput(t *testing.T) {

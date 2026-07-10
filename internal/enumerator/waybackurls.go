@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/itszeeshan/subdomainx/internal/config"
+	"github.com/itszeeshan/subdomainx/v2/internal/config"
 )
 
 type WaybackURLsEnumerator struct{}

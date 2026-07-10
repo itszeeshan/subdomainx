@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/itszeeshan/subdomainx/internal/types"
+	"github.com/itszeeshan/subdomainx/v2/internal/types"
 )
 
 type Checkpoint struct {

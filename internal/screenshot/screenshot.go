@@ -14,9 +14,9 @@ import (
 	"time"
 
 	"github.com/chromedp/chromedp"
-	"github.com/itszeeshan/subdomainx/internal/config"
-	"github.com/itszeeshan/subdomainx/internal/types"
-	"github.com/itszeeshan/subdomainx/internal/utils"
+	"github.com/itszeeshan/subdomainx/v2/internal/config"
+	"github.com/itszeeshan/subdomainx/v2/internal/types"
+	"github.com/itszeeshan/subdomainx/v2/internal/utils"
 )
 
 // CaptureAll takes screenshots of all HTTP-alive subdomains concurrently.

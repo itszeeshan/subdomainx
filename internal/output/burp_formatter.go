@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/itszeeshan/subdomainx/internal/types"
+	"github.com/itszeeshan/subdomainx/v2/internal/types"
 )
 
 // BurpItem represents an item in Burp Suite XML format

@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/itszeeshan/subdomainx/internal/types"
+	"github.com/itszeeshan/subdomainx/v2/internal/types"
 )
 
 // WriteTXT writes subdomain results to a text file (one per line)

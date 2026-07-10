@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/itszeeshan/subdomainx/internal/diff"
+	"github.com/itszeeshan/subdomainx/v2/internal/diff"
 )
 
 // ScanSummary is the payload delivered to every notifier.

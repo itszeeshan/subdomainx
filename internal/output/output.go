@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/itszeeshan/subdomainx/internal/config"
-	"github.com/itszeeshan/subdomainx/internal/diff"
-	"github.com/itszeeshan/subdomainx/internal/types"
+	"github.com/itszeeshan/subdomainx/v2/internal/config"
+	"github.com/itszeeshan/subdomainx/v2/internal/diff"
+	"github.com/itszeeshan/subdomainx/v2/internal/types"
 )
 
 // Generate creates output files based on the configuration and results.

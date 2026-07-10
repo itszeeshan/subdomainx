@@ -12,10 +12,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/itszeeshan/subdomainx/internal/config"
-	"github.com/itszeeshan/subdomainx/internal/tui"
-	"github.com/itszeeshan/subdomainx/internal/types"
-	"github.com/itszeeshan/subdomainx/internal/utils"
+	"github.com/itszeeshan/subdomainx/v2/internal/config"
+	"github.com/itszeeshan/subdomainx/v2/internal/tui"
+	"github.com/itszeeshan/subdomainx/v2/internal/types"
+	"github.com/itszeeshan/subdomainx/v2/internal/utils"
 )
 
 // Scanner interface for different scanning types

@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/itszeeshan/subdomainx/internal/types"
+	"github.com/itszeeshan/subdomainx/v2/internal/types"
 )
 
 // headerFingerprint maps an HTTP header to detection rules.

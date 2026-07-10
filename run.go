@@ -5,17 +5,17 @@ import (
 	"strings"
 	"time"
 
-	"github.com/itszeeshan/subdomainx/internal/config"
-	"github.com/itszeeshan/subdomainx/internal/diff"
-	"github.com/itszeeshan/subdomainx/internal/enumerator"
-	"github.com/itszeeshan/subdomainx/internal/notify"
-	"github.com/itszeeshan/subdomainx/internal/output"
-	"github.com/itszeeshan/subdomainx/internal/scanner"
-	"github.com/itszeeshan/subdomainx/internal/screenshot"
-	"github.com/itszeeshan/subdomainx/internal/server"
-	"github.com/itszeeshan/subdomainx/internal/tui"
-	"github.com/itszeeshan/subdomainx/internal/types"
-	"github.com/itszeeshan/subdomainx/internal/utils"
+	"github.com/itszeeshan/subdomainx/v2/internal/config"
+	"github.com/itszeeshan/subdomainx/v2/internal/diff"
+	"github.com/itszeeshan/subdomainx/v2/internal/enumerator"
+	"github.com/itszeeshan/subdomainx/v2/internal/notify"
+	"github.com/itszeeshan/subdomainx/v2/internal/output"
+	"github.com/itszeeshan/subdomainx/v2/internal/scanner"
+	"github.com/itszeeshan/subdomainx/v2/internal/screenshot"
+	"github.com/itszeeshan/subdomainx/v2/internal/server"
+	"github.com/itszeeshan/subdomainx/v2/internal/tui"
+	"github.com/itszeeshan/subdomainx/v2/internal/types"
+	"github.com/itszeeshan/subdomainx/v2/internal/utils"
 )
 
 // scanState holds in-progress and completed scan results alongside the

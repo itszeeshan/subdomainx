@@ -6,8 +6,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/itszeeshan/subdomainx/internal/config"
-	"github.com/itszeeshan/subdomainx/internal/utils"
+	"github.com/itszeeshan/subdomainx/v2/internal/config"
+	"github.com/itszeeshan/subdomainx/v2/internal/utils"
 )
 
 // toolFlags holds all per-tool CLI flags so they can be passed as one argument.

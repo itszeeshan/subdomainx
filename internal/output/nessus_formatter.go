@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/itszeeshan/subdomainx/internal/types"
+	"github.com/itszeeshan/subdomainx/v2/internal/types"
 )
 
 // NessusReport represents the complete Nessus XML report

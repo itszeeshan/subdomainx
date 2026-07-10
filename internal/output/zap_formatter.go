@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/itszeeshan/subdomainx/internal/types"
+	"github.com/itszeeshan/subdomainx/v2/internal/types"
 )
 
 // ZAPSite represents a site in ZAP XML format

@@ -6,8 +6,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/itszeeshan/subdomainx/internal/server"
-	"github.com/itszeeshan/subdomainx/internal/tui"
+	"github.com/itszeeshan/subdomainx/v2/internal/server"
+	"github.com/itszeeshan/subdomainx/v2/internal/tui"
 )
 
 // runServer parses server-specific flags and starts the REST API server.

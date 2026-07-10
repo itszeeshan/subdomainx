@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/itszeeshan/subdomainx/internal/types"
+	"github.com/itszeeshan/subdomainx/v2/internal/types"
 )
 
 // ScanStatus represents the lifecycle of a scan job.
