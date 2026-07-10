@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/itszeeshan/subdomainx/internal/config"
+	"github.com/itszeeshan/subdomainx/internal/tui"
 	"github.com/itszeeshan/subdomainx/internal/types"
 	"github.com/itszeeshan/subdomainx/internal/utils"
 )
@@ -23,7 +24,7 @@ func RegisterEnumerator(e Enumerator) {
 	enumerators[e.Name()] = e
 }
 
-func Run(cfg *config.Config) ([]types.SubdomainResult, error) {
+func Run(cfg *config.Config, sink tui.EventSink) ([]types.SubdomainResult, error) {
 	// Read domains from wildcard file
 	domains, err := utils.ReadLines(cfg.WildcardFile)
 	if err != nil {
@@ -36,7 +37,7 @@ func Run(cfg *config.Config) ([]types.SubdomainResult, error) {
 		if cfg.Tools[name] && utils.CheckToolAvailability(name) {
 			availableEnumerators[name] = enumerator
 		} else if cfg.Tools[name] && !utils.CheckToolAvailability(name) {
-			fmt.Printf("⚠️  Skipping %s: tool not found in PATH\n", name)
+			sink.ToolProgress(name, "", "skipped", 0, nil)
 		}
 	}
 
@@ -44,12 +45,11 @@ func Run(cfg *config.Config) ([]types.SubdomainResult, error) {
 		return nil, fmt.Errorf("no enumeration tools are available")
 	}
 
-	fmt.Printf("🔧 Using %d enumeration tools: ", len(availableEnumerators))
 	var toolNames []string
 	for name := range availableEnumerators {
 		toolNames = append(toolNames, name)
 	}
-	fmt.Printf("%s\n", strings.Join(toolNames, ", "))
+	sink.Log("info", fmt.Sprintf("Using %d enumeration tools: %s", len(availableEnumerators), strings.Join(toolNames, ", ")))
 
 	// Use a more reasonable timeout calculation
 	totalTimeout := cfg.Timeout * len(domains) * len(availableEnumerators)
@@ -89,9 +89,9 @@ func Run(cfg *config.Config) ([]types.SubdomainResult, error) {
 				}, cfg.Retries, cfg.Timeout)
 
 				if err != nil {
-					fmt.Printf("❌ Error with %s on %s: %v\n", toolName, d, err)
+					sink.ToolProgress(toolName, d, "failed", 0, err)
 				} else {
-					fmt.Printf("✅ %s found %d subdomains for %s\n", toolName, len(subdomains), d)
+					sink.ToolProgress(toolName, d, "completed", len(subdomains), nil)
 				}
 
 				// Update progress
@@ -146,8 +146,6 @@ func Run(cfg *config.Config) ([]types.SubdomainResult, error) {
 		}
 	}
 
-	fmt.Printf("📊 Total unique subdomains found: %d\n", len(subdomainSources))
-
 	// Create results without DNS resolution for better performance
 	var finalResults []types.SubdomainResult
 	for subdomain, sources := range subdomainSources {
@@ -157,6 +155,8 @@ func Run(cfg *config.Config) ([]types.SubdomainResult, error) {
 			IPs:       []string{},
 		})
 	}
+
+	sink.SubdomainsFound(finalResults, len(subdomainSources))
 
 	return finalResults, nil
 }

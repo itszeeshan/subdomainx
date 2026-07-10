@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"log"
 	"net"
 	"net/http"
 	"strings"
@@ -12,6 +11,7 @@ import (
 	"time"
 
 	"github.com/itszeeshan/subdomainx/internal/config"
+	"github.com/itszeeshan/subdomainx/internal/tui"
 	"github.com/itszeeshan/subdomainx/internal/types"
 	"github.com/itszeeshan/subdomainx/internal/utils"
 )
@@ -101,7 +101,7 @@ var serviceFingerprints = []serviceFingerprint{
 
 // RunTakeoverCheck checks subdomains for potential takeover vulnerabilities
 // by examining CNAME records and optionally HTTP responses.
-func RunTakeoverCheck(cfg *config.Config, subdomains []types.SubdomainResult, httpResults []types.HTTPResult) ([]types.TakeoverResult, error) {
+func RunTakeoverCheck(cfg *config.Config, subdomains []types.SubdomainResult, httpResults []types.HTTPResult, sink tui.EventSink) ([]types.TakeoverResult, error) {
 	if len(subdomains) == 0 {
 		return nil, nil
 	}
@@ -276,37 +276,31 @@ func ExtractHostFromURL(rawURL string) string {
 	return host
 }
 
-// PrintTakeoverSummary prints a formatted summary of takeover results to the terminal.
-func PrintTakeoverSummary(results []types.TakeoverResult) {
+// PrintTakeoverSummary prints a formatted summary of takeover results via the EventSink.
+func PrintTakeoverSummary(results []types.TakeoverResult, sink tui.EventSink) {
 	if len(results) == 0 {
 		return
 	}
 
-	log.Println("")
-	log.Println("⚠️  TAKEOVER RISK DETECTED:")
-	log.Println("")
+	sink.Log("warn", "TAKEOVER RISK DETECTED:")
 
 	highCount, medCount, lowCount := 0, 0, 0
 	for _, r := range results {
-		var icon string
 		switch r.Risk {
 		case "high":
-			icon = "🔴"
 			highCount++
 		case "medium":
-			icon = "🟠"
 			medCount++
 		default:
-			icon = "🟡"
 			lowCount++
 		}
-		log.Printf("  %s [%s] %s", icon, strings.ToUpper(r.Risk), r.Subdomain)
+		msg := fmt.Sprintf("[%s] %s", strings.ToUpper(r.Risk), r.Subdomain)
 		if r.CNAME != "" {
-			log.Printf("           CNAME → %s", r.CNAME)
+			msg += fmt.Sprintf(" CNAME→%s", r.CNAME)
 		}
-		log.Printf("           Service: %s — %s", r.Service, r.Evidence)
-		log.Println()
+		msg += fmt.Sprintf(" Service: %s — %s", r.Service, r.Evidence)
+		sink.Log("warn", msg)
 	}
 
-	log.Printf("Summary: %d high risk, %d medium risk, %d low risk\n", highCount, medCount, lowCount)
+	sink.Log("info", fmt.Sprintf("Takeover summary: %d high, %d medium, %d low risk", highCount, medCount, lowCount))
 }

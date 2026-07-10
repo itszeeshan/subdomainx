@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"strings"
 	"time"
 
@@ -11,8 +10,9 @@ import (
 	"github.com/itszeeshan/subdomainx/internal/enumerator"
 	"github.com/itszeeshan/subdomainx/internal/notify"
 	"github.com/itszeeshan/subdomainx/internal/output"
-	"github.com/itszeeshan/subdomainx/internal/screenshot"
 	"github.com/itszeeshan/subdomainx/internal/scanner"
+	"github.com/itszeeshan/subdomainx/internal/screenshot"
+	"github.com/itszeeshan/subdomainx/internal/tui"
 	"github.com/itszeeshan/subdomainx/internal/types"
 	"github.com/itszeeshan/subdomainx/internal/utils"
 )
@@ -30,7 +30,7 @@ type scanState struct {
 
 // initScanState either loads a previous checkpoint (resume mode) or creates a
 // fresh one, returning the initial scanState to continue from.
-func initScanState(cfg *config.Config, args []string, resume, outputDir string) (*scanState, error) {
+func initScanState(cfg *config.Config, args []string, resume, outputDir string, sink tui.EventSink) (*scanState, error) {
 	state := &scanState{}
 
 	if resume != "" {
@@ -39,12 +39,12 @@ func initScanState(cfg *config.Config, args []string, resume, outputDir string) 
 			return nil, fmt.Errorf("failed to load checkpoint: %v", err)
 		}
 
-		fmt.Printf("🔄 Resuming scan from checkpoint: %s\n", resume)
-		fmt.Printf("📊 Previous progress: %d/%d tasks completed\n",
-			cp.Progress.CompletedTasks, cp.Progress.TotalTasks)
-		fmt.Printf("🔍 Previous subdomains found: %d\n", len(cp.Subdomains))
-		fmt.Printf("🌐 Previous HTTP results: %d\n", len(cp.HTTPResults))
-		fmt.Printf("🔌 Previous port results: %d\n", len(cp.PortResults))
+		sink.Log("info", fmt.Sprintf("Resuming scan from checkpoint: %s", resume))
+		sink.Log("info", fmt.Sprintf("Previous progress: %d/%d tasks completed",
+			cp.Progress.CompletedTasks, cp.Progress.TotalTasks))
+		sink.Log("info", fmt.Sprintf("Previous subdomains found: %d", len(cp.Subdomains)))
+		sink.Log("info", fmt.Sprintf("Previous HTTP results: %d", len(cp.HTTPResults)))
+		sink.Log("info", fmt.Sprintf("Previous port results: %d", len(cp.PortResults)))
 
 		state.checkpoint = cp
 		state.results = cp.Subdomains
@@ -81,101 +81,111 @@ func initScanState(cfg *config.Config, args []string, resume, outputDir string) 
 // executeScanPipeline runs enumeration, optional HTTP scanning, optional port
 // scanning, and output generation, persisting progress to the checkpoint after
 // each phase.
-func executeScanPipeline(cfg *config.Config, state *scanState, resume string) error {
+func executeScanPipeline(cfg *config.Config, state *scanState, resume string, sink tui.EventSink) error {
 	cp := state.checkpoint
 
-	// Start signal handler so Ctrl-C saves progress gracefully.
-	signalHandler := utils.NewSignalHandler(cp, cfg.OutputDir)
-	signalHandler.Start()
+	// Start signal handler only in CLI mode (TUI handles signals itself).
+	if _, isTUI := sink.(*tui.TUIEventSink); !isTUI {
+		signalHandler := utils.NewSignalHandler(cp, cfg.OutputDir)
+		signalHandler.Start()
+	}
 
 	// --- Enumeration ---
 	if resume == "" || len(state.results) == 0 {
-		results, err := enumerator.Run(cfg)
+		sink.StageStarted("enumeration", "Starting subdomain enumeration...")
+		results, err := enumerator.Run(cfg, sink)
 		if err != nil {
 			cp.MarkError(fmt.Sprintf("Enumeration failed: %v", err))
-			saveCheckpoint(cp, cfg.OutputDir)
+			saveCheckpoint(cp, cfg.OutputDir, sink)
+			sink.StageCompleted("enumeration", fmt.Sprintf("Enumeration failed: %v", err))
 			return fmt.Errorf("enumeration failed: %v", err)
 		}
 		state.results = results
 		cp.AddSubdomains(results)
 		cp.UpdateProgress(len(results), len(results))
-		saveCheckpoint(cp, cfg.OutputDir)
+		saveCheckpoint(cp, cfg.OutputDir, sink)
+		sink.StageCompleted("enumeration", fmt.Sprintf("Enumeration completed: %d subdomains", len(results)))
 	}
 
 	// --- HTTP scanning ---
 	if cfg.Tools["httpx"] && (resume == "" || len(state.httpResults) == 0) {
-		log.Println("🔍 Running HTTP scanning with httpx...")
-		httpResults, err := scanner.RunHTTPx(cfg, state.results)
+		sink.StageStarted("http", "Running HTTP scanning with httpx...")
+		httpResults, err := scanner.RunHTTPx(cfg, state.results, sink)
 		if err != nil {
-			log.Printf("HTTP scanning failed: %v", err)
+			sink.Log("error", fmt.Sprintf("HTTP scanning failed: %v", err))
 		} else {
-			log.Printf("✅ HTTP scanning completed: %d results", len(httpResults))
 			state.httpResults = httpResults
 			cp.AddHTTPResults(httpResults)
-			saveCheckpoint(cp, cfg.OutputDir)
+			saveCheckpoint(cp, cfg.OutputDir, sink)
+			sink.HTTPResults(httpResults, len(httpResults))
 		}
+		sink.StageCompleted("http", fmt.Sprintf("HTTP scanning completed: %d results", len(state.httpResults)))
 	}
 
 	// --- Screenshots ---
 	if cfg.Screenshot && len(state.httpResults) > 0 {
-		log.Println("📸 Capturing screenshots...")
+		sink.StageStarted("screenshot", "Capturing screenshots...")
 		count, err := screenshot.CaptureAll(cfg, state.httpResults)
 		if err != nil {
-			log.Printf("Warning: Screenshot capture failed: %v", err)
+			sink.Log("warn", fmt.Sprintf("Screenshot capture failed: %v", err))
 		} else {
-			log.Printf("✅ Screenshots captured: %d", count)
+			sink.Log("info", fmt.Sprintf("Screenshots captured: %d", count))
 		}
+		sink.StageCompleted("screenshot", "Screenshots done")
 	}
 
 	// --- Wayback URLs for HTTP-alive subdomains ---
 	if cfg.Tools["waybackurls"] && len(state.httpResults) > 0 && len(state.waybackResults) == 0 {
-		log.Println("🕰️  Collecting Wayback URLs for HTTP-alive subdomains...")
+		sink.StageStarted("wayback", "Collecting Wayback URLs for HTTP-alive subdomains...")
 		waybackResults := scanner.RunWaybackURLs(cfg, state.httpResults)
 		if len(waybackResults) > 0 {
 			totalURLs := 0
 			for _, w := range waybackResults {
 				totalURLs += len(w.URLs)
 			}
-			log.Printf("✅ Wayback URLs collected: %d URLs across %d subdomains", totalURLs, len(waybackResults))
+			sink.Log("info", fmt.Sprintf("Wayback URLs collected: %d URLs across %d subdomains", totalURLs, len(waybackResults)))
 			state.waybackResults = waybackResults
 		} else {
-			log.Println("ℹ️  No Wayback URLs found")
+			sink.Log("info", "No Wayback URLs found")
 		}
+		sink.StageCompleted("wayback", "Wayback collection done")
 	}
 
 	// --- Technology filter (post-HTTP-scan) ---
 	if cfg.TechFilter != "" && len(state.httpResults) > 0 {
 		state.httpResults = filterByTechnology(state.httpResults, cfg.TechFilter)
-		log.Printf("🔧 Filtered HTTP results by technology: %d remaining", len(state.httpResults))
+		sink.Log("info", fmt.Sprintf("Filtered HTTP results by technology: %d remaining", len(state.httpResults)))
 	}
 
 	// --- Port scanning ---
 	if cfg.Tools["smap"] && (resume == "" || len(state.portResults) == 0) {
-		log.Println("🔍 Running port scanning with smap...")
-		portResults, err := scanner.RunSmap(cfg, state.results)
+		sink.StageStarted("ports", "Running port scanning with smap...")
+		portResults, err := scanner.RunSmap(cfg, state.results, sink)
 		if err != nil {
-			log.Printf("Port scanning failed: %v", err)
+			sink.Log("error", fmt.Sprintf("Port scanning failed: %v", err))
 		} else {
-			log.Printf("✅ Port scanning completed: %d results", len(portResults))
 			state.portResults = portResults
 			cp.AddPortResults(portResults)
-			saveCheckpoint(cp, cfg.OutputDir)
+			saveCheckpoint(cp, cfg.OutputDir, sink)
+			sink.PortResults(portResults, len(portResults))
 		}
+		sink.StageCompleted("ports", fmt.Sprintf("Port scanning completed: %d results", len(state.portResults)))
 	}
 
 	// --- Subdomain takeover detection ---
 	if cfg.Takeover {
-		log.Println("🔍 Checking for subdomain takeover vulnerabilities...")
-		takeoverResults, err := scanner.RunTakeoverCheck(cfg, state.results, state.httpResults)
+		sink.StageStarted("takeover", "Checking for subdomain takeover vulnerabilities...")
+		takeoverResults, err := scanner.RunTakeoverCheck(cfg, state.results, state.httpResults, sink)
 		if err != nil {
-			log.Printf("Takeover detection failed: %v", err)
+			sink.Log("error", fmt.Sprintf("Takeover detection failed: %v", err))
 		} else {
-			log.Printf("✅ Takeover check completed: %d potential vulnerabilities", len(takeoverResults))
 			state.takeoverResults = takeoverResults
+			sink.TakeoverResults(takeoverResults)
 			if len(takeoverResults) > 0 {
-				scanner.PrintTakeoverSummary(takeoverResults)
+				scanner.PrintTakeoverSummary(takeoverResults, sink)
 			}
 		}
+		sink.StageCompleted("takeover", fmt.Sprintf("Takeover check completed: %d vulnerabilities", len(state.takeoverResults)))
 	}
 
 	// --- Record scan history (always, for future diffs) ---
@@ -184,7 +194,7 @@ func executeScanPipeline(cfg *config.Config, state *scanState, resume string) er
 		domain = cp.ScanID
 	}
 	if err := diff.RecordScan(cfg.OutputDir, cp.ScanID, domain, state.results); err != nil {
-		log.Printf("Warning: Failed to record scan history: %v", err)
+		sink.Log("warn", fmt.Sprintf("Failed to record scan history: %v", err))
 	}
 
 	// --- Diff comparison (before output so HTML report can include diff) ---
@@ -192,20 +202,22 @@ func executeScanPipeline(cfg *config.Config, state *scanState, resume string) er
 	if cfg.DiffEnabled {
 		dr, err := diff.Compare(cfg, cp.ScanID, state.results)
 		if err != nil {
-			log.Printf("Warning: Diff comparison failed: %v", err)
+			sink.Log("warn", fmt.Sprintf("Diff comparison failed: %v", err))
 		} else {
 			diffResult = dr
 			if err := diff.WriteDiffReport(cfg, dr); err != nil {
-				log.Printf("Warning: Failed to write diff report: %v", err)
+				sink.Log("warn", fmt.Sprintf("Failed to write diff report: %v", err))
 			}
 			diff.PrintSummary(dr)
 		}
 	}
 
 	// --- Output ---
+	sink.StageStarted("output", "Generating output files...")
 	if err := output.Generate(cfg, state.results, state.httpResults, state.portResults, state.waybackResults, state.takeoverResults, diffResult); err != nil {
 		return fmt.Errorf("failed to generate output: %v", err)
 	}
+	sink.StageCompleted("output", fmt.Sprintf("Results saved to %s", cfg.OutputDir))
 
 	// --- Notifications ---
 	if len(cfg.NotifyChannels) > 0 {
@@ -219,22 +231,34 @@ func executeScanPipeline(cfg *config.Config, state *scanState, resume string) er
 			Diff:            diffResult,
 		}
 		if err := notify.Send(cfg.NotifyChannels, summary); err != nil {
-			log.Printf("Warning: %v", err)
+			sink.Log("warn", fmt.Sprintf("Notification failed: %v", err))
 		}
 	}
 
 	cp.MarkCompleted()
-	saveCheckpoint(cp, cfg.OutputDir)
+	saveCheckpoint(cp, cfg.OutputDir, sink)
 
-	log.Printf("Scan completed. Results saved to %s", cfg.OutputDir)
+	sink.ScanComplete(nil)
 	return nil
 }
 
 // saveCheckpoint persists cp and logs a warning on failure (non-fatal).
-func saveCheckpoint(cp *utils.Checkpoint, outputDir string) {
+func saveCheckpoint(cp *utils.Checkpoint, outputDir string, sink tui.EventSink) {
 	if err := utils.SaveCheckpoint(cp, outputDir); err != nil {
-		log.Printf("Warning: Failed to save checkpoint: %v", err)
+		sink.Log("warn", fmt.Sprintf("Failed to save checkpoint: %v", err))
 	}
+}
+
+// tuiScanFunc bridges the TUI's ScanFunc signature to the internal pipeline.
+// It creates a scanState from the checkpoint and runs the full pipeline.
+func tuiScanFunc(cfg *config.Config, checkpoint *utils.Checkpoint, resume string, args []string, outputDir string, sink tui.EventSink) error {
+	state := &scanState{
+		checkpoint:  checkpoint,
+		results:     checkpoint.Subdomains,
+		httpResults: checkpoint.HTTPResults,
+		portResults: checkpoint.PortResults,
+	}
+	return executeScanPipeline(cfg, state, resume, sink)
 }
 
 // filterByTechnology filters HTTP results to only include those matching

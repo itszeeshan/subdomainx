@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/itszeeshan/subdomainx/internal/config"
+	"github.com/itszeeshan/subdomainx/internal/tui"
 	"github.com/itszeeshan/subdomainx/internal/utils"
 )
 
@@ -45,6 +46,7 @@ func main() {
 		techFilter      = flag.String("tech-filter", "", "Filter results by technology (comma-separated, e.g., 'WordPress,nginx')")
 		takeoverFlag    = flag.Bool("takeover", false, "Check for subdomain takeover vulnerabilities")
 		takeoverOnly    = flag.Bool("takeover-only", false, "Only show subdomains vulnerable to takeover")
+		tuiMode         = flag.Bool("tui", false, "Enable interactive TUI dashboard")
 
 		flags = toolFlags{}
 	)
@@ -108,7 +110,9 @@ func main() {
 		return
 	}
 
-	showBanner()
+	if !*tuiMode {
+		showBanner()
+	}
 
 	if *verbose {
 		utils.StartResourceMonitoring()
@@ -215,12 +219,27 @@ func main() {
 	}
 
 	// ---- Checkpoint init and scan pipeline ----
-	state, err := initScanState(cfg, args, *resume, *outputDir)
-	if err != nil {
-		log.Fatalf("%v", err)
-	}
+	if *tuiMode {
+		// Register the scan pipeline function for the TUI to call
+		tui.RegisterScanFunc(tuiScanFunc)
 
-	if err := executeScanPipeline(cfg, state, *resume); err != nil {
-		log.Fatalf("%v", err)
+		// Create initial state with a temporary CLI sink for checkpoint loading
+		tmpSink := tui.EventSink(tui.NewCLIEventSink())
+		state, err := initScanState(cfg, args, *resume, *outputDir, tmpSink)
+		if err != nil {
+			log.Fatalf("%v", err)
+		}
+		if err := tui.RunDashboard(cfg, state.checkpoint, *resume, args, *outputDir); err != nil {
+			log.Fatalf("TUI error: %v", err)
+		}
+	} else {
+		sink := tui.EventSink(tui.NewCLIEventSink())
+		state, err := initScanState(cfg, args, *resume, *outputDir, sink)
+		if err != nil {
+			log.Fatalf("%v", err)
+		}
+		if err := executeScanPipeline(cfg, state, *resume, sink); err != nil {
+			log.Fatalf("%v", err)
+		}
 	}
 }

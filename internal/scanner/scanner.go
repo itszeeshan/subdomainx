@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/itszeeshan/subdomainx/internal/config"
+	"github.com/itszeeshan/subdomainx/internal/tui"
 	"github.com/itszeeshan/subdomainx/internal/types"
 	"github.com/itszeeshan/subdomainx/internal/utils"
 )
@@ -43,7 +44,7 @@ func RegisterPortScanner(s PortScanner) {
 }
 
 // RunHTTPx runs HTTP scanning on discovered subdomains
-func RunHTTPx(cfg *config.Config, subdomains []types.SubdomainResult) ([]types.HTTPResult, error) {
+func RunHTTPx(cfg *config.Config, subdomains []types.SubdomainResult, sink tui.EventSink) ([]types.HTTPResult, error) {
 	if len(subdomains) == 0 {
 		return []types.HTTPResult{}, nil
 	}
@@ -54,7 +55,7 @@ func RunHTTPx(cfg *config.Config, subdomains []types.SubdomainResult) ([]types.H
 
 	for i, subdomain := range subdomains {
 		if i >= maxTargets {
-			fmt.Printf("⚠️  Limiting HTTP scan to first %d subdomains for performance\n", maxTargets)
+			sink.Log("warn", fmt.Sprintf("Limiting HTTP scan to first %d subdomains for performance", maxTargets))
 			break
 		}
 		urls = append(urls, fmt.Sprintf("http://%s", subdomain.Subdomain))
@@ -126,14 +127,14 @@ func RunHTTPx(cfg *config.Config, subdomains []types.SubdomainResult) ([]types.H
 
 	// Log errors (but don't fail the scan)
 	for err := range errors {
-		fmt.Printf("HTTP scan error: %v\n", err)
+		sink.Log("warn", fmt.Sprintf("HTTP scan error: %v", err))
 	}
 
 	return httpResults, nil
 }
 
 // RunSmap runs port scanning on discovered subdomains
-func RunSmap(cfg *config.Config, subdomains []types.SubdomainResult) ([]types.PortResult, error) {
+func RunSmap(cfg *config.Config, subdomains []types.SubdomainResult, sink tui.EventSink) ([]types.PortResult, error) {
 	if len(subdomains) == 0 {
 		return []types.PortResult{}, nil
 	}
@@ -206,7 +207,7 @@ func RunSmap(cfg *config.Config, subdomains []types.SubdomainResult) ([]types.Po
 
 	// Log errors (but don't fail the scan)
 	for err := range errors {
-		fmt.Printf("Port scan error: %v\n", err)
+		sink.Log("warn", fmt.Sprintf("Port scan error: %v", err))
 	}
 
 	return portResults, nil
