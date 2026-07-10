@@ -101,10 +101,8 @@ func (s *Server) handleCreateScan(w http.ResponseWriter, r *http.Request) {
 
 	// Create scan job
 	scanID := fmt.Sprintf("scan_%d", time.Now().UnixNano())
-	ctx, cancel := context.WithCancel(r.Context())
 	// Detach from request context so scan outlives the HTTP request
-	ctx = context.WithoutCancel(ctx)
-	ctx, cancel = context.WithCancel(ctx)
+	ctx, cancel := context.WithCancel(context.WithoutCancel(r.Context()))
 
 	job := &ScanJob{
 		ID:        scanID,

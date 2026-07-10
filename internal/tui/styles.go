@@ -10,8 +10,7 @@ var (
 	colorWarning   = lipgloss.Color("#F59E0B") // amber
 	colorError     = lipgloss.Color("#EF4444") // red
 	colorMuted     = lipgloss.Color("#6B7280") // gray
-	colorBg        = lipgloss.Color("#1E1E2E") // dark bg
-	colorBorder    = lipgloss.Color("#44475A") // border gray
+	colorBorder = lipgloss.Color("#44475A") // border gray
 
 	// Tab styles
 	activeTab = lipgloss.NewStyle().

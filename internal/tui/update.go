@@ -71,7 +71,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case msg.String() == "3":
 			m.activeTab = tabLogs
 		case msg.String() == "j" || msg.String() == "down":
-			if m.activeTab == tabResults {
+			switch m.activeTab {
+			case tabResults:
 				m.resultOffset++
 				maxOffset := len(m.getFilteredResults()) - m.visibleRows()
 				if maxOffset < 0 {
@@ -80,17 +81,18 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				if m.resultOffset > maxOffset {
 					m.resultOffset = maxOffset
 				}
-			} else if m.activeTab == tabLogs {
-				m.logViewport.LineDown(1)
+			case tabLogs:
+				m.logViewport.ScrollDown(1)
 			}
 		case msg.String() == "k" || msg.String() == "up":
-			if m.activeTab == tabResults {
+			switch m.activeTab {
+			case tabResults:
 				m.resultOffset--
 				if m.resultOffset < 0 {
 					m.resultOffset = 0
 				}
-			} else if m.activeTab == tabLogs {
-				m.logViewport.LineUp(1)
+			case tabLogs:
+				m.logViewport.ScrollUp(1)
 			}
 		case msg.String() == "s":
 			if m.activeTab == tabResults {

@@ -1,0 +1,120 @@
+---
+title: "REST API Server"
+---
+
+# REST API Server
+
+Run SubdomainX as a persistent HTTP server for programmatic scan management.
+
+## Quick Start
+
+```bash
+subdomainx serve --port 8080 --api-key my-secret-key
+```
+
+## Server Options
+
+| Option          | Default  | Description                       |
+| --------------- | -------- | --------------------------------- |
+| `--port N`      | `8080`   | Port to listen on                 |
+| `--api-key KEY` | `""`     | API key for Bearer token auth     |
+| `--output DIR`  | `output` | Output directory for scan results |
+
+## Authentication
+
+When `--api-key` is set, all endpoints except `/api/health` require the header:
+
+```
+Authorization: Bearer <your-api-key>
+```
+
+## Endpoints
+
+### Health Check
+
+```
+GET /api/health
+```
+
+Returns server version and uptime. No authentication required.
+
+```bash
+curl http://localhost:8080/api/health
+```
+
+### Create a Scan
+
+```
+POST /api/scan
+```
+
+```json
+{
+  "domain": "example.com",
+  "tools": ["subfinder", "crtsh"],
+  "threads": 10,
+  "retries": 3,
+  "timeout": 30,
+  "rate_limit": 100,
+  "format": "json",
+  "options": {
+    "httpx": true,
+    "smap": false,
+    "screenshot": false,
+    "tech_detect": false,
+    "takeover": false
+  }
+}
+```
+
+```bash
+curl -X POST http://localhost:8080/api/scan \
+  -H "Authorization: Bearer my-secret-key" \
+  -H "Content-Type: application/json" \
+  -d '{"domain":"example.com","tools":["subfinder","crtsh"],"options":{"httpx":true}}'
+```
+
+### Get Scan Status
+
+```
+GET /api/scan/:id
+```
+
+Returns scan progress, status, and results when complete.
+
+```bash
+curl http://localhost:8080/api/scan/SCAN_ID \
+  -H "Authorization: Bearer my-secret-key"
+```
+
+### List All Scans
+
+```
+GET /api/scans
+```
+
+```bash
+curl http://localhost:8080/api/scans \
+  -H "Authorization: Bearer my-secret-key"
+```
+
+### Cancel a Scan
+
+```
+DELETE /api/scan/:id
+```
+
+```bash
+curl -X DELETE http://localhost:8080/api/scan/SCAN_ID \
+  -H "Authorization: Bearer my-secret-key"
+```
+
+## Endpoint Summary
+
+| Method   | Endpoint        | Auth | Description                    |
+| -------- | --------------- | ---- | ------------------------------ |
+| `GET`    | `/api/health`   | No   | Health check (version, uptime) |
+| `POST`   | `/api/scan`     | Yes  | Create a new scan job          |
+| `GET`    | `/api/scan/:id` | Yes  | Get scan status and results    |
+| `GET`    | `/api/scans`    | Yes  | List all scan jobs             |
+| `DELETE` | `/api/scan/:id` | Yes  | Cancel a running scan          |
