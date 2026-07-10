@@ -65,3 +65,8 @@ var scanFunc ScanFunc
 func RegisterScanFunc(f ScanFunc) {
 	scanFunc = f
 }
+
+// GetScanFunc returns the registered scan function (used by the API server).
+func GetScanFunc() ScanFunc {
+	return scanFunc
+}

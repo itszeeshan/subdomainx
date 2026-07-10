@@ -12,6 +12,7 @@ import (
 	"github.com/itszeeshan/subdomainx/internal/output"
 	"github.com/itszeeshan/subdomainx/internal/scanner"
 	"github.com/itszeeshan/subdomainx/internal/screenshot"
+	"github.com/itszeeshan/subdomainx/internal/server"
 	"github.com/itszeeshan/subdomainx/internal/tui"
 	"github.com/itszeeshan/subdomainx/internal/types"
 	"github.com/itszeeshan/subdomainx/internal/utils"
@@ -84,10 +85,12 @@ func initScanState(cfg *config.Config, args []string, resume, outputDir string, 
 func executeScanPipeline(cfg *config.Config, state *scanState, resume string, sink tui.EventSink) error {
 	cp := state.checkpoint
 
-	// Start signal handler only in CLI mode (TUI handles signals itself).
+	// Start signal handler only in CLI mode (TUI and API handle signals differently).
 	if _, isTUI := sink.(*tui.TUIEventSink); !isTUI {
-		signalHandler := utils.NewSignalHandler(cp, cfg.OutputDir)
-		signalHandler.Start()
+		if _, isAPI := sink.(*server.APIEventSink); !isAPI {
+			signalHandler := utils.NewSignalHandler(cp, cfg.OutputDir)
+			signalHandler.Start()
+		}
 	}
 
 	// --- Enumeration ---

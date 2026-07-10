@@ -13,6 +13,12 @@ import (
 )
 
 func main() {
+	// ---- Serve subcommand (before flag.Parse) ----
+	if len(os.Args) > 1 && os.Args[1] == "serve" {
+		runServer(os.Args[2:])
+		return
+	}
+
 	// ---- Flag definitions ----
 	var (
 		showVersion     = flag.Bool("version", false, "Show version information")
@@ -76,7 +82,7 @@ func main() {
 
 	// ---- Early-exit commands ----
 	if *showVersion {
-		fmt.Println("SubdomainX v1.5.0")
+		fmt.Println("SubdomainX v2.0.0")
 		return
 	}
 	if *showHelp {
