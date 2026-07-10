@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/itszeeshan/subdomainx/internal/config"
+	"github.com/itszeeshan/subdomainx/internal/utils"
 )
 
 type SecurityTrailsEnumerator struct {
@@ -48,8 +49,8 @@ func (s *SecurityTrailsEnumerator) Enumerate(ctx context.Context, domain string,
 	req.Header.Set("APIKEY", s.apiKey)
 	req.Header.Set("Accept", "application/json")
 
-	// Make request
-	resp, err := s.client.Do(req)
+	// Make request with 429 retry handling
+	resp, err := utils.DoWithRetry(s.client, req, cfg.Retries, cfg.Timeout)
 	if err != nil {
 		return nil, fmt.Errorf("securitytrails API request failed: %v", err)
 	}

@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/itszeeshan/subdomainx/internal/config"
+	"github.com/itszeeshan/subdomainx/internal/utils"
 )
 
 type URLScanEnumerator struct {
@@ -49,8 +50,8 @@ func (u *URLScanEnumerator) Enumerate(ctx context.Context, domain string, cfg *c
 		req.Header.Set("API-Key", u.apiKey)
 	}
 
-	// Make request
-	resp, err := u.client.Do(req)
+	// Make request with 429 retry handling
+	resp, err := utils.DoWithRetry(u.client, req, cfg.Retries, cfg.Timeout)
 	if err != nil {
 		return nil, fmt.Errorf("urlscan API request failed: %v", err)
 	}

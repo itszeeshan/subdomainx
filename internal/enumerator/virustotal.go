@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/itszeeshan/subdomainx/internal/config"
+	"github.com/itszeeshan/subdomainx/internal/utils"
 )
 
 type VirusTotalEnumerator struct {
@@ -51,8 +52,8 @@ func (v *VirusTotalEnumerator) Enumerate(ctx context.Context, domain string, cfg
 	req.Header.Set("x-apikey", v.apiKey)
 	req.Header.Set("Accept", "application/json")
 
-	// Make request
-	resp, err := v.client.Do(req)
+	// Make request with 429 retry handling
+	resp, err := utils.DoWithRetry(v.client, req, cfg.Retries, cfg.Timeout)
 	if err != nil {
 		return nil, fmt.Errorf("virustotal API request failed: %v", err)
 	}

@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/itszeeshan/subdomainx/internal/config"
+	"github.com/itszeeshan/subdomainx/internal/utils"
 )
 
 type CensysEnumerator struct {
@@ -56,8 +57,8 @@ func (c *CensysEnumerator) Enumerate(ctx context.Context, domain string, cfg *co
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
 
-	// Make request
-	resp, err := c.client.Do(req)
+	// Make request with 429 retry handling
+	resp, err := utils.DoWithRetry(c.client, req, cfg.Retries, cfg.Timeout)
 	if err != nil {
 		return nil, fmt.Errorf("censys API request failed: %v", err)
 	}

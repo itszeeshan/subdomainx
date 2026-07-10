@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/itszeeshan/subdomainx/internal/config"
+	"github.com/itszeeshan/subdomainx/internal/utils"
 )
 
 type HackerTargetEnumerator struct {
@@ -40,8 +41,8 @@ func (h *HackerTargetEnumerator) Enumerate(ctx context.Context, domain string, c
 		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", h.apiKey))
 	}
 
-	// Make request
-	resp, err := h.client.Do(req)
+	// Make request with 429 retry handling
+	resp, err := utils.DoWithRetry(h.client, req, cfg.Retries, cfg.Timeout)
 	if err != nil {
 		return nil, fmt.Errorf("hackertarget API request failed: %v", err)
 	}
